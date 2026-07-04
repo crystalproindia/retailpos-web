@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+  ::selection {
+    @apply bg-brand-100 text-brand-800;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+  }
+}
+
+@layer components {
+  /* Signature: POS receipt tape with perforated edges */
+  .receipt-tape {
+    @apply relative bg-receipt;
+    --hole: 0.55rem;
+  }
+  .receipt-tape::before,
+  .receipt-tape::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: calc(var(--hole) / 2);
+    background-image: radial-gradient(
+      circle at calc(var(--hole) / 2) 0,
+      transparent calc(var(--hole) / 2 - 1px),
+      var(--tape-bg, #ffffff) calc(var(--hole) / 2)
+    );
+    background-size: calc(var(--hole) * 1.6) var(--hole);
+    background-repeat: repeat-x;
+  }
+  .receipt-tape::before {
+    top: 0;
+    transform: rotate(180deg);
+  }
+  .receipt-tape::after {
+    bottom: 0;
+  }
+
+  .barcode-divider {
+    @apply h-6 w-28 bg-barcode text-ink/70;
+  }
+}
