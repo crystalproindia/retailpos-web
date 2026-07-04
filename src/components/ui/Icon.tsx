@@ -1,11 +1,12 @@
-import { icons, CircleDot, type LucideProps } from "lucide-react";
+import type { LucideProps } from "lucide-react";
+import { iconRegistry, fallbackIcon } from "./icon-registry";
 
 interface IconProps extends LucideProps {
   name: string;
 }
 
-/** Resolves a lucide icon by name so data files can stay serializable for the CMS. */
+/** Resolves an icon by name from the static registry (tree-shakeable). */
 export function Icon({ name, ...props }: IconProps) {
-  const LucideIcon = icons[name as keyof typeof icons] ?? CircleDot;
+  const LucideIcon = iconRegistry[name] ?? fallbackIcon;
   return <LucideIcon aria-hidden="true" {...props} />;
 }

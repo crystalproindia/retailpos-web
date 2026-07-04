@@ -6,6 +6,10 @@
   html {
     scroll-behavior: smooth;
   }
+  /* Anchor targets clear the sticky header (announcement + header ≈ 6.5rem) */
+  [id] {
+    scroll-margin-top: 6.5rem;
+  }
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;

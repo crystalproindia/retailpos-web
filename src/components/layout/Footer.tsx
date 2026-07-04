@@ -6,6 +6,7 @@ import { primaryCtas } from "@/data/ctas";
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import { Logo } from "./Logo";
+import { RegionalContacts } from "./RegionalContacts";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -50,14 +51,21 @@ export function Footer() {
         ))}
       </Container>
 
+      {/* Regional contacts */}
+      <div className="border-t border-white/10">
+        <Container className="py-8">
+          <RegionalContacts invert />
+        </Container>
+      </div>
+
       {/* Company strip */}
       <div className="border-t border-white/10">
         <Container className="flex flex-col gap-6 py-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-3">
             <Logo invert />
             <p className="max-w-md text-sm text-white/60">
-              Retail ERP, POS and AI-powered retail management by {company.parent}, serving retailers
-              since {company.foundedYear}.
+              Retail ERP, POS and AI-powered retail management by {company.parent}, delivering
+              software solutions since {company.foundedYear}.
             </p>
             <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/60">
               <span className="inline-flex items-center gap-1.5">

@@ -1,12 +1,20 @@
-import type { Stat } from "@/types/content";
-
 /**
- * PLACEHOLDER metrics — structured for replacement from the admin panel.
- * These describe measurable product outcomes, not rankings or awards.
+ * Operational coverage facts — verified product capabilities only.
+ * Replaces the earlier illustrative statistics (40%/3sec/99.9%/1day),
+ * which were removed because they were not customer-verified figures.
  */
-export const outcomeStats: Stat[] = [
-  { value: "40%", label: "less time spent on stock audits", placeholder: true },
-  { value: "3 sec", label: "average time to bill an item", placeholder: true },
-  { value: "99.9%", label: "billing uptime target with offline mode", placeholder: true },
-  { value: "1 day", label: "typical go-live for a single store", placeholder: true },
+export interface CoverageFact {
+  label: string;
+  detail: string;
+}
+
+export const coverageFacts: CoverageFact[] = [
+  { label: "POS + ERP", detail: "one platform" },
+  { label: "Multi-store", detail: "operations & franchise" },
+  { label: "Offline-capable", detail: "billing architecture" },
+  { label: "Role-based", detail: "workflows & approvals" },
+  { label: "Audit trail", detail: "on every transaction" },
+  { label: "Omnichannel", detail: "inventory pool" },
+  { label: "AI-assisted", detail: "recommendations" },
+  { label: "API-ready", detail: "integration architecture" },
 ];

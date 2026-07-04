@@ -1,6 +1,7 @@
 import { SearchX } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { ButtonLink } from "@/components/ui/Button";
+import { primaryCtas } from "@/data/ctas";
 
 export default function NotFound() {
   return (
@@ -13,8 +14,8 @@ export default function NotFound() {
         </p>
         <div className="mt-8 flex justify-center gap-3">
           <ButtonLink href="/">Go to homepage</ButtonLink>
-          <ButtonLink href="/book-demo" variant="ghost">
-            Book a Free Demo
+          <ButtonLink href={primaryCtas.bookDemo.href} variant="ghost">
+            {primaryCtas.bookDemo.label}
           </ButtonLink>
         </div>
       </div>

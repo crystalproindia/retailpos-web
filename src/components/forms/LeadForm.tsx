@@ -5,6 +5,8 @@ import { CircleCheck, LoaderCircle, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Checkbox, FieldWrap, Select, Textarea, TextInput } from "./fields";
 import { solutions } from "@/data/solutions";
+import { countryOptions } from "@/data/countries";
+import { contactConfig } from "@/config/contact";
 
 interface LeadFormValues {
   name: string;
@@ -17,6 +19,8 @@ interface LeadFormValues {
   requiredSolution: string;
   message: string;
   consent: boolean;
+  /** Honeypot — must stay empty; bots that fill it are silently dropped. */
+  website: string;
 }
 
 const emptyValues: LeadFormValues = {
@@ -30,10 +34,11 @@ const emptyValues: LeadFormValues = {
   requiredSolution: "",
   message: "",
   consent: false,
+  website: "",
 };
 
 type Errors = Partial<Record<keyof LeadFormValues, string>>;
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "submitting" | "success" | "demo" | "error";
 
 function validate(v: LeadFormValues): Errors {
   const errors: Errors = {};
@@ -61,18 +66,24 @@ const businessTypes = [
 ];
 
 /**
- * Lead capture form. Submission currently resolves locally and logs the
- * payload; the `submitLead` function is the single integration point for
- * the future backend lead API (POST /api/v1/leads).
+ * Backend integration point for the future lead API (POST /api/v1/leads).
+ * Set NEXT_PUBLIC_LEADS_API_URL to activate real submissions. Until then
+ * the form validates and shows an HONEST demonstration state — it never
+ * pretends a submission was sent. Spam-protection (e.g. Turnstile token)
+ * attaches to this same request when configured.
  */
-async function submitLead(payload: LeadFormValues): Promise<void> {
-  // Backend integration point — replaced with a real API call when the
-  // Laravel lead endpoint is available. Simulates network latency so the
-  // loading state is exercised in development.
-  await new Promise((resolve) => setTimeout(resolve, 700));
-  if (process.env.NODE_ENV === "development") {
-    console.info("[lead-form] payload ready for backend:", payload);
-  }
+const LEADS_API_URL = process.env.NEXT_PUBLIC_LEADS_API_URL;
+
+async function submitLead(payload: LeadFormValues): Promise<"sent" | "demo"> {
+  if (payload.website) return "sent"; // honeypot tripped: drop silently
+  if (!LEADS_API_URL) return "demo";
+  const res = await fetch(LEADS_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("Lead submission failed");
+  return "sent";
 }
 
 export function LeadForm({ compact = false }: { compact?: boolean }) {
@@ -92,8 +103,8 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
 
     setStatus("submitting");
     try {
-      await submitLead(values);
-      setStatus("success");
+      const result = await submitLead(values);
+      setStatus(result === "sent" ? "success" : "demo");
     } catch {
       setStatus("error");
     }
@@ -105,14 +116,31 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
         <CircleCheck aria-hidden="true" className="mx-auto h-10 w-10 text-ledger-500" />
         <h3 className="mt-4 font-display text-xl font-semibold text-ink">Request received</h3>
         <p className="mt-2 text-sm text-ink-muted">
-          Our retail consultants will reach out within one business day to schedule your demo.
+          Our retail consultants will reach out shortly to schedule your demo.
+        </p>
+      </div>
+    );
+  }
+
+  if (status === "demo") {
+    return (
+      <div role="status" className="rounded-lg border border-brand-200 bg-brand-50/60 p-8 text-center">
+        <CircleCheck aria-hidden="true" className="mx-auto h-10 w-10 text-brand-600" />
+        <h3 className="mt-4 font-display text-xl font-semibold text-ink">Your details check out</h3>
+        <p className="mt-2 text-sm text-ink-muted">
+          Online booking opens when our demo scheduling system goes live. To book right now,
+          email your details to{" "}
+          <a href={`mailto:${contactConfig.salesEmail}`} className="font-medium text-brand-700 underline">
+            {contactConfig.salesEmail}
+          </a>{" "}
+          — we reply on business days.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="relative grid gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <FieldWrap label="Name" htmlFor="lead-name" required error={errors.name}>
           <TextInput
@@ -153,9 +181,17 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
           />
         </FieldWrap>
         <FieldWrap label="Country" htmlFor="lead-country">
-          <Select id="lead-country" value={values.country} onChange={(e) => update("country", e.target.value)}>
-            {["India", "Singapore", "Malaysia", "Bahrain", "UAE", "Other"].map((c) => (
-              <option key={c}>{c}</option>
+          <Select
+            id="lead-country"
+            autoComplete="country-name"
+            value={values.country}
+            onChange={(e) => update("country", e.target.value)}
+          >
+            {countryOptions.map((c) => (
+              <option key={c.code} value={c.name}>
+                {c.name}
+                {c.dialCode ? ` (${c.dialCode})` : ""}
+              </option>
             ))}
           </Select>
         </FieldWrap>
@@ -205,6 +241,19 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
           />
         </FieldWrap>
       ) : null}
+
+      {/* Honeypot: visually hidden, ignored by humans, catches bots */}
+      <div aria-hidden="true" className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden">
+        <label htmlFor="lead-website">Website</label>
+        <input
+          id="lead-website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={values.website}
+          onChange={(e) => update("website", e.target.value)}
+        />
+      </div>
 
       <div>
         <Checkbox

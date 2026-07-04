@@ -4,6 +4,7 @@ import { erpModules } from "./modules";
 import { industries } from "./industries";
 import { solutions } from "./solutions";
 import { integrations } from "./integrations";
+import { groupedIndustries } from "./industry-groups";
 
 export const navGroups: NavGroup[] = [
   {
@@ -38,6 +39,10 @@ export const navGroups: NavGroup[] = [
       href: `/industries/${i.slug}`,
       description: i.description,
       icon: i.icon,
+    })),
+    sections: groupedIndustries().map(({ group, items }) => ({
+      title: group.title,
+      links: items.map((i) => ({ label: i.name, href: `/industries/${i.slug}`, icon: i.icon })),
     })),
   },
   {
@@ -90,8 +95,8 @@ export const topLevelLinks: NavLink[] = [{ label: "Pricing", href: "/pricing" }]
 
 export const quickLinks: NavLink[] = [
   { label: "Pricing", href: "/pricing", icon: "Tag" },
-  { label: "Book Demo", href: "/book-demo", icon: "CalendarCheck" },
-  { label: "Contact", href: "/contact", icon: "Phone" },
+  { label: "Book Demo", href: "/#book-demo", icon: "CalendarCheck" },
+  { label: "Talk to Sales", href: "/#book-demo", icon: "Phone" },
 ];
 
 export const footerColumns: { title: string; links: NavLink[] }[] = [

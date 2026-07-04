@@ -2,12 +2,12 @@ import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { primaryCtas } from "@/data/ctas";
-import { PosMockup } from "./PosMockup";
+import { HeroComposition } from "@/components/product-ui/HeroComposition";
 
 export function Hero() {
   return (
-    <section aria-labelledby="hero-heading" className="border-b border-line bg-paper">
-      <Container className="grid items-center gap-12 py-16 sm:py-20 lg:grid-cols-2 lg:py-24">
+    <section aria-labelledby="hero-heading" className="overflow-hidden border-b border-line bg-paper">
+      <Container className="grid items-center gap-12 py-14 sm:py-16 lg:grid-cols-[1fr,1.1fr] lg:py-20">
         <div>
           <Badge tone="brand">Retail ERP · POS · AI — one platform</Badge>
           <h1
@@ -19,7 +19,7 @@ export function Hero() {
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-muted">
             RetailPOS.biz combines fast POS billing with a complete retail ERP — inventory,
             purchasing, CRM, loyalty, accounting and analytics — and adds AI that forecasts
-            demand and reorders before you run out.
+            demand and suggests reorders before you run out.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href={primaryCtas.bookDemo.href} size="lg">
@@ -33,7 +33,9 @@ export function Hero() {
             Single store to enterprise chain · GST-ready · Works offline
           </p>
         </div>
-        <PosMockup />
+        <div className="pb-6 sm:pb-8">
+          <HeroComposition />
+        </div>
       </Container>
     </section>
   );

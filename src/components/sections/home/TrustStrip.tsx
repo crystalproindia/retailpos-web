@@ -16,8 +16,8 @@ export function TrustStrip() {
     <div className="border-b border-line bg-white">
       <Container className="flex flex-col items-center gap-4 py-6 lg:flex-row lg:justify-between">
         <p className="text-sm text-ink-muted">
-          Built by <span className="font-medium text-ink">{company.parent}</span>, delivering retail
-          software since {company.foundedYear}
+          Built by <span className="font-medium text-ink">{company.parent}</span>, delivering
+          software solutions since {company.foundedYear}
         </p>
         <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
           {indicators.map((i) => (

@@ -12,12 +12,14 @@ const display = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
+  fallback: ["Arial", "Helvetica", "sans-serif"],
 });
 
 const sans = Instrument_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
+  fallback: ["Arial", "Helvetica", "sans-serif"],
 });
 
 const mono = IBM_Plex_Mono({
@@ -25,6 +27,7 @@ const mono = IBM_Plex_Mono({
   weight: ["400", "500"],
   variable: "--font-mono",
   display: "swap",
+  fallback: ["Courier New", "monospace"],
 });
 
 export const metadata: Metadata = {

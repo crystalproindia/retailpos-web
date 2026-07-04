@@ -1,4 +1,4 @@
-.PHONY: bootstrap dev verify build lint format
+.PHONY: bootstrap dev verify build lint typecheck format
 
 bootstrap:
 	npm install
@@ -9,10 +9,13 @@ dev:
 lint:
 	npm run lint
 
+typecheck:
+	npm run typecheck
+
 build:
 	npm run build
 
-verify: lint build
+verify: lint typecheck build
 	@echo "✔ lint and production build passed"
 
 format:

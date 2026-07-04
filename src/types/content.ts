@@ -13,6 +13,8 @@ export interface NavGroup {
   href: string; // index page for the group
   tagline?: string;
   links: NavLink[];
+  /** Optional grouped columns for large menus (e.g. Industries). */
+  sections?: { title: string; links: NavLink[] }[];
   /** Secondary column shown in the mega menu (e.g. highlights). */
   secondary?: { title: string; links: NavLink[] };
 }
@@ -58,22 +60,6 @@ export interface Integration {
 export interface Faq {
   question: string;
   answer: string;
-}
-
-export interface Testimonial {
-  quote: string;
-  name: string;
-  role: string;
-  company: string;
-  /** Marked true until real customer quotes are loaded from the admin panel. */
-  placeholder: boolean;
-}
-
-export interface Stat {
-  value: string;
-  label: string;
-  /** Marked true until verified figures are loaded from the admin panel. */
-  placeholder: boolean;
 }
 
 export interface ResourceItem {

@@ -8,6 +8,7 @@ Tailwind CSS, Framer Motion and Lucide icons.
 | Phase | Scope | Status |
 |-------|-------|--------|
 | 1 | Foundation, design system, global layout, homepage | ✅ Complete |
+| 1.1 | Homepage visual storytelling, contact architecture, technical hardening | ✅ Complete |
 | 2 | Product + module + pricing pages | Pending approval |
 | 3 | Industries + solutions + integrations + conversion pages | Pending |
 | 4 | Content platform + comparisons + trust + final audits | Pending |
@@ -39,6 +40,26 @@ activate only when their env vars are set — see `src/config/site.ts`.
   ledger green `#0E9F6E`, paper neutrals, warm receipt `#FDFBF4`.
 - Type: Bricolage Grotesque (display), Instrument Sans (body), IBM Plex Mono (data).
 - Signature: POS receipt-tape stat strip + barcode dividers (`globals.css`).
+
+## International contacts
+
+All phone/email/WhatsApp data lives in `src/config/contact.ts`. Singapore and
+Malaysia numbers were NOT provided and are NOT invented — enter verified
+values and set `verified: true` to make tel:/wa.me links render automatically
+(footer + future contact page). Never hardcode numbers in components.
+
+## Fonts & build resilience
+
+`next/font/google` fetches fonts at build time and needs network access in
+the build environment. Metric fallbacks are configured so layout stays stable.
+For a fully offline build, download the three families into `src/fonts/` and
+switch to `next/font/local` — the variable names stay the same.
+
+## Lead form backend
+
+Set `NEXT_PUBLIC_LEADS_API_URL` to activate real submissions. Without it the
+form validates and shows an honest demonstration state (never fake success).
+A honeypot field is included; attach spam-protection tokens in `submitLead`.
 
 ## Content integrity
 

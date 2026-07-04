@@ -103,7 +103,7 @@ export function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 6 }}
               transition={{ duration: 0.16 }}
-              className="absolute inset-x-4 top-full z-50 mt-2 hidden rounded-lg border border-line bg-white p-6 shadow-menu lg:block"
+              className="absolute inset-x-4 top-full z-50 mt-2 hidden max-h-[min(34rem,calc(100vh-9rem))] overflow-y-auto overscroll-contain rounded-lg border border-line bg-white p-6 shadow-menu lg:block"
             >
               <div className="flex items-baseline justify-between border-b border-line pb-4">
                 <p className="text-sm text-ink-muted">{activeGroup.tagline}</p>
@@ -116,6 +116,31 @@ export function Header() {
                 </Link>
               </div>
               <div className={cn("mt-4 grid gap-6", activeGroup.secondary ? "grid-cols-[2fr,1fr]" : "grid-cols-1")}>
+                {activeGroup.sections ? (
+                  <div className="grid grid-cols-2 gap-6 xl:grid-cols-4">
+                    {activeGroup.sections.map((section) => (
+                      <div key={section.title}>
+                        <p className="px-3 font-mono text-[10px] font-medium uppercase tracking-widest text-ink-muted">
+                          {section.title}
+                        </p>
+                        <ul className="mt-2 space-y-0.5">
+                          {section.links.map((link) => (
+                            <li key={link.href}>
+                              <Link
+                                href={link.href}
+                                onClick={() => setOpenMenu(null)}
+                                className="flex items-center gap-2 rounded px-3 py-2 text-sm text-ink-soft transition-colors hover:bg-paper hover:text-brand-700"
+                              >
+                                {link.icon ? <Icon name={link.icon} className="h-4 w-4 shrink-0 text-brand-600" /> : null}
+                                {link.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
                 <ul className="grid grid-cols-2 gap-1 xl:grid-cols-3">
                   {activeGroup.links.map((link) => (
                     <li key={link.href}>
@@ -146,6 +171,7 @@ export function Header() {
                     </li>
                   ))}
                 </ul>
+                )}
                 {activeGroup.secondary ? (
                   <div className="rounded-lg bg-paper p-4">
                     <p className="font-mono text-xs font-medium uppercase tracking-widest text-ink-muted">

@@ -34,7 +34,7 @@ export const homepageFaqs: Faq[] = [
   {
     question: "How long does implementation take?",
     answer:
-      "A single store can typically go live in about a day: import items, connect hardware, train the team and start billing. Multi-store and enterprise rollouts follow a phased plan with data migration and on-site or remote training.",
+      "Implementation timelines depend on store count, data volume, integrations and hardware requirements. Every rollout follows the same phased plan: discovery, data migration, setup and hardware, team training, then go-live with close support. Multi-store chains roll out one outlet cluster at a time.",
   },
   {
     question: "Can it integrate with my webstore and other software?",

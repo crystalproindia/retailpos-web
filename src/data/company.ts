@@ -5,7 +5,6 @@ export const company = {
   headquarters: "Coimbatore, India",
   offices: ["Coimbatore, India", "Singapore", "Malaysia", "Bahrain"],
   email: "hello@retailpos.biz",
-  phone: "+91-00000-00000", // replaced by admin panel
   address: {
     streetAddress: "CrystalPro Technologies",
     addressLocality: "Coimbatore",

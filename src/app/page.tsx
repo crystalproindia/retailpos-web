@@ -17,7 +17,7 @@ import { ProductShowcase } from "@/components/sections/home/ProductShowcase";
 import { IntegrationsStrip } from "@/components/sections/home/IntegrationsStrip";
 import { Implementation } from "@/components/sections/home/Implementation";
 import { SecurityReliability } from "@/components/sections/home/SecurityReliability";
-import { Testimonials } from "@/components/sections/home/Testimonials";
+import { UseCases } from "@/components/sections/home/UseCases";
 import { ResourcesPreview } from "@/components/sections/home/ResourcesPreview";
 import { HomeFaq } from "@/components/sections/home/HomeFaq";
 import { FinalCta } from "@/components/sections/home/FinalCta";
@@ -48,7 +48,7 @@ export default function HomePage() {
       <Implementation />
       <SecurityReliability />
       <TrustReceipt />
-      <Testimonials />
+      <UseCases />
       <ResourcesPreview />
       <HomeFaq />
       <FinalCta />
