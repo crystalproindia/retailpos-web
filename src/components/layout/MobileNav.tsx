@@ -64,7 +64,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
             <div className="grid grid-cols-3 gap-2 border-b border-line p-4">
               {quickLinks.map((link) => (
                 <Link
-                  key={link.href}
+                  key={`${link.label}-${link.href}`}
                   href={link.href}
                   onClick={onClose}
                   className="flex flex-col items-center gap-1.5 rounded-lg border border-line bg-paper py-3 text-xs font-medium text-ink transition-colors hover:border-brand-200 hover:bg-brand-50"
