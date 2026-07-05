@@ -24,7 +24,7 @@ export default function ContactPage() {
             Talk to the RetailPOS team
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-            Whether you're comparing options, planning a rollout or already a customer — write to us
+            Whether you&apos;re comparing options, planning a rollout or already a customer — write to us
             or send the form and the right person will reply.
           </p>
         </Container>

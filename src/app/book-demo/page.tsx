@@ -39,7 +39,7 @@ export default function BookDemoPage() {
             Book a free RetailPOS demo
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-            Thirty minutes, your items on screen, your questions answered. We'll walk your daily
+            Thirty minutes, your items on screen, your questions answered. We&apos;ll walk your daily
             workflows and give you clear next steps — whether or not RetailPOS is the right fit.
           </p>
         </Container>

@@ -51,7 +51,7 @@ export default function PricingPage() {
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
             RetailPOS is priced on what you actually run — stores, modules, integrations and
-            implementation scope — not a one-size tier. Here's what shapes a quote, and how to get yours.
+            implementation scope — not a one-size tier. Here&apos;s what shapes a quote, and how to get yours.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <ButtonLink href="/book-demo" size="lg">Request Pricing in a Demo</ButtonLink>
