@@ -13,7 +13,7 @@ export const industryGroups: IndustryGroup[] = [
     title: "General retail",
     summary: "High-volume billing and stock-heavy operations.",
     capability: "Fast checkout lanes, credit control, reorder rules and route-ready distribution.",
-    slugs: ["supermarkets", "grocery", "wholesale-distribution", "franchise-retail"],
+    slugs: ["supermarkets", "grocery-kirana", "wholesale-distribution", "franchise-retail"],
   },
   {
     title: "Fashion & lifestyle",

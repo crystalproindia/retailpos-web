@@ -1,0 +1,217 @@
+import type { LandingPage } from "@/lib/landing-pages/types";
+
+export const solutionPages: LandingPage[] = [
+  {
+    slug: "small-business", family: "solutions", name: "Small Business",
+    eyebrow: "Solution", title: "Retail software for small businesses: start simple, grow ready",
+    metaTitle: "Small Business Retail Software — POS, Stock & GST Made Simple",
+    metaDescription: "POS billing, inventory and GST reports sized for single-store retailers — simple to run daily, with ERP modules ready when the business grows.",
+    intro: "A small store needs billing that just works, stock that stays honest, and GST that doesn't eat weekends. RetailPOS starts there — and because it's the same platform chains run, growing never means switching software.",
+    benefits: [
+      "Billing your team learns in a morning",
+      "Live stock without spreadsheet maintenance",
+      "GST-ready documents and filing-prep reports",
+      "Loyalty and WhatsApp when you're ready for them",
+      "A second store is a setting, not a migration",
+    ],
+    workflow: [
+      { title: "Set up", description: "Import items, connect a printer and scanner, set taxes." },
+      { title: "Run daily", description: "Bill, receive stock and watch the owner dashboard." },
+      { title: "Grow", description: "Enable purchasing, loyalty or a new outlet when it's time." },
+    ],
+    faqs: [
+      { question: "Is this too much software for one store?", answer: "No — you use only what you enable. Most single stores run billing, stock and GST reports; everything else stays out of the way until needed." },
+      { question: "What do I need to start?", answer: "A billing device (PC, tablet or Android), a receipt printer and scanner if you use them, and your item list — imports from sheets are supported." },
+      { question: "What happens when I open a second store?", answer: "You add an outlet in settings. Items, customers and reports extend to it automatically, with per-store stock and permissions." },
+    ],
+    related: [
+      { family: "products", slug: "pos-software" },
+      { family: "industries", slug: "grocery-kirana" },
+      { family: "solutions", slug: "cloud-pos" },
+    ],
+  },
+  {
+    slug: "multi-store-retail", family: "solutions", name: "Multi-Store Retail",
+    eyebrow: "Solution", title: "Multi-store retail management from one control room",
+    metaTitle: "Multi-Store Retail Management Software — Central Control & Transfers",
+    metaDescription: "Run every outlet from one system: central item master and pricing, inter-store transfers, outlet permissions and consolidated live reporting.",
+    intro: "Multi-store retail fails on inconsistency — prices drift, stock hides, reports argue. RetailPOS gives head office one control room: set centrally, execute locally, see everything live.",
+    problems: [
+      { problem: "Each store becomes its own island", solution: "Central item master, pricing and offers push to every outlet instantly." },
+      { problem: "Stock sits idle in one store while another stocks out", solution: "Network stock views and suggested transfers rebalance inventory." },
+      { problem: "Month-end is the first honest look at outlets", solution: "Live consolidated sales, stock and cash by store, every day." },
+    ],
+    workflow: [
+      { title: "Standardise", description: "One master for items, prices, taxes and offers." },
+      { title: "Operate", description: "Outlets bill and receive with role-scoped permissions." },
+      { title: "Steer", description: "Head office compares stores and acts on live numbers." },
+    ],
+    faqs: [
+      { question: "Can stores have different prices where needed?", answer: "Yes. Pricing is central by default, with controlled store-level overrides where your policy allows — every deviation is visible to head office." },
+      { question: "How do inter-store transfers stay honest?", answer: "Transfers pass through request, approval, dispatch and receipt, with in-transit stock tracked so nothing vanishes between outlets." },
+      { question: "Can outlet managers see other stores' data?", answer: "Only if you allow it. Role-based permissions scope screens and reports per outlet, while head office sees the network." },
+    ],
+    related: [
+      { family: "solutions", slug: "franchise-management" },
+      { family: "modules", slug: "warehouse-management" },
+      { family: "products", slug: "retail-analytics" },
+    ],
+  },
+  {
+    slug: "enterprise-retail", family: "solutions", name: "Enterprise Retail",
+    eyebrow: "Solution", title: "Enterprise retail ERP with controls, audit trails and APIs",
+    metaTitle: "Enterprise Retail ERP — Approvals, Audit Trails & Open APIs",
+    metaDescription: "Retail ERP for enterprise chains: role-based controls, approval workflows, complete audit trails, consolidated finance and API-first integration.",
+    intro: "At enterprise scale, software is judged on control: who can do what, what gets approved, what gets logged, and how cleanly it connects to everything else. RetailPOS is built to answer all four.",
+    benefits: [
+      "Role-based access scoped by function and outlet",
+      "Approval workflows on discounts, purchases and payments",
+      "Every edit, void and override in the audit trail",
+      "Consolidated finance across companies and stores",
+      "REST APIs and webhooks for your integration landscape",
+    ],
+    faqs: [
+      { question: "How granular are permissions?", answer: "Permissions apply per role, per function and per outlet — down to actions like discount limits, price edits and report visibility." },
+      { question: "What lands in the audit trail?", answer: "Document creation, edits, voids, overrides, approvals and logins, each with user, terminal and timestamp, available for review and export." },
+      { question: "How does it fit our existing systems?", answer: "Through the open REST API and webhooks — commonly connected to e-commerce, payment providers, external accounting and data platforms. Integration scope is agreed during solution design." },
+    ],
+    related: [
+      { family: "solutions", slug: "multi-store-retail" },
+      { family: "products", slug: "retail-erp" },
+      { family: "modules", slug: "finance" },
+    ],
+  },
+  {
+    slug: "franchise-management", family: "solutions", name: "Franchise Management",
+    eyebrow: "Solution", title: "Franchise management software: brand control, outlet accountability",
+    metaTitle: "Franchise Management Software — Royalty, Replenishment & Standards",
+    metaDescription: "Run franchise networks with brand-controlled catalogs and pricing, franchisee billing and royalty computation, replenishment and outlet performance views.",
+    intro: "Franchising trades control for reach — the software has to earn the control back. RetailPOS lets the brand own the catalog, pricing and standards while each franchisee runs an accountable, transparent outlet.",
+    problems: [
+      { problem: "Franchisees drift from brand pricing and range", solution: "Brand-controlled masters with local execution and full deviation visibility." },
+      { problem: "Royalty computed from self-reported sales", solution: "Royalty calculated from actual billed sales in the system." },
+    ],
+    features: [
+      { icon: "GitBranch", title: "Brand masters", description: "Catalog, pricing and offers owned centrally." },
+      { icon: "ReceiptText", title: "Franchisee billing", description: "Stock supplied to franchisees billed and tracked." },
+      { icon: "Percent", title: "Royalty computation", description: "Rules-based royalty from actual sales data." },
+      { icon: "ChartColumnIncreasing", title: "Outlet performance", description: "Comparable KPIs across the network." },
+    ],
+    faqs: [
+      { question: "How is royalty calculated?", answer: "Rules you define — percentage of sales, category-wise or slab-based — computed from billed transactions, so statements are backed by data both sides can see." },
+      { question: "Can franchisees buy stock only from the brand?", answer: "Supply policies are configurable: brand-supplied catalogs, approved local purchases, or a mix, with visibility on compliance either way." },
+      { question: "What does a franchisee see versus the brand?", answer: "Franchisees see their outlet's operations; the brand sees network-level dashboards, standards compliance and consolidated numbers." },
+    ],
+    related: [
+      { family: "solutions", slug: "multi-store-retail" },
+      { family: "products", slug: "retail-erp" },
+      { family: "products", slug: "retail-analytics" },
+    ],
+  },
+  {
+    slug: "omnichannel", family: "solutions", name: "Omnichannel",
+    eyebrow: "Solution", title: "Omnichannel retail solution: one inventory behind every channel",
+    metaTitle: "Omnichannel Retail Solution — Store, Online & Marketplace on One Stock",
+    metaDescription: "Unify in-store POS, webstore, marketplaces and WhatsApp orders on one catalog and one stock pool, with cross-channel customers and returns.",
+    intro: "Customers don't think in channels — they just buy. This solution puts one catalog, one stock pool and one customer record behind your counters, webstore, marketplaces and WhatsApp, so selling everywhere doesn't mean managing everything twice.",
+    workflow: [
+      { title: "Unify", description: "One item master and stock pool across all channels." },
+      { title: "Sell", description: "Counter, web, marketplace and WhatsApp orders reserve shared stock." },
+      { title: "Fulfil", description: "Pick from store or warehouse; returns post back cross-channel." },
+    ],
+    benefits: [
+      "No overselling between store and online",
+      "One catalog update publishes everywhere",
+      "Customers recognised across channels",
+      "Channel-wise margins in one report",
+    ],
+    faqs: [
+      { question: "Where do online orders ship from?", answer: "Your choice per order or rule: central warehouse, the nearest store, or the store holding stock — all drawing from the same pool." },
+      { question: "How fast does availability update online?", answer: "Stock changes from any channel post to the shared pool immediately and publish to connected channels on their sync cycles." },
+      { question: "Is this different from the Omnichannel Retail product?", answer: "The product page describes the capability set; this solution frames the rollout — combining POS, inventory, integrations and fulfilment for a channel-expansion project." },
+    ],
+    related: [
+      { family: "products", slug: "omnichannel-retail" },
+      { family: "modules", slug: "warehouse-management" },
+      { family: "products", slug: "retail-crm" },
+    ],
+  },
+  {
+    slug: "cloud-pos", family: "solutions", name: "Cloud POS",
+    eyebrow: "Solution", title: "Cloud POS: modern billing without server headaches",
+    metaTitle: "Cloud POS Solution — Browser-Based Billing with Offline Resilience",
+    metaDescription: "Cloud-hosted POS with offline-capable billing: no in-store servers, instant updates, access from anywhere, and data that survives hardware failure.",
+    intro: "Traditional POS ties your business to a box under the counter. Cloud POS moves the system to the cloud — updates arrive instantly, owners see stores from anywhere, and a failed device is an inconvenience, not a disaster — while offline billing keeps counters independent of the connection.",
+    problems: [
+      { problem: "In-store servers fail and take the data with them", solution: "Cloud hosting with local offline continuity at the counter." },
+      { problem: "Every update means a technician visit", solution: "Updates deploy centrally; every store is current automatically." },
+    ],
+    benefits: [
+      "No server hardware to buy or maintain",
+      "Billing continues offline, syncs when connected",
+      "Owner visibility from any device, anywhere",
+      "New counters and stores added in minutes",
+    ],
+    faqs: [
+      { question: "What happens to billing when the internet drops?", answer: "The counter keeps billing locally and syncs completed transactions when connectivity returns — the cloud is the system of record, not a dependency for every bill." },
+      { question: "Do I need special hardware?", answer: "No. Cloud POS runs on standard billing PCs, tablets and Android devices with your existing printers and scanners." },
+      { question: "Is my data safe if a device is stolen?", answer: "Business data lives in the cloud account, and device access is controlled by user credentials — a lost device is replaced and signed in, not a data loss event." },
+    ],
+    related: [
+      { family: "products", slug: "pos-software" },
+      { family: "solutions", slug: "small-business" },
+      { family: "solutions", slug: "retail-automation" },
+    ],
+  },
+  {
+    slug: "retail-automation", family: "solutions", name: "Retail Automation",
+    eyebrow: "Solution", title: "Retail automation: remove the busywork between decisions",
+    metaTitle: "Retail Automation Solution — Auto-Reorder, Auto-Posting & Alerts",
+    metaDescription: "Automate reordering drafts, ledger posting, price updates, report delivery and exception alerts — humans decide, the system does the clerical work.",
+    intro: "Most retail admin is the same clerical loop repeated daily. This solution automates the loop — drafting reorders, posting ledgers, applying schedules, delivering reports — and reserves people for the decisions.",
+    features: [
+      { icon: "Workflow", title: "Auto-drafted reorders", description: "Purchase suggestions assembled from rules and forecasts." },
+      { icon: "Calculator", title: "Auto-posted accounts", description: "Operational documents become ledger entries automatically." },
+      { icon: "CalendarCheck", title: "Scheduled changes", description: "Price lists and offers switch on their effective dates." },
+      { icon: "BellRing", title: "Exception alerts", description: "Only deviations demand attention — not routine noise." },
+    ],
+    faqs: [
+      { question: "Does automation mean losing control?", answer: "No. Automations draft and execute within the rules you set, and anything consequential — orders, price changes, adjustments — waits for approval." },
+      { question: "What's the difference from AI-powered retail?", answer: "Automation executes defined rules; AI recommends based on learned patterns. They combine well — AI proposes, rules constrain, you approve." },
+      { question: "Where do most retailers start?", answer: "Usually auto-posted accounting and reorder drafts — high-frequency clerical work with immediate time savings — then scheduled pricing and report delivery." },
+    ],
+    related: [
+      { family: "solutions", slug: "ai-powered-retail" },
+      { family: "modules", slug: "procurement" },
+      { family: "products", slug: "accounting" },
+    ],
+  },
+  {
+    slug: "ai-powered-retail", family: "solutions", name: "AI-Powered Retail",
+    eyebrow: "Solution", title: "AI-powered retail: recommendations inside daily operations",
+    metaTitle: "AI-Powered Retail Solution — Forecasting & Recommendations at Work",
+    metaDescription: "Put AI demand forecasting, reorder recommendations, pricing signals and anomaly alerts inside purchasing, pricing and audit workflows — with human approval on every action.",
+    intro: "AI in retail earns its keep inside the workflow, not in a separate dashboard. This solution embeds forecasting and recommendations where decisions already happen — purchasing, pricing, audit — with a human approving every action.",
+    workflow: [
+      { title: "Connect data", description: "Your sales, stock and store history power the models." },
+      { title: "Surface recommendations", description: "Suggestions appear inside the screens where work happens." },
+      { title: "Approve & learn", description: "Your decisions execute — and feed back into the models." },
+    ],
+    benefits: [
+      "Forecast-sized reorders instead of gut-feel quantities",
+      "Markdown candidates flagged while they still sell",
+      "Discount and cash anomalies surfaced daily",
+      "Store-versus-network insights head office can act on",
+    ],
+    faqs: [
+      { question: "Can the AI act without approval?", answer: "No. Recommendations require human approval by design — the AI never orders, reprices or posts on its own." },
+      { question: "Do I need a data team?", answer: "No. The models run on your operational data inside RetailPOS; there's nothing to export, clean or maintain." },
+      { question: "How is this different from the AI Retail product?", answer: "The product page details the AI capabilities; this solution covers adopting them across a business — which workflows to start with and how recommendations enter daily routines." },
+    ],
+    related: [
+      { family: "products", slug: "ai-retail" },
+      { family: "solutions", slug: "retail-automation" },
+      { family: "products", slug: "retail-analytics" },
+    ],
+  },
+];

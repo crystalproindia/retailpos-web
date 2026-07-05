@@ -2,7 +2,7 @@ import type { Industry } from "@/types/content";
 
 export const industries: Industry[] = [
   { slug: "supermarkets", name: "Supermarkets", icon: "ShoppingBasket", description: "High-volume billing, weighing-scale integration and fast checkout lanes." },
-  { slug: "grocery", name: "Grocery & Kirana", icon: "Apple", description: "Quick billing, credit khata, reorder alerts and home-delivery orders." },
+  { slug: "grocery-kirana", name: "Grocery & Kirana", icon: "Apple", description: "Quick billing, credit khata, reorder alerts and home-delivery orders." },
   { slug: "fashion-apparel", name: "Fashion & Apparel", icon: "Shirt", description: "Size-colour matrix, seasons, markdowns and style-level analytics." },
   { slug: "footwear", name: "Footwear", icon: "Footprints", description: "Size-run inventory, pair tracking and exchange-heavy workflows." },
   { slug: "electronics", name: "Electronics", icon: "Smartphone", description: "Serial/IMEI tracking, warranties, EMI sales and service jobs." },

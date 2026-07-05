@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isImplemented } from "@/lib/landing-pages/registry";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Icon } from "@/components/ui/Icon";
@@ -18,7 +19,7 @@ export function ModuleEcosystem() {
 
   const ModuleLink = ({ slug, name, icon }: { slug: string; name: string; icon: string }) => (
     <Link
-      href={`/modules/${slug}`}
+      href={isImplemented("modules", slug) ? `/modules/${slug}` : `/modules#${slug}`}
       className="group flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 transition-colors hover:border-brand-400/60 hover:bg-white/10"
     >
       <Icon name={icon} className="h-4 w-4 shrink-0 text-brand-200" />

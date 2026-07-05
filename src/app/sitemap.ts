@@ -1,20 +1,36 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
+import { allLandingPages } from "@/lib/landing-pages/registry";
+import { pagePath } from "@/lib/landing-pages/helpers";
 
 /**
- * Sitemap architecture. Phase 1 registers the live homepage; each later
- * phase appends its route groups here (products, modules, industries,
- * solutions, integrations, resources) as those pages ship, sourcing
- * lastModified from the admin panel when available.
+ * Sitemap generated from the same registry that drives routing, so a page
+ * cannot exist without a sitemap entry or vice versa. lastModified is
+ * omitted until the admin panel supplies real modification dates.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const staticRoutes = [
+    "",
+    "/products",
+    "/modules",
+    "/industries",
+    "/solutions",
+    "/about",
+    "/contact",
+    "/pricing",
+    "/book-demo",
+  ];
+
   return [
-    {
-      url: siteConfig.url,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
+    ...staticRoutes.map((path) => ({
+      url: `${siteConfig.url}${path}`,
+      changeFrequency: "weekly" as const,
+      priority: path === "" ? 1 : 0.8,
+    })),
+    ...allLandingPages().map((page) => ({
+      url: `${siteConfig.url}${pagePath(page)}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
 }

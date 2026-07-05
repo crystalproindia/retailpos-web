@@ -1,0 +1,203 @@
+import type { LandingPage } from "@/lib/landing-pages/types";
+
+export const modulePages: LandingPage[] = [
+  {
+    slug: "procurement", family: "modules", name: "Procurement",
+    eyebrow: "ERP Module", title: "Procurement module: from reorder signal to received stock",
+    metaTitle: "Retail Procurement Module — Purchase Orders, GRN & Supplier Pricing",
+    metaDescription: "Purchase planning, supplier management, purchase orders, GRN and landed costs — connected to live stock and posted straight to accounts.",
+    intro: "Purchasing decides both stockouts and locked-up cash. The procurement module turns reorder signals into supplier-wise purchase orders, receives them against GRNs, and lands the true cost on every item.",
+    features: [
+      { icon: "ShoppingCart", title: "Purchase orders", description: "Raised from reorder suggestions or manually, with approval workflow." },
+      { icon: "Handshake", title: "Supplier management", description: "Supplier-wise items, rates, terms and performance history." },
+      { icon: "PackageCheck", title: "GRN receiving", description: "Receive against PO with variance capture and quality rejection." },
+      { icon: "Scale", title: "Landed cost", description: "Freight, duty and other charges allocated to item cost." },
+    ],
+    workflow: [
+      { title: "Plan", description: "Reorder rules and AI forecasts propose what to buy, per store." },
+      { title: "Order", description: "POs go to suppliers with agreed rates and delivery terms." },
+      { title: "Receive & post", description: "GRN updates stock and posts supplier liability in one step." },
+    ],
+    faqs: [
+      { question: "Can purchase orders require approval before sending?", answer: "Yes. Approval workflows apply by value or role, and the audit trail records who raised, approved and amended each order." },
+      { question: "How are supplier rates handled?", answer: "Supplier-item rate cards store agreed prices with effective dates; deviations at GRN are flagged for review." },
+      { question: "Does receiving update accounts automatically?", answer: "Yes. A posted GRN updates stock and books the supplier liability, so purchase registers and payables stay current without re-entry." },
+    ],
+    related: [
+      { family: "modules", slug: "inventory" },
+      { family: "products", slug: "ai-retail" },
+      { family: "modules", slug: "finance" },
+    ],
+  },
+  {
+    slug: "inventory", family: "modules", name: "Inventory",
+    eyebrow: "ERP Module", title: "Inventory module: live stock, every location, one ledger",
+    metaTitle: "Inventory Module — Multi-Location Stock, Batches, Serials & Counts",
+    metaDescription: "The ERP inventory core: per-location stock, batch and expiry control, serial tracking, transfers, adjustments and audit-friendly cycle counts.",
+    intro: "Every other module depends on stock being right. The inventory module is the shared ledger they all write to — bills, GRNs, transfers and counts — one movement history per item, per location.",
+    features: [
+      { icon: "Boxes", title: "Per-location stock", description: "Store, warehouse and in-transit quantities with valuation." },
+      { icon: "Pill", title: "Batch & expiry", description: "FEFO picking, expiry alerts and batch-wise traceability." },
+      { icon: "Smartphone", title: "Serial tracking", description: "Unit-level identity for electronics and high-value items." },
+      { icon: "ScrollText", title: "Counts & adjustments", description: "Cycle counts, variance approval and adjustment audit trails." },
+    ],
+    workflow: [
+      { title: "Move", description: "Every document — bill, GRN, transfer — writes the stock ledger." },
+      { title: "Watch", description: "Low-stock, ageing and expiry alerts surface daily." },
+      { title: "Reconcile", description: "Cycle counts correct drift with approved adjustments." },
+    ],
+    faqs: [
+      { question: "Is stock updated in real time?", answer: "Yes. Movements post as documents are saved, so availability shown at any counter or channel reflects the latest position." },
+      { question: "Can I trace who changed stock and why?", answer: "Yes. Every movement carries its source document, user and timestamp; manual adjustments additionally require a reason and approval." },
+      { question: "How do transfers between locations work?", answer: "Transfers move stock into an in-transit state on dispatch and into the destination on receipt, so nothing disappears between stores." },
+    ],
+    related: [
+      { family: "products", slug: "inventory-management" },
+      { family: "modules", slug: "warehouse-management" },
+      { family: "modules", slug: "procurement" },
+    ],
+  },
+  {
+    slug: "sales", family: "modules", name: "Sales",
+    eyebrow: "ERP Module", title: "Sales module: counter, B2B and promotions on one engine",
+    metaTitle: "Retail Sales Module — Counter Sales, B2B Orders & Promotions",
+    metaDescription: "Counter billing, B2B sales orders, quotations, price lists and promotions — one sales engine feeding stock, accounts and analytics.",
+    intro: "Retail sells across a counter and a ledger: cash customers at the till, trade parties on orders and credit. The sales module runs both on one engine, with pricing and promotions applied consistently.",
+    features: [
+      { icon: "BadgePercent", title: "Promotions", description: "Item, bill and customer-level offers with validity windows." },
+      { icon: "Tag", title: "Price lists", description: "Retail, wholesale and party pricing with effective dates." },
+      { icon: "ReceiptText", title: "B2B order flow", description: "Quotation, sales order, dispatch and invoice without retyping." },
+      { icon: "CreditCard", title: "Credit sales", description: "Party limits, ageing and collections follow-up." },
+    ],
+    workflow: [
+      { title: "Quote or bill", description: "Counter bills or trade quotations from the same item master." },
+      { title: "Fulfil", description: "Dispatch against orders with stock reservation." },
+      { title: "Collect", description: "Receivables tracked with ageing and reminders." },
+    ],
+    faqs: [
+      { question: "Can promotions overlap or conflict?", answer: "Promotion rules have priorities and validity windows, and billing applies the winning offer deterministically, with the applied promotion recorded on the bill." },
+      { question: "Do B2B and counter sales share stock?", answer: "Yes. Both draw from the same live stock pool, so a large trade order immediately affects counter availability and vice versa." },
+      { question: "How is a credit customer stopped at their limit?", answer: "Billing checks outstanding against the party limit and either blocks or asks for authorised override, per your policy." },
+    ],
+    related: [
+      { family: "products", slug: "pos-software" },
+      { family: "modules", slug: "crm" },
+      { family: "products", slug: "retail-analytics" },
+    ],
+  },
+  {
+    slug: "finance", family: "modules", name: "Finance",
+    eyebrow: "ERP Module", title: "Finance module: cash, banks and controls in one view",
+    metaTitle: "Retail Finance Module — Cash Flow, Banking & Controls",
+    metaDescription: "Cash and bank management, payment scheduling, budgets and financial controls for retail — fed automatically by billing, purchasing and payroll.",
+    intro: "Retail finance is a daily rhythm: cash from counters, payments to suppliers, banking in between. The finance module tracks the flow and enforces the controls, on numbers that post themselves.",
+    features: [
+      { icon: "Landmark", title: "Cash & bank", description: "Counter cash, deposits, bank accounts and reconciliations." },
+      { icon: "CalendarCheck", title: "Payment planning", description: "Supplier due dates, scheduling and approval before release." },
+      { icon: "ShieldCheck", title: "Controls", description: "Limits, approvals and segregation of duties on money movement." },
+      { icon: "ChartPie", title: "Budgets", description: "Expense budgets with actuals tracked from operations." },
+    ],
+    faqs: [
+      { question: "How does counter cash reach the bank cleanly?", answer: "Shift declarations feed deposit records, and bank reconciliation matches deposits to statements, so till-to-bank is traceable end to end." },
+      { question: "Can payments require dual approval?", answer: "Yes. Payment release can require approval by role and amount, with the full trail captured." },
+      { question: "Where do the numbers come from?", answer: "From operations: bills, GRNs, payroll and expenses post automatically, so finance works on live figures rather than month-end uploads." },
+    ],
+    related: [
+      { family: "modules", slug: "accounting" },
+      { family: "products", slug: "accounting" },
+      { family: "modules", slug: "procurement" },
+    ],
+  },
+  {
+    slug: "accounting", family: "modules", name: "Accounting",
+    eyebrow: "ERP Module", title: "Accounting module: books that follow the business",
+    metaTitle: "Accounting Module — Ledgers, GST Registers & Reconciliation",
+    metaDescription: "Double-entry ledgers posted automatically from retail operations, with GST registers, party ledgers, trial balance and reconciliation tools.",
+    intro: "The accounting module is where every operational document lands as a clean double entry — sales, purchases, receipts, payments and stock value — producing books your accountant can trust and GST data ready for filing preparation.",
+    features: [
+      { icon: "Calculator", title: "Auto double-entry", description: "Operational documents post to configured ledger heads." },
+      { icon: "FileSpreadsheet", title: "GST registers", description: "Sales and purchase registers structured for filing prep." },
+      { icon: "ScrollText", title: "Party ledgers", description: "Customer and supplier statements with ageing." },
+      { icon: "FileBarChart", title: "Financial statements", description: "Trial balance, P&L and balance sheet views." },
+    ],
+    faqs: [
+      { question: "Can my accountant adjust entries?", answer: "Yes. Manual journals are supported with role permissions and audit trails, alongside the automatic postings from operations." },
+      { question: "How is GST input credit tracked?", answer: "Purchase documents carry GST detail into the purchase register, so input records stay organised for filing preparation." },
+      { question: "Can I export to an external accounting system?", answer: "Yes. Structured exports and the open API allow entries to flow into an external system if your accountant prefers one." },
+    ],
+    related: [
+      { family: "products", slug: "accounting" },
+      { family: "modules", slug: "finance" },
+      { family: "products", slug: "billing-software" },
+    ],
+  },
+  {
+    slug: "crm", family: "modules", name: "CRM",
+    eyebrow: "ERP Module", title: "CRM module: customer records the whole business shares",
+    metaTitle: "Retail CRM Module — Customer Records, Segments & Campaigns",
+    metaDescription: "Shared customer records built from billing, with segments, campaigns, service follow-ups and outlet-level visibility across the network.",
+    intro: "The CRM module is the customer counterpart to the item master: one record per customer, shared by billing, loyalty, marketing and service, across every store.",
+    features: [
+      { icon: "HeartHandshake", title: "Unified records", description: "One profile per customer across all outlets and channels." },
+      { icon: "Tags", title: "Segmentation", description: "Recency, frequency, value and category-based groups." },
+      { icon: "MessageCircle", title: "Campaigns", description: "Offer and reminder campaigns to targeted segments." },
+      { icon: "LifeBuoy", title: "Service follow-ups", description: "Complaints and requests tracked to closure." },
+    ],
+    faqs: [
+      { question: "How are duplicate customers avoided?", answer: "Phone-number matching at billing keeps one profile per customer, with merge tools for records created before the rule." },
+      { question: "Which stores can see a customer's history?", answer: "That's permission-controlled: share full history network-wide or restrict detail by outlet, per your policy." },
+      { question: "Is this the same as the Retail CRM product?", answer: "The CRM module is the record-and-segment core inside the ERP; the Retail CRM product page describes the full customer suite including loyalty and WhatsApp engagement built on top of it." },
+    ],
+    related: [
+      { family: "products", slug: "retail-crm" },
+      { family: "modules", slug: "customer-loyalty" },
+      { family: "modules", slug: "sales" },
+    ],
+  },
+  {
+    slug: "customer-loyalty", family: "modules", name: "Customer Loyalty",
+    eyebrow: "ERP Module", title: "Loyalty module: points and tiers that work at the counter",
+    metaTitle: "Customer Loyalty Module — Points, Tiers & Redemptions",
+    metaDescription: "Points accrual, tiers, vouchers and redemptions applied during billing, shared across stores and channels, with a full per-customer trail.",
+    intro: "Loyalty fails when it slows the counter. This module accrues and redeems inside the billing flow itself — a phone number is enough — with rules, tiers and vouchers managed centrally.",
+    features: [
+      { icon: "Gift", title: "Points engine", description: "Accrual rules by amount, category or campaign." },
+      { icon: "Sparkle", title: "Tiers", description: "Thresholds with tier-specific earn rates and benefits." },
+      { icon: "Percent", title: "Vouchers", description: "Issue and redeem coded vouchers with validity control." },
+      { icon: "Network", title: "Network-wide", description: "Earn at one store, redeem at another." },
+    ],
+    faqs: [
+      { question: "Can points expire?", answer: "Yes. Expiry rules are configurable, and upcoming expiries can feed reminder campaigns through the CRM module." },
+      { question: "How are redemptions controlled against abuse?", answer: "Redemption limits, OTP-style verification options and the per-customer trail keep redemptions auditable, with anomalies surfaced by AI alerts." },
+      { question: "Do loyalty discounts post correctly to accounts?", answer: "Yes. Redemptions post as discounts on the bill, so revenue and liability figures stay accurate in the books." },
+    ],
+    related: [
+      { family: "products", slug: "retail-crm" },
+      { family: "modules", slug: "crm" },
+      { family: "products", slug: "pos-software" },
+    ],
+  },
+  {
+    slug: "warehouse-management", family: "modules", name: "Warehouse Management",
+    eyebrow: "ERP Module", title: "Warehouse module: bins, picking and dispatch under control",
+    metaTitle: "Warehouse Management Module — Bins, Picking, Packing & Dispatch",
+    metaDescription: "Bin locations, pick lists, packing, inter-store transfers and dispatch management for retail warehouses feeding stores and online orders.",
+    intro: "When a warehouse feeds stores and online orders, 'somewhere in the back' stops working. The warehouse module adds bin-level locations, guided picking and controlled dispatch to the shared inventory core.",
+    features: [
+      { icon: "Warehouse", title: "Bin locations", description: "Zone and bin addressing with put-away suggestions." },
+      { icon: "ScrollText", title: "Pick lists", description: "Order- and route-wise picking with barcode confirmation." },
+      { icon: "PackageCheck", title: "Packing & dispatch", description: "Cartonisation, manifests and delivery status." },
+      { icon: "ArrowLeftRight", title: "Store replenishment", description: "Transfer requests fulfilled from warehouse stock." },
+    ],
+    faqs: [
+      { question: "Do I need the warehouse module for a single store?", answer: "Usually not — store-level inventory covers a stockroom. The module earns its keep when a central warehouse serves multiple stores or online fulfilment." },
+      { question: "Can pickers work with barcode scanners?", answer: "Yes. Pick confirmation by scanning reduces wrong-item errors, and variances are flagged before dispatch." },
+      { question: "How does warehouse stock relate to store stock?", answer: "Both live in the same inventory ledger as separate locations, so transfers, in-transit quantities and totals reconcile automatically." },
+    ],
+    related: [
+      { family: "modules", slug: "inventory" },
+      { family: "products", slug: "omnichannel-retail" },
+      { family: "solutions", slug: "multi-store-retail" },
+    ],
+  },
+];

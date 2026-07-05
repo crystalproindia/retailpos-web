@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Icon } from "@/components/ui/Icon";
@@ -8,19 +7,17 @@ export function IntegrationsStrip() {
   const left = integrations.slice(0, 3);
   const right = integrations.slice(3);
 
-  const IntegrationLink = ({ slug, name, description, icon }: (typeof integrations)[number]) => (
-    <Link
-      href={`/integrations/${slug}`}
-      className="group flex items-start gap-3 rounded-lg border border-line bg-white p-4 transition-shadow hover:shadow-card"
-    >
+  /* Integration detail pages ship in a later phase; cards are informational until then. */
+  const IntegrationCard = ({ name, description, icon }: (typeof integrations)[number]) => (
+    <div className="flex items-start gap-3 rounded-lg border border-line bg-white p-4">
       <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded bg-brand-50 text-brand-600">
         <Icon name={icon} className="h-4 w-4" />
       </span>
       <span>
-        <span className="block text-sm font-semibold text-ink group-hover:text-brand-700">{name}</span>
+        <span className="block text-sm font-semibold text-ink">{name}</span>
         <span className="mt-0.5 block text-xs leading-relaxed text-ink-muted">{description}</span>
       </span>
-    </Link>
+    </div>
   );
 
   return (
@@ -34,7 +31,7 @@ export function IntegrationsStrip() {
       />
       <div className="mt-10 grid items-center gap-3 lg:grid-cols-[1fr,auto,1fr]">
         <div className="grid gap-3">
-          {left.map((i) => <IntegrationLink key={i.slug} {...i} />)}
+          {left.map((i) => <IntegrationCard key={i.slug} {...i} />)}
         </div>
         <div className="relative hidden h-full items-center lg:flex" aria-hidden="true">
           <span className="absolute left-0 top-1/2 h-px w-full bg-line" />
@@ -47,7 +44,7 @@ export function IntegrationsStrip() {
           <p className="mt-2 text-[11px] text-brand-100">REST API + webhooks</p>
         </div>
         <div className="grid gap-3 lg:col-start-3 lg:row-start-1">
-          {right.map((i) => <IntegrationLink key={i.slug} {...i} />)}
+          {right.map((i) => <IntegrationCard key={i.slug} {...i} />)}
         </div>
       </div>
     </Section>

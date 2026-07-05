@@ -34,7 +34,7 @@ export function Footer() {
       </div>
 
       {/* Link columns */}
-      <Container className="grid grid-cols-2 gap-8 py-12 sm:grid-cols-3 lg:grid-cols-6">
+      <Container className="grid grid-cols-2 gap-8 py-12 sm:grid-cols-3 lg:grid-cols-5">
         {footerColumns.map((col) => (
           <nav key={col.title} aria-label={col.title}>
             <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-200">{col.title}</p>

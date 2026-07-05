@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isImplemented } from "@/lib/landing-pages/registry";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Icon } from "@/components/ui/Icon";
@@ -27,7 +28,7 @@ export function IndustryCoverage() {
               {items.map((i) => (
                 <li key={i.slug}>
                   <Link
-                    href={`/industries/${i.slug}`}
+                    href={isImplemented("industries", i.slug) ? `/industries/${i.slug}` : `/industries#${i.slug}`}
                     className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 text-sm font-medium text-ink-soft transition-colors hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700"
                   >
                     <Icon name={i.icon} className="h-3.5 w-3.5 text-brand-600" />

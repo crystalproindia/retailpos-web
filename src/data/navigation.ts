@@ -3,7 +3,7 @@ import { products } from "./products";
 import { erpModules } from "./modules";
 import { industries } from "./industries";
 import { solutions } from "./solutions";
-import { integrations } from "./integrations";
+import { isImplemented } from "@/lib/landing-pages/registry";
 import { groupedIndustries } from "./industry-groups";
 
 export const navGroups: NavGroup[] = [
@@ -25,7 +25,7 @@ export const navGroups: NavGroup[] = [
     tagline: "ERP modules that switch on as you grow",
     links: erpModules.map((m) => ({
       label: m.name,
-      href: `/modules/${m.slug}`,
+      href: isImplemented("modules", m.slug) ? `/modules/${m.slug}` : `/modules#${m.slug}`,
       description: m.description,
       icon: m.icon,
     })),
@@ -56,38 +56,17 @@ export const navGroups: NavGroup[] = [
       icon: s.icon,
       featured: s.slug === "ai-powered-retail" || s.slug === "cloud-pos",
     })),
-    secondary: {
-      title: "Integrations",
-      links: integrations.map((i) => ({
-        label: i.name,
-        href: `/integrations/${i.slug}`,
-        icon: i.icon,
-      })),
-    },
   },
   {
-    label: "Resources",
-    href: "/resources",
-    tagline: "Learn, compare, decide",
+    label: "Company",
+    href: "/about",
+    tagline: "Who we are and how to reach us",
     links: [
-      { label: "Blog", href: "/blog", icon: "Newspaper", description: "Retail operations and product updates" },
-      { label: "Guides", href: "/guides", icon: "BookOpen", description: "In-depth buyer and how-to guides" },
-      { label: "Case Studies", href: "/case-studies", icon: "FileBarChart", description: "How retailers run on RetailPOS" },
-      { label: "Comparisons", href: "/comparisons", icon: "Scale", description: "POS vs ERP, cloud vs on-premise" },
-      { label: "FAQ", href: "/faq", icon: "CircleHelp", description: "Answers to common questions" },
-      { label: "Glossary", href: "/glossary", icon: "BookMarked", description: "Retail and ERP terms explained" },
+      { label: "About RetailPOS", href: "/about", icon: "Building2", description: "The product, the principles and the company behind it" },
+      { label: "Contact", href: "/contact", icon: "Phone", description: "Sales, support and regional offices" },
+      { label: "Pricing", href: "/pricing", icon: "Tag", description: "What shapes a quote for your setup" },
+      { label: "Book a Demo", href: "/book-demo", icon: "CalendarCheck", description: "30 minutes, your items, your questions" },
     ],
-    secondary: {
-      title: "Company",
-      links: [
-        { label: "About", href: "/about", icon: "Building2" },
-        { label: "Customers", href: "/customers", icon: "Users" },
-        { label: "Partners", href: "/partners", icon: "Handshake" },
-        { label: "Security", href: "/security", icon: "ShieldCheck" },
-        { label: "Implementation", href: "/implementation", icon: "Route" },
-        { label: "Support", href: "/support", icon: "LifeBuoy" },
-      ],
-    },
   },
 ];
 
@@ -95,8 +74,8 @@ export const topLevelLinks: NavLink[] = [{ label: "Pricing", href: "/pricing" }]
 
 export const quickLinks: NavLink[] = [
   { label: "Pricing", href: "/pricing", icon: "Tag" },
-  { label: "Book Demo", href: "/#book-demo", icon: "CalendarCheck" },
-  { label: "Talk to Sales", href: "/#book-demo", icon: "Phone" },
+  { label: "Book Demo", href: "/book-demo", icon: "CalendarCheck" },
+  { label: "Talk to Sales", href: "/contact", icon: "Phone" },
 ];
 
 export const footerColumns: { title: string; links: NavLink[] }[] = [
@@ -106,11 +85,11 @@ export const footerColumns: { title: string; links: NavLink[] }[] = [
   },
   {
     title: "Modules",
-    links: erpModules.slice(0, 8).map((m) => ({ label: m.name, href: `/modules/${m.slug}` })),
+    links: erpModules.filter((m) => isImplemented("modules", m.slug)).map((m) => ({ label: m.name, href: `/modules/${m.slug}` })),
   },
   {
     title: "Industries",
-    links: industries.slice(0, 8).map((i) => ({ label: i.name, href: `/industries/${i.slug}` })),
+    links: industries.filter((i) => isImplemented("industries", i.slug)).map((i) => ({ label: i.name, href: `/industries/${i.slug}` })),
   },
   {
     title: "Solutions",
@@ -120,23 +99,9 @@ export const footerColumns: { title: string; links: NavLink[] }[] = [
     title: "Company",
     links: [
       { label: "About", href: "/about" },
-      { label: "Customers", href: "/customers" },
-      { label: "Partners", href: "/partners" },
-      { label: "Security", href: "/security" },
-      { label: "Implementation", href: "/implementation" },
-      { label: "Support", href: "/support" },
       { label: "Contact", href: "/contact" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "Blog", href: "/blog" },
-      { label: "Guides", href: "/guides" },
-      { label: "Case Studies", href: "/case-studies" },
-      { label: "Comparisons", href: "/comparisons" },
-      { label: "FAQ", href: "/faq" },
-      { label: "Glossary", href: "/glossary" },
+      { label: "Pricing", href: "/pricing" },
+      { label: "Book a Demo", href: "/book-demo" },
     ],
   },
 ];

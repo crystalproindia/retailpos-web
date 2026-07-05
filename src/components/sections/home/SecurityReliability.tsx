@@ -26,8 +26,8 @@ export function SecurityReliability() {
           title="Built to be trusted with the day's takings"
           description="Your sales data is your business. Protecting it is part of the product's architecture, not an afterthought."
         />
-        <ButtonLink href="/security" variant="ghost" className="shrink-0">
-          Read our security overview
+        <ButtonLink href="/about" variant="ghost" className="shrink-0">
+          How we handle your data
         </ButtonLink>
       </div>
       <div className="mt-10 overflow-hidden rounded-lg border border-line">

@@ -49,7 +49,7 @@ export const products: Product[] = [
     icon: "Calculator",
   },
   {
-    slug: "crm",
+    slug: "retail-crm",
     name: "Retail CRM",
     shortName: "CRM",
     tagline: "Turn walk-ins into repeat customers",
