@@ -8,7 +8,7 @@ export function Hero() {
   return (
     <section aria-labelledby="hero-heading" className="overflow-hidden border-b border-line bg-paper">
       <Container className="grid items-center gap-12 py-14 sm:py-16 lg:grid-cols-[1fr,1.1fr] lg:py-20">
-        <div>
+        <div className="min-w-0">
           <Badge tone="brand">Retail ERP · POS · AI — one platform</Badge>
           <h1
             id="hero-heading"
@@ -33,7 +33,7 @@ export function Hero() {
             Single store to enterprise chain · GST-ready · Works offline
           </p>
         </div>
-        <div className="pb-6 sm:pb-8">
+        <div className="min-w-0 pb-6 sm:pb-8">
           <HeroComposition />
         </div>
       </Container>

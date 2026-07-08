@@ -9,7 +9,7 @@ export function PosCapabilities() {
   return (
     <Section tone="white" className="py-14 sm:py-16 lg:py-20" aria-labelledby="pos-heading">
       <div className="grid gap-10 lg:grid-cols-[1fr,1.25fr] lg:items-center">
-        <div>
+        <div className="min-w-0">
           <SectionHeading
             id="pos-heading"
             eyebrow="Point of sale"
@@ -33,7 +33,9 @@ export function PosCapabilities() {
             See POS software
           </ButtonLink>
         </div>
-        <PosBilling />
+        <div className="min-w-0">
+          <PosBilling />
+        </div>
       </div>
     </Section>
   );

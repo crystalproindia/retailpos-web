@@ -16,6 +16,8 @@ export function Header() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const mobileButtonRef = useRef<HTMLButtonElement>(null);
+  const hadMobileOpenRef = useRef(false);
   const prefersReducedMotion = useReducedMotion();
 
   // Close mega menu on escape or outside click.
@@ -34,6 +36,13 @@ export function Header() {
     };
   }, []);
 
+  useEffect(() => {
+    if (hadMobileOpenRef.current && !mobileOpen) {
+      mobileButtonRef.current?.focus();
+    }
+    hadMobileOpenRef.current = mobileOpen;
+  }, [mobileOpen]);
+
   const activeGroup = navGroups.find((g) => g.label === openMenu);
 
   return (
@@ -51,6 +60,7 @@ export function Header() {
                 type="button"
                 aria-expanded={expanded}
                 aria-haspopup="true"
+                aria-controls={expanded ? `mega-menu-${group.label.toLowerCase()}` : undefined}
                 onClick={() => setOpenMenu(expanded ? null : group.label)}
                 className={cn(
                   "inline-flex items-center gap-1 rounded px-3 py-2 text-sm font-medium transition-colors",
@@ -84,6 +94,7 @@ export function Header() {
 
         {/* Mobile trigger */}
         <button
+          ref={mobileButtonRef}
           type="button"
           aria-label="Open menu"
           aria-expanded={mobileOpen}
@@ -98,6 +109,7 @@ export function Header() {
         <AnimatePresence>
           {activeGroup ? (
             <motion.div
+              id={`mega-menu-${activeGroup.label.toLowerCase()}`}
               key={activeGroup.label}
               initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}

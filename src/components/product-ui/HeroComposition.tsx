@@ -10,14 +10,14 @@ import { AiInsightCard } from "./AiInsight";
  */
 export function HeroComposition() {
   return (
-    <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
+    <div className="relative mx-auto w-full min-w-0 max-w-xl lg:max-w-none">
       {/* Secondary layer: ERP dashboard */}
-      <div className="hidden sm:block sm:pl-14 lg:pl-20" aria-hidden={false}>
+      <div className="hidden min-w-0 sm:block sm:pl-14 lg:pl-20" aria-hidden={false}>
         <ErpDashboard compact />
       </div>
 
       {/* Primary layer: POS billing */}
-      <div className="sm:-mt-16 sm:max-w-[86%] lg:-mt-20">
+      <div className="min-w-0 sm:-mt-16 sm:max-w-[86%] lg:-mt-20">
         <PosBilling compact />
       </div>
 

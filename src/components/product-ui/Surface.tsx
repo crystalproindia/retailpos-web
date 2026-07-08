@@ -14,7 +14,7 @@ export function Surface({ title, status, className, children, ariaLabel }: Surfa
     <div
       role="img"
       aria-label={ariaLabel}
-      className={cn("overflow-hidden rounded-lg border border-line bg-white shadow-raised", className)}
+      className={cn("w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-line bg-white shadow-raised", className)}
     >
       <div className="flex items-center justify-between gap-3 border-b border-line bg-paper px-4 py-2">
         <div className="flex items-center gap-2" aria-hidden="true">

@@ -34,15 +34,19 @@ export const navGroups: NavGroup[] = [
     label: "Industries",
     href: "/industries",
     tagline: "Built-in workflows for your vertical",
-    links: industries.map((i) => ({
-      label: i.name,
-      href: `/industries/${i.slug}`,
-      description: i.description,
-      icon: i.icon,
-    })),
+    links: industries
+      .filter((i) => isImplemented("industries", i.slug))
+      .map((i) => ({
+        label: i.name,
+        href: `/industries/${i.slug}`,
+        description: i.description,
+        icon: i.icon,
+      })),
     sections: groupedIndustries().map(({ group, items }) => ({
       title: group.title,
-      links: items.map((i) => ({ label: i.name, href: `/industries/${i.slug}`, icon: i.icon })),
+      links: items
+        .filter((i) => isImplemented("industries", i.slug))
+        .map((i) => ({ label: i.name, href: `/industries/${i.slug}`, icon: i.icon })),
     })),
   },
   {

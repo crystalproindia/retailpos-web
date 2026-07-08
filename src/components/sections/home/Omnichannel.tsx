@@ -15,7 +15,7 @@ export function Omnichannel() {
   return (
     <Section tone="white" className="py-14 sm:py-16 lg:py-20" aria-labelledby="omnichannel-heading">
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-        <div className="order-2 lg:order-1">
+        <div className="order-2 min-w-0 lg:order-1">
           {/* Hub-and-spoke sync diagram */}
           <div className="rounded-lg border border-line bg-paper p-5">
             <div className="rounded-lg border border-brand-200 bg-brand-800 px-4 py-3 text-center">
@@ -48,7 +48,7 @@ export function Omnichannel() {
             </ul>
           </div>
         </div>
-        <div className="order-1 lg:order-2">
+        <div className="order-1 min-w-0 lg:order-2">
           <SectionHeading
             id="omnichannel-heading"
             eyebrow="Omnichannel"

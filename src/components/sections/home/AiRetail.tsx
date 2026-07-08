@@ -13,7 +13,7 @@ export function AiRetail() {
   return (
     <Section tone="brand" className="py-14 sm:py-16 lg:py-20" aria-labelledby="ai-heading">
       <div className="grid gap-10 lg:grid-cols-[1fr,1.4fr] lg:items-center">
-        <div>
+        <div className="min-w-0">
           <SectionHeading
             id="ai-heading"
             eyebrow="AI-powered retail"
@@ -33,7 +33,7 @@ export function AiRetail() {
             Explore AI Retail
           </ButtonLink>
         </div>
-        <div>
+        <div className="min-w-0">
           <AiCommandCenter />
           <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-widest text-brand-200">
             Product demonstration data

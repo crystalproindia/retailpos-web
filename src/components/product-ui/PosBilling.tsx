@@ -19,7 +19,7 @@ export function PosBilling({ compact = false }: { compact?: boolean }) {
       status={{ label: "Online", tone: "ok" }}
       ariaLabel="Illustration of the RetailPOS billing screen with scanned items, loyalty customer, GST, discount, payment methods, shift status and a returns option"
     >
-      <div className="grid sm:grid-cols-[1.6fr,1fr]">
+      <div className="grid min-w-0 sm:grid-cols-[minmax(0,1.6fr),minmax(0,1fr)]">
         <div className="border-b border-line p-4 sm:border-b-0 sm:border-r">
           <div className="mb-2 flex items-center justify-between gap-2">
             <p className="flex items-center gap-1.5 text-[11px] text-ink-muted">
@@ -33,7 +33,7 @@ export function PosBilling({ compact = false }: { compact?: boolean }) {
               <Undo2 aria-hidden="true" className="h-3 w-3" /> Returns · F4
             </span>
           </div>
-          <div className="mb-2 grid grid-cols-[1fr,auto,auto,auto] gap-3 border-b border-line pb-2 font-mono text-[10px] uppercase tracking-wider text-ink-muted">
+          <div className="mb-2 grid grid-cols-[minmax(0,1fr),auto,auto,auto] gap-3 border-b border-line pb-2 font-mono text-[10px] uppercase tracking-wider text-ink-muted">
             <span>Item</span>
             <span className="text-right">Qty</span>
             <span className="text-right">Rate</span>
@@ -41,7 +41,7 @@ export function PosBilling({ compact = false }: { compact?: boolean }) {
           </div>
           <ul className="divide-y divide-line/70">
             {items.slice(0, compact ? 3 : 4).map((item) => (
-              <li key={item.name} className="grid grid-cols-[1fr,auto,auto,auto] gap-3 py-2 text-xs">
+              <li key={item.name} className="grid grid-cols-[minmax(0,1fr),auto,auto,auto] gap-3 py-2 text-xs">
                 <span className="truncate text-ink">{item.name}</span>
                 <span className="text-right font-mono tabular-nums text-ink-muted">{item.qty}</span>
                 <span className="text-right font-mono tabular-nums text-ink-muted">{item.rate}</span>

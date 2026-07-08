@@ -1,6 +1,7 @@
 import type { Faq } from "@/types/content";
 
 export type LandingFamily = "products" | "modules" | "industries" | "solutions";
+export type LandingVariant = "product" | "module" | "industry" | "solution";
 
 export interface LandingFeature {
   icon: string; // must exist in the static icon registry
@@ -30,6 +31,8 @@ export interface LandingUseCase {
 export interface LandingPage {
   slug: string;
   family: LandingFamily;
+  /** Optional override when a page needs a presentation style outside its family default. */
+  variant?: LandingVariant;
   name: string; // short name used in related-links and hubs
   eyebrow: string;
   title: string; // the single visible H1

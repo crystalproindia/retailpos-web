@@ -7,7 +7,7 @@ export function EnterpriseScale() {
   return (
     <Section tone="paper" className="py-14 sm:py-16 lg:py-20" aria-labelledby="enterprise-heading">
       <div className="grid gap-10 lg:grid-cols-[1fr,1.3fr] lg:items-center">
-        <div>
+        <div className="min-w-0">
           <SectionHeading
             id="enterprise-heading"
             eyebrow="Multi-store & enterprise"
@@ -23,7 +23,9 @@ export function EnterpriseScale() {
             </ButtonLink>
           </div>
         </div>
-        <MultiStorePanel />
+        <div className="min-w-0">
+          <MultiStorePanel />
+        </div>
       </div>
     </Section>
   );

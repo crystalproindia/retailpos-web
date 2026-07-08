@@ -2,9 +2,7 @@ import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
 import { footerColumns, legalLinks } from "@/data/navigation";
 import { company, socialLinks } from "@/data/company";
-import { primaryCtas } from "@/data/ctas";
 import { Container } from "@/components/ui/Container";
-import { ButtonLink } from "@/components/ui/Button";
 import { Logo } from "./Logo";
 import { RegionalContacts } from "./RegionalContacts";
 
@@ -13,26 +11,6 @@ export function Footer() {
 
   return (
     <footer className="bg-ink text-white">
-      {/* Pre-footer CTA band */}
-      <div className="border-b border-white/10">
-        <Container className="flex flex-col items-start justify-between gap-6 py-10 sm:flex-row sm:items-center">
-          <div>
-            <h2 className="font-display text-display-sm font-semibold sm:text-display-md">
-              See RetailPOS on your own products
-            </h2>
-            <p className="mt-2 max-w-xl text-sm text-brand-100">
-              A 30-minute walkthrough with your items, your prices and your questions.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <ButtonLink href={primaryCtas.bookDemo.href}>{primaryCtas.bookDemo.label}</ButtonLink>
-            <ButtonLink href={primaryCtas.requestPricing.href} variant="inverted">
-              {primaryCtas.requestPricing.label}
-            </ButtonLink>
-          </div>
-        </Container>
-      </div>
-
       {/* Link columns */}
       <Container className="grid grid-cols-2 gap-8 py-12 sm:grid-cols-3 lg:grid-cols-5">
         {footerColumns.map((col) => (

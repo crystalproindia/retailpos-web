@@ -2,13 +2,27 @@ import { Icon } from "@/components/ui/Icon";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import type { LandingFeature, LandingProblem, LandingStep, LandingUseCase } from "@/lib/landing-pages/types";
+import type { LandingSectionCopy } from "@/lib/landing-pages/variants";
 
 /** Server-rendered landing sections. Each renders only when data exists. */
 
-export function LandingProblemSolution({ items, name }: { items: LandingProblem[]; name: string }) {
+export function LandingProblemSolution({
+  items,
+  name,
+  heading,
+}: {
+  items: LandingProblem[];
+  name: string;
+  heading?: LandingSectionCopy;
+}) {
   return (
     <Section tone="white" aria-labelledby="ls-problems" className="py-12 sm:py-16">
-      <SectionHeading id="ls-problems" eyebrow="Problems solved" title={`What ${name} fixes day to day`} />
+      <SectionHeading
+        id="ls-problems"
+        eyebrow={heading?.eyebrow ?? "Problems solved"}
+        title={heading?.title ?? `What ${name} fixes day to day`}
+        description={heading?.description}
+      />
       <ul className="mt-8 space-y-4">
         {items.map((p) => (
           <li key={p.problem} className="grid gap-3 rounded-lg border border-line bg-white p-5 shadow-card sm:grid-cols-2 sm:gap-6">
@@ -27,10 +41,23 @@ export function LandingProblemSolution({ items, name }: { items: LandingProblem[
   );
 }
 
-export function LandingFeatureGrid({ items, name }: { items: LandingFeature[]; name: string }) {
+export function LandingFeatureGrid({
+  items,
+  name,
+  heading,
+}: {
+  items: LandingFeature[];
+  name: string;
+  heading?: LandingSectionCopy;
+}) {
   return (
     <Section tone="paper" aria-labelledby="ls-features" className="py-12 sm:py-16">
-      <SectionHeading id="ls-features" eyebrow="Capabilities" title={`What ${name} includes`} />
+      <SectionHeading
+        id="ls-features"
+        eyebrow={heading?.eyebrow ?? "Capabilities"}
+        title={heading?.title ?? `What ${name} includes`}
+        description={heading?.description}
+      />
       <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((f) => (
           <li key={f.title} className="rounded-lg border border-line bg-white p-5 shadow-card">
@@ -44,13 +71,29 @@ export function LandingFeatureGrid({ items, name }: { items: LandingFeature[]; n
   );
 }
 
-export function LandingWorkflow({ items }: { items: LandingStep[] }) {
+export function LandingWorkflow({
+  items,
+  heading,
+  presentation = "steps",
+}: {
+  items: LandingStep[];
+  heading?: LandingSectionCopy;
+  presentation?: "steps" | "cards";
+}) {
   return (
     <Section tone="white" aria-labelledby="ls-workflow" className="py-12 sm:py-16">
-      <SectionHeading id="ls-workflow" eyebrow="How it works" title="The workflow, end to end" />
-      <ol className="mt-8 grid gap-6 sm:grid-cols-3">
+      <SectionHeading
+        id="ls-workflow"
+        eyebrow={heading?.eyebrow ?? "How it works"}
+        title={heading?.title ?? "The workflow, end to end"}
+        description={heading?.description}
+      />
+      <ol className={presentation === "cards" ? "mt-8 grid gap-4 sm:grid-cols-3" : "mt-8 grid gap-6 sm:grid-cols-3"}>
         {items.map((step, i) => (
-          <li key={step.title}>
+          <li
+            key={step.title}
+            className={presentation === "cards" ? "rounded-lg border border-line bg-white p-5 shadow-card" : undefined}
+          >
             <span className="font-mono text-sm font-medium tabular-nums text-brand-600">
               {String(i + 1).padStart(2, "0")}
             </span>
@@ -64,10 +107,15 @@ export function LandingWorkflow({ items }: { items: LandingStep[] }) {
   );
 }
 
-export function LandingBenefits({ items }: { items: string[] }) {
+export function LandingBenefits({ items, heading }: { items: string[]; heading?: LandingSectionCopy }) {
   return (
     <Section tone="paper" aria-labelledby="ls-benefits" className="py-12 sm:py-16">
-      <SectionHeading id="ls-benefits" eyebrow="Outcomes" title="What changes for the business" />
+      <SectionHeading
+        id="ls-benefits"
+        eyebrow={heading?.eyebrow ?? "Outcomes"}
+        title={heading?.title ?? "What changes for the business"}
+        description={heading?.description}
+      />
       <ul className="mt-8 grid gap-3 sm:grid-cols-2">
         {items.map((b) => (
           <li key={b} className="flex gap-3 rounded-lg border border-line bg-white px-4 py-3">
@@ -80,10 +128,15 @@ export function LandingBenefits({ items }: { items: string[] }) {
   );
 }
 
-export function LandingUseCases({ items }: { items: LandingUseCase[] }) {
+export function LandingUseCases({ items, heading }: { items: LandingUseCase[]; heading?: LandingSectionCopy }) {
   return (
     <Section tone="white" aria-labelledby="ls-usecases" className="py-12 sm:py-16">
-      <SectionHeading id="ls-usecases" eyebrow="In practice" title="Where it earns its keep" />
+      <SectionHeading
+        id="ls-usecases"
+        eyebrow={heading?.eyebrow ?? "In practice"}
+        title={heading?.title ?? "Where it earns its keep"}
+        description={heading?.description}
+      />
       <ul className="mt-8 grid gap-4 sm:grid-cols-2">
         {items.map((u) => (
           <li key={u.title} className="rounded-lg border border-line bg-paper p-5">

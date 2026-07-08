@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -18,48 +19,109 @@ interface MobileNavProps {
 }
 
 /**
- * Full-screen mobile navigation designed to showcase the entire site:
+ * Modal mobile navigation designed to showcase the entire site:
  * quick-access row, accordion sections mirroring the mega menu (every
  * major page reachable in two taps), featured highlights, and a sticky
  * bottom conversion bar that stays visible while scrolling.
  */
 export function MobileNav({ open, onClose }: MobileNavProps) {
   const [expanded, setExpanded] = useState<string | null>(navGroups[0]?.label ?? null);
+  const [mounted, setMounted] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion();
   useScrollLock(open);
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!open || !mounted) return;
+    closeButtonRef.current?.focus();
+  }, [mounted, open]);
+
+  function trapFocus(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      onClose();
+      return;
+    }
+
+    if (e.key !== "Tab") return;
+
+    const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(
+      [
+        "a[href]",
+        "button:not([disabled])",
+        "textarea:not([disabled])",
+        "input:not([disabled])",
+        "select:not([disabled])",
+        "[tabindex]:not([tabindex='-1'])",
+      ].join(","),
+    ) ?? []).filter((el) => el.offsetParent !== null);
+    if (!focusable.length) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  const drawer = (
     <AnimatePresence>
       {open ? (
         <motion.div
-          id="mobile-nav"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Site navigation"
-          initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: "8%" }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: "8%" }}
-          transition={{ duration: 0.22, ease: "easeOut" }}
-          className="fixed inset-0 z-50 flex flex-col bg-white lg:hidden"
-          onKeyDown={(e) => {
-            if (e.key === "Escape") onClose();
+          className="fixed bottom-0 left-0 right-0 top-0 z-50 bg-ink/35 lg:hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.16 }}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) onClose();
+          }}
+          onPointerDown={(e) => {
+            if (e.target === e.currentTarget) onClose();
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) onClose();
           }}
         >
-          {/* Top bar */}
-          <div className="flex h-16 shrink-0 items-center justify-between border-b border-line px-4">
-            <Logo />
-            <button
-              type="button"
-              aria-label="Close menu"
-              onClick={onClose}
-              className="inline-flex h-10 w-10 items-center justify-center rounded text-ink hover:bg-paper"
-            >
-              <X aria-hidden="true" className="h-6 w-6" />
-            </button>
-          </div>
+          <motion.div
+            id="mobile-nav"
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
+            initial={prefersReducedMotion ? { opacity: 0 } : { x: "100%" }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { x: 0 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { x: "100%" }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className="ml-auto flex h-full w-full max-w-md flex-col bg-white shadow-menu"
+            onKeyDown={trapFocus}
+          >
+            {/* Top bar */}
+            <div className="flex h-16 shrink-0 items-center justify-between border-b border-line px-4">
+              <Logo />
+              <button
+                ref={closeButtonRef}
+                type="button"
+                aria-label="Close menu"
+                onClick={onClose}
+                className="inline-flex h-11 w-11 items-center justify-center rounded text-ink hover:bg-paper"
+              >
+                <X aria-hidden="true" className="h-6 w-6" />
+              </button>
+            </div>
 
-          {/* Scrollable body */}
-          <div className="flex-1 overflow-y-auto overscroll-contain pb-4">
+            {/* Scrollable body */}
+            <div className="flex-1 overflow-y-auto overscroll-contain pb-4">
             {/* Quick access row */}
             <div className="grid grid-cols-3 gap-2 border-b border-line p-4">
               {quickLinks.map((link) => (
@@ -188,21 +250,25 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Sticky conversion bar */}
-          <div className="shrink-0 border-t border-line bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-            <div className="grid grid-cols-2 gap-2">
-              <ButtonLink href={primaryCtas.bookDemo.href} onClick={onClose} size="lg">
-                {primaryCtas.bookDemo.label}
-              </ButtonLink>
-              <ButtonLink href={primaryCtas.talkToSales.href} onClick={onClose} variant="ghost" size="lg">
-                {primaryCtas.talkToSales.label}
-              </ButtonLink>
             </div>
-          </div>
+
+            {/* Sticky conversion bar */}
+            <div className="shrink-0 border-t border-line bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+              <div className="grid grid-cols-2 gap-2">
+                <ButtonLink href={primaryCtas.bookDemo.href} onClick={onClose} size="lg">
+                  {primaryCtas.bookDemo.label}
+                </ButtonLink>
+                <ButtonLink href={primaryCtas.talkToSales.href} onClick={onClose} variant="ghost" size="lg">
+                  {primaryCtas.talkToSales.label}
+                </ButtonLink>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
       ) : null}
     </AnimatePresence>
   );
+
+  if (!mounted) return null;
+  return createPortal(drawer, document.body);
 }
