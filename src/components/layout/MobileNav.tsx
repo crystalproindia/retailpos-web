@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronDown, X } from "lucide-react";
@@ -18,6 +18,10 @@ interface MobileNavProps {
   onClose: () => void;
 }
 
+const subscribeToHydration = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 /**
  * Modal mobile navigation designed to showcase the entire site:
  * quick-access row, accordion sections mirroring the mega menu (every
@@ -26,15 +30,11 @@ interface MobileNavProps {
  */
 export function MobileNav({ open, onClose }: MobileNavProps) {
   const [expanded, setExpanded] = useState<string | null>(navGroups[0]?.label ?? null);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(subscribeToHydration, getClientSnapshot, getServerSnapshot);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion();
   useScrollLock(open);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!open || !mounted) return;
