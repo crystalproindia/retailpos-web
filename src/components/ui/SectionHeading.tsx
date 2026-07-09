@@ -31,11 +31,14 @@ export function SectionHeading({
           {eyebrow}
         </p>
       ) : null}
-      <Tag id={id} className={cn("font-display text-display-md font-semibold sm:text-display-lg", invert ? "text-white" : "text-ink")}>
+      <Tag
+        id={id}
+        className={`font-display text-display-md font-semibold sm:text-display-lg ${invert ? "text-white" : "text-ink"}`}
+      >
         {title}
       </Tag>
       {description ? (
-        <p className={cn("mt-4 text-base leading-relaxed sm:text-lg", invert ? "text-brand-100" : "text-ink-muted")}>
+        <p className={`mt-4 text-base leading-relaxed sm:text-lg ${invert ? "text-brand-100" : "text-ink-muted"}`}>
           {description}
         </p>
       ) : null}

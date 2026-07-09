@@ -6,6 +6,7 @@ import { Hero } from "@/components/sections/home/Hero";
 import { TrustStrip } from "@/components/sections/home/TrustStrip";
 import { TrustReceipt } from "@/components/sections/home/TrustReceipt";
 import { Challenges } from "@/components/sections/home/Challenges";
+import { WhyRetailPOS } from "@/components/sections/home/WhyRetailPOS";
 import { PlatformOverview } from "@/components/sections/home/PlatformOverview";
 import { PosCapabilities } from "@/components/sections/home/PosCapabilities";
 import { ModuleEcosystem } from "@/components/sections/home/ModuleEcosystem";
@@ -36,6 +37,7 @@ export default function HomePage() {
       <Hero />
       <TrustStrip />
       <Challenges />
+      <WhyRetailPOS />
       <PlatformOverview />
       <PosCapabilities />
       <ModuleEcosystem />

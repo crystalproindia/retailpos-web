@@ -23,6 +23,35 @@ const principles = [
   { icon: "Braces", title: "Open by design", text: "REST APIs and webhooks, because your retail system should connect to your world, not trap your data." },
 ];
 
+const timeline = [
+  {
+    marker: String(company.foundedYear),
+    title: `${company.parent} begins delivering software solutions`,
+    text: `RetailPOS.biz comes from a software company headquartered in ${company.headquarters}, with product work grounded in real operational systems.`,
+  },
+  {
+    marker: "RetailPOS",
+    title: "Retail workflows become the product focus",
+    text: "POS billing, inventory, purchasing, CRM, loyalty, accounting and analytics are shaped into one retail-native platform.",
+  },
+  {
+    marker: "AI + APIs",
+    title: "The platform direction becomes more connected",
+    text: "AI recommendations, REST APIs and webhooks extend the product while keeping human approval and data ownership clear.",
+  },
+  {
+    marker: "Presence",
+    title: "Regional offices support growing retail markets",
+    text: `CrystalPro lists offices in ${company.offices.join(", ")}.`,
+  },
+];
+
+const roadmapThemes = [
+  { icon: "Sparkles", title: "Decision support", text: "Deeper forecasting, anomaly detection and recommendation workflows that still require human approval." },
+  { icon: "Braces", title: "Connected retail stack", text: "More API and webhook-led integrations for e-commerce, payments, finance and analytics systems." },
+  { icon: "Workflow", title: "Operational automation", text: "Less repeated admin around reordering, posting, scheduled reports and controlled approvals." },
+];
+
 export default function AboutPage() {
   return (
     <>
@@ -40,11 +69,27 @@ export default function AboutPage() {
         </Container>
       </div>
       <Section tone="white" className="py-12 sm:py-16">
-        <SectionHeading
-          eyebrow="What we build"
-          title="One platform from the billing counter up"
-          description="RetailPOS combines POS billing with retail ERP — inventory, purchasing, CRM, loyalty, accounting and analytics — and adds AI that recommends actions for human approval. It serves single stores, multi-store chains, franchises and enterprise retail across India and Southeast Asia."
-        />
+        <div className="grid gap-10 lg:grid-cols-[0.82fr,1.18fr] lg:items-start">
+          <SectionHeading
+            eyebrow="RetailPOS journey"
+            title="From software delivery to a retail operating platform"
+            description="RetailPOS combines POS billing with retail ERP — inventory, purchasing, CRM, loyalty, accounting and analytics — and adds AI that recommends actions for human approval."
+          />
+          <ol className="relative space-y-4 before:absolute before:bottom-3 before:left-4 before:top-3 before:w-px before:bg-line">
+            {timeline.map((item) => (
+              <li key={item.title} className="relative grid grid-cols-[2rem,1fr] gap-4">
+                <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded bg-brand-600 text-white">
+                  <span className="h-2 w-2 rounded-full bg-white" />
+                </span>
+                <div className="rounded-lg border border-line bg-white p-5 shadow-card">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-brand-600">{item.marker}</p>
+                  <h3 className="mt-2 text-sm font-semibold text-ink">{item.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{item.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </Section>
       <Section tone="paper" className="py-12 sm:py-16">
         <SectionHeading eyebrow="How we work" title="Product principles we hold ourselves to" />
@@ -54,6 +99,45 @@ export default function AboutPage() {
               <Icon name={p.icon} className="h-5 w-5 text-brand-600" />
               <h3 className="mt-3 text-sm font-semibold text-ink">{p.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{p.text}</p>
+            </li>
+          ))}
+        </ul>
+      </Section>
+      <Section tone="white" className="py-12 sm:py-16">
+        <div className="grid gap-8 lg:grid-cols-[1fr,1fr] lg:items-start">
+          <SectionHeading
+            eyebrow="Mission and vision"
+            title="Build retail software that makes daily work clearer"
+            description="The product direction is simple: keep the counter fast, keep business data connected, and give owners better control without making store teams fight the system."
+          />
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+            <div className="rounded-lg border border-line bg-paper p-5">
+              <h3 className="text-sm font-semibold text-ink">Mission</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
+                Make retail operations easier to run by connecting billing, stock, purchasing, customers, accounting and analytics in one product.
+              </p>
+            </div>
+            <div className="rounded-lg border border-line bg-paper p-5">
+              <h3 className="text-sm font-semibold text-ink">Vision</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
+                Give retailers a modern SaaS platform that grows from a first counter to a controlled multi-store network.
+              </p>
+            </div>
+          </div>
+        </div>
+      </Section>
+      <Section tone="paper" className="py-12 sm:py-16">
+        <SectionHeading
+          eyebrow="Future roadmap themes"
+          title="What we keep improving"
+          description="These are product themes, not invented timelines: more useful intelligence, cleaner integrations and fewer manual handoffs."
+        />
+        <ul className="mt-8 grid gap-4 sm:grid-cols-3">
+          {roadmapThemes.map((theme) => (
+            <li key={theme.title} className="rounded-lg border border-line bg-white p-5 shadow-card">
+              <Icon name={theme.icon} className="h-5 w-5 text-brand-600" />
+              <h3 className="mt-3 text-sm font-semibold text-ink">{theme.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{theme.text}</p>
             </li>
           ))}
         </ul>

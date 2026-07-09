@@ -1,5 +1,6 @@
 import type { LandingPage } from "@/lib/landing-pages/types";
 import { LandingHero } from "./LandingHero";
+import { LandingFamilyStory } from "./LandingFamilyStory";
 import { LandingFAQ } from "./LandingFAQ";
 import { LandingCTA } from "./LandingCTA";
 import { RelatedPages } from "./RelatedPages";
@@ -61,6 +62,7 @@ export function LandingPageTemplate({ page }: { page: LandingPage }) {
   return (
     <>
       <LandingHero page={page} />
+      <LandingFamilyStory page={page} />
       {profile.order.map(renderSection)}
       {page.faqs.length ? <LandingFAQ items={page.faqs} name={page.name} /> : null}
       <RelatedPages page={page} />

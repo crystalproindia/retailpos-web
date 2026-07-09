@@ -7,12 +7,12 @@ import { HeroComposition } from "@/components/product-ui/HeroComposition";
 export function Hero() {
   return (
     <section aria-labelledby="hero-heading" className="overflow-hidden border-b border-line bg-paper">
-      <Container className="grid items-center gap-12 py-14 sm:py-16 lg:grid-cols-[1fr,1.1fr] lg:py-20">
+      <Container className="grid grid-cols-[minmax(0,1fr)] items-center gap-12 py-14 sm:py-16 lg:grid-cols-[minmax(0,1fr),minmax(0,1.1fr)] lg:py-20">
         <div className="min-w-0">
           <Badge tone="brand">Retail ERP · POS · AI — one platform</Badge>
           <h1
             id="hero-heading"
-            className="mt-5 font-display text-display-lg font-bold text-ink sm:text-display-xl"
+            className="mt-5 font-display text-display-md font-bold text-ink sm:text-display-lg lg:text-display-xl"
           >
             Run your entire retail business from the billing counter up
           </h1>
