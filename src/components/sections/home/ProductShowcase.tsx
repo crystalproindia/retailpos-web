@@ -5,7 +5,14 @@ import { PosBilling } from "@/components/product-ui/PosBilling";
 import { ErpDashboard } from "@/components/product-ui/ErpDashboard";
 import { InventoryPanel } from "@/components/product-ui/InventoryPanel";
 import { AiCommandCenter } from "@/components/product-ui/AiInsight";
-import { MultiStorePanel } from "@/components/product-ui/MultiStorePanel";
+import {
+  CrmWorkspacePanel,
+  FinanceControlPanel,
+  MobileAppPanel,
+  PurchaseWorkflowPanel,
+  ReportsAnalyticsPanel,
+  WarehouseFulfillmentPanel,
+} from "@/components/product-ui/SaasMockups";
 
 export function ProductShowcase() {
   return (
@@ -26,7 +33,7 @@ export function ProductShowcase() {
               panel: <PosBilling />,
             },
             {
-              label: "ERP Dashboard",
+              label: "Dashboard",
               summary: "Today's sales, store performance, inventory status, purchase orders and receivables in one view.",
               panel: <ErpDashboard />,
             },
@@ -36,14 +43,39 @@ export function ProductShowcase() {
               panel: <InventoryPanel />,
             },
             {
-              label: "AI Insights",
-              summary: "A recommendation inbox — every suggestion waits for your approval.",
-              panel: <AiCommandCenter />,
+              label: "Purchase",
+              summary: "Reorder signals, purchase orders, goods receipt and accounting updates connected in one flow.",
+              panel: <PurchaseWorkflowPanel />,
             },
             {
-              label: "Multi-Store",
-              summary: "Head-office control: transfers, price sync, approvals and consolidated reporting.",
-              panel: <MultiStorePanel />,
+              label: "Warehouse",
+              summary: "Receiving, binning, picking and dispatch control for warehouse-to-store movement.",
+              panel: <WarehouseFulfillmentPanel />,
+            },
+            {
+              label: "CRM",
+              summary: "Customer profiles, loyalty context and segments that follow shoppers across stores.",
+              panel: <CrmWorkspacePanel />,
+            },
+            {
+              label: "Reports",
+              summary: "Margin, dead stock, store variance and owner questions tied back to real transactions.",
+              panel: <ReportsAnalyticsPanel />,
+            },
+            {
+              label: "Finance",
+              summary: "Cash close, bank deposits, supplier payments and tax summaries with controlled approvals.",
+              panel: <FinanceControlPanel />,
+            },
+            {
+              label: "Mobile App",
+              summary: "Store-floor stock checks, bill drafts and manager approvals synced to the same platform.",
+              panel: <MobileAppPanel />,
+            },
+            {
+              label: "AI Assistant",
+              summary: "A recommendation inbox where every suggestion waits for human approval.",
+              panel: <AiCommandCenter />,
             },
           ]}
         />

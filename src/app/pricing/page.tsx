@@ -10,6 +10,8 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { faqJsonLd } from "@/lib/seo/jsonld";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { TrustMetrics } from "@/components/trust/TrustMetrics";
+import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
 import type { Faq } from "@/types/content";
 
 export const metadata: Metadata = buildMetadata({
@@ -34,6 +36,12 @@ const included = [
   "Clear commercial terms before any commitment",
 ];
 
+const pricingPrinciples = [
+  { icon: "Scale", title: "Scope before number", text: "We price the stores, counters, modules and rollout you actually need instead of pushing a generic bundle." },
+  { icon: "Route", title: "Services made visible", text: "Deployment, implementation, migration, training and support are discussed as separate parts of the proposal." },
+  { icon: "ChartColumnIncreasing", title: "ROI stays practical", text: "The conversation connects cost to stock accuracy, reporting time, downtime risk and rollout control." },
+];
+
 const quotePath = [
   { icon: "MessageCircle", title: "Understand the operation", text: "Stores, counters, current tools, billing flow and the modules you actually need." },
   { icon: "Workflow", title: "Map the rollout", text: "Implementation scope, data migration, hardware, integrations and training responsibilities." },
@@ -46,6 +54,15 @@ const roiQuestions = [
   "Which reports are rebuilt manually from spreadsheets?",
   "How much counter downtime is acceptable during connectivity issues?",
   "Which workflows should be controlled before adding more stores?",
+];
+
+const comparisonRows = [
+  { topic: "Pricing model", generic: "Public tiers that assume one buying pattern", retailpos: "Scoped quote based on stores, counters, modules and rollout depth" },
+  { topic: "Deployment", generic: "Standard setup with limited operational context", retailpos: "Deployment requirements reviewed before proposal" },
+  { topic: "Implementation", generic: "Onboarding treated as a separate afterthought", retailpos: "Migration, hardware, configuration and responsibilities included in planning" },
+  { topic: "Training", generic: "Self-serve documentation as the main path", retailpos: "Store, back-office and management users considered during rollout scope" },
+  { topic: "Support", generic: "Support level discovered after purchase", retailpos: "Support expectation discussed before commitment" },
+  { topic: "ROI review", generic: "Feature comparison first", retailpos: "Operational value, reporting effort and stock control discussed alongside price" },
 ];
 
 const pricingFaqs: Faq[] = [
@@ -95,11 +112,33 @@ export default function PricingPage() {
           </div>
         </Container>
       </div>
+      <TrustMetrics
+        compact
+        eyebrow="Commercial confidence"
+        title="A pricing conversation backed by implementation experience"
+        description="The quote is shaped around store reality: modules, rollout scope, training, support and the operational return expected from the platform."
+      />
+      <Section tone="paper" className="py-12 sm:py-16">
+        <SectionHeading
+          eyebrow="Pricing philosophy"
+          title="A scoped proposal you can defend internally"
+          description="RetailPOS.biz pricing is built around deployment reality: what should run now, what can wait, what support the team needs and what operational return makes the rollout worthwhile."
+        />
+        <ul className="mt-8 grid gap-4 md:grid-cols-3">
+          {pricingPrinciples.map((principle) => (
+            <li key={principle.title} className="rounded-lg border border-line bg-white p-5 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-raised">
+              <Icon name={principle.icon} className="h-5 w-5 text-brand-600" />
+              <h3 className="mt-3 text-sm font-semibold text-ink">{principle.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{principle.text}</p>
+            </li>
+          ))}
+        </ul>
+      </Section>
       <Section tone="white" className="py-12 sm:py-16">
         <SectionHeading eyebrow="What shapes your quote" title="Six factors that set the number" />
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {factors.map((f) => (
-            <li key={f.title} className="rounded-lg border border-line bg-white p-5 shadow-card">
+            <li key={f.title} className="rounded-lg border border-line bg-white p-5 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-raised">
               <Icon name={f.icon} className="h-5 w-5 text-brand-600" />
               <h3 className="mt-3 text-sm font-semibold text-ink">{f.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{f.text}</p>
@@ -117,7 +156,7 @@ export default function PricingPage() {
           </div>
           <ol className="grid gap-3 sm:grid-cols-2">
             {quotePath.map((step, index) => (
-              <li key={step.title} className="rounded-lg border border-line bg-white p-5 shadow-card">
+              <li key={step.title} className="rounded-lg border border-line bg-white p-5 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-raised">
                 <div className="flex items-center justify-between gap-3">
                   <Icon name={step.icon} className="h-5 w-5 text-brand-600" />
                   <span className="font-mono text-xs text-ink-muted">{String(index + 1).padStart(2, "0")}</span>
@@ -127,6 +166,34 @@ export default function PricingPage() {
               </li>
             ))}
           </ol>
+        </div>
+      </Section>
+      <Section tone="white" className="py-12 sm:py-16" aria-labelledby="pricing-comparison">
+        <SectionHeading
+          id="pricing-comparison"
+          eyebrow="Comparison"
+          title="What changes when pricing is scoped"
+          description="The goal is not to hide the number. It is to make sure the number matches the deployment, support and training responsibility behind it."
+        />
+        <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-white shadow-card">
+          <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
+            <thead className="bg-paper text-xs uppercase tracking-wide text-ink-muted">
+              <tr>
+                <th scope="col" className="w-1/5 px-4 py-3 font-semibold">Decision area</th>
+                <th scope="col" className="w-2/5 px-4 py-3 font-semibold">Generic tiered software</th>
+                <th scope="col" className="w-2/5 px-4 py-3 font-semibold">RetailPOS scoped proposal</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-line">
+              {comparisonRows.map((row) => (
+                <tr key={row.topic} className="align-top">
+                  <th scope="row" className="px-4 py-4 font-semibold text-ink">{row.topic}</th>
+                  <td className="px-4 py-4 leading-relaxed text-ink-muted">{row.generic}</td>
+                  <td className="px-4 py-4 leading-relaxed text-ink">{row.retailpos}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </Section>
       <Section tone="white" className="py-12 sm:py-16">
@@ -160,6 +227,13 @@ export default function PricingPage() {
           </div>
         </div>
       </Section>
+      <ClientLogoWall
+        compact
+        tone="paper"
+        eyebrow="Buyer confidence"
+        title="Proof points before a scoped proposal"
+        description="RetailPOS.biz is evaluated by teams who need software that feels clear at the counter and controlled at head office."
+      />
       <Section tone="white" aria-labelledby="pricing-faq" className="py-12 sm:py-16">
         <JsonLd data={faqJsonLd(pricingFaqs)} />
         <div className="grid gap-8 lg:grid-cols-[1fr,1.6fr]">

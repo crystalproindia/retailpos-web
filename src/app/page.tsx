@@ -3,6 +3,8 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { softwareApplicationJsonLd } from "@/lib/seo/jsonld";
 import { Hero } from "@/components/sections/home/Hero";
+import { TrustMetrics } from "@/components/trust/TrustMetrics";
+import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
 import { TrustStrip } from "@/components/sections/home/TrustStrip";
 import { TrustReceipt } from "@/components/sections/home/TrustReceipt";
 import { Challenges } from "@/components/sections/home/Challenges";
@@ -35,6 +37,8 @@ export default function HomePage() {
     <>
       <JsonLd data={softwareApplicationJsonLd()} />
       <Hero />
+      <TrustMetrics compact />
+      <ClientLogoWall compact tone="paper" />
       <TrustStrip />
       <Challenges />
       <WhyRetailPOS />

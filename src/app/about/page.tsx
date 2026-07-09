@@ -6,6 +6,7 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Icon } from "@/components/ui/Icon";
 import { LandingCTA } from "@/components/landing/LandingCTA";
+import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
 import { company } from "@/data/company";
 
 export const metadata: Metadata = buildMetadata({
@@ -68,6 +69,7 @@ export default function AboutPage() {
           </p>
         </Container>
       </div>
+      <ClientLogoWall compact />
       <Section tone="white" className="py-12 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-[0.82fr,1.18fr] lg:items-start">
           <SectionHeading
