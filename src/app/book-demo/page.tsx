@@ -96,7 +96,11 @@ export default function BookDemoPage() {
             </ol>
           </div>
           <div className="rounded-lg border border-line bg-paper p-6 sm:p-8">
-            <LeadForm />
+            <LeadForm
+              source="book_demo"
+              submitLabel="Book a Free Demo"
+              successMessage="Our retail consultants will reach out shortly to schedule your demo."
+            />
           </div>
         </div>
       </Section>

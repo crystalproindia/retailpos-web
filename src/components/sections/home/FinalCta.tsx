@@ -23,7 +23,11 @@ export function FinalCta() {
           </ul>
         </div>
         <div className="rounded-lg border border-line bg-paper p-6 sm:p-8">
-          <LeadForm />
+          <LeadForm
+            source="landing_page"
+            submitLabel="Book a Free Demo"
+            successMessage="Our retail consultants will review your enquiry and follow up with the right next step."
+          />
         </div>
       </div>
     </Section>

@@ -214,7 +214,11 @@ export default function ContactPage() {
           </div>
           <div className="rounded-lg border border-line bg-white p-6 shadow-card sm:p-8">
             <h2 className="mb-5 font-display text-display-sm font-semibold text-ink">Send an enquiry</h2>
-            <LeadForm />
+            <LeadForm
+              source="contact"
+              submitLabel="Send enquiry"
+              successMessage="The RetailPOS team will route your enquiry to the right sales, support or implementation contact."
+            />
           </div>
         </div>
       </Section>

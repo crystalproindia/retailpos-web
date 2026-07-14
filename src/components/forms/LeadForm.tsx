@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/Button";
 import { Checkbox, FieldWrap, Select, Textarea, TextInput } from "./fields";
 import { solutions } from "@/data/solutions";
 import { countryOptions } from "@/data/countries";
-import { contactConfig } from "@/config/contact";
+
+type LeadSource = "contact" | "book_demo" | "pricing_enquiry" | "landing_page";
 
 interface LeadFormValues {
   name: string;
@@ -38,7 +39,15 @@ const emptyValues: LeadFormValues = {
 };
 
 type Errors = Partial<Record<keyof LeadFormValues, string>>;
-type Status = "idle" | "submitting" | "success" | "demo" | "error";
+type Status = "idle" | "submitting" | "success" | "error";
+
+interface LeadFormProps {
+  compact?: boolean;
+  source: LeadSource;
+  submitLabel?: string;
+  successTitle?: string;
+  successMessage?: string;
+}
 
 function validate(v: LeadFormValues): Errors {
   const errors: Errors = {};
@@ -65,28 +74,57 @@ const businessTypes = [
   "Other retail",
 ];
 
-/**
- * Backend integration point for the future lead API (POST /api/v1/leads).
- * Set NEXT_PUBLIC_LEADS_API_URL to activate real submissions. Until then
- * the form validates and shows an HONEST demonstration state — it never
- * pretends a submission was sent. Spam-protection (e.g. Turnstile token)
- * attaches to this same request when configured.
- */
-const LEADS_API_URL = process.env.NEXT_PUBLIC_LEADS_API_URL;
+function getTrackingContext() {
+  if (typeof window === "undefined") {
+    return { page_url: "", utm_source: "", utm_medium: "", utm_campaign: "" };
+  }
 
-async function submitLead(payload: LeadFormValues): Promise<"sent" | "demo"> {
-  if (payload.website) return "sent"; // honeypot tripped: drop silently
-  if (!LEADS_API_URL) return "demo";
-  const res = await fetch(LEADS_API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error("Lead submission failed");
-  return "sent";
+  const url = new URL(window.location.href);
+  return {
+    page_url: url.href,
+    utm_source: url.searchParams.get("utm_source") ?? "",
+    utm_medium: url.searchParams.get("utm_medium") ?? "",
+    utm_campaign: url.searchParams.get("utm_campaign") ?? "",
+  };
 }
 
-export function LeadForm({ compact = false }: { compact?: boolean }) {
+async function submitLead(payload: LeadFormValues, source: LeadSource): Promise<void> {
+  const tracking = getTrackingContext();
+  const requirement = payload.message.trim() || payload.requiredSolution || "Website enquiry";
+
+  const res = await fetch("/api/leads", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: payload.name.trim(),
+      company_name: payload.businessName.trim(),
+      email: payload.email.trim(),
+      phone: payload.phone.trim(),
+      city: "",
+      country: payload.country,
+      business_type: payload.businessType,
+      requirement,
+      source,
+      ...tracking,
+      metadata: {
+        store_count: payload.storeCount,
+        required_solution: payload.requiredSolution,
+        consent_to_contact: payload.consent,
+      },
+      website: payload.website,
+    }),
+  });
+
+  if (!res.ok) throw new Error("Lead submission failed.");
+}
+
+export function LeadForm({
+  compact = false,
+  source,
+  submitLabel = "Book a Free Demo",
+  successTitle = "Request received",
+  successMessage = "Our retail consultants will reach out shortly to discuss your enquiry.",
+}: LeadFormProps) {
   const [values, setValues] = useState<LeadFormValues>(emptyValues);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>("idle");
@@ -96,15 +134,28 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
     if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (values.website) {
+      setStatus("submitting");
+      try {
+        await submitLead(values, source);
+        setStatus("success");
+      } catch {
+        setStatus("success");
+      }
+      return;
+    }
+
     const nextErrors = validate(values);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
     setStatus("submitting");
     try {
-      const result = await submitLead(values);
-      setStatus(result === "sent" ? "success" : "demo");
+      await submitLead(values, source);
+      setStatus("success");
     } catch {
       setStatus("error");
     }
@@ -114,33 +165,14 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
     return (
       <div role="status" className="rounded-lg border border-ledger-500/30 bg-ledger-500/5 p-8 text-center">
         <CircleCheck aria-hidden="true" className="mx-auto h-10 w-10 text-ledger-500" />
-        <h3 className="mt-4 font-display text-xl font-semibold text-ink">Request received</h3>
-        <p className="mt-2 text-sm text-ink-muted">
-          Our retail consultants will reach out shortly to schedule your demo.
-        </p>
-      </div>
-    );
-  }
-
-  if (status === "demo") {
-    return (
-      <div role="status" className="rounded-lg border border-brand-200 bg-brand-50/60 p-8 text-center">
-        <CircleCheck aria-hidden="true" className="mx-auto h-10 w-10 text-brand-600" />
-        <h3 className="mt-4 font-display text-xl font-semibold text-ink">Your details check out</h3>
-        <p className="mt-2 text-sm text-ink-muted">
-          Online booking opens when our demo scheduling system goes live. To book right now,
-          email your details to{" "}
-          <a href={`mailto:${contactConfig.salesEmail}`} className="font-medium text-brand-700 underline">
-            {contactConfig.salesEmail}
-          </a>{" "}
-          — we reply on business days.
-        </p>
+        <h3 className="mt-4 font-display text-xl font-semibold text-ink">{successTitle}</h3>
+        <p className="mt-2 text-sm text-ink-muted">{successMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="relative grid gap-4">
+    <form className="relative grid gap-4" onSubmit={handleSubmit} noValidate>
       <div className="grid gap-4 sm:grid-cols-2">
         <FieldWrap label="Name" htmlFor="lead-name" required error={errors.name}>
           <TextInput
@@ -148,6 +180,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
             autoComplete="name"
             value={values.name}
             error={errors.name}
+            disabled={status === "submitting"}
             onChange={(e) => update("name", e.target.value)}
           />
         </FieldWrap>
@@ -157,6 +190,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
             autoComplete="organization"
             value={values.businessName}
             error={errors.businessName}
+            disabled={status === "submitting"}
             onChange={(e) => update("businessName", e.target.value)}
           />
         </FieldWrap>
@@ -167,6 +201,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
             autoComplete="email"
             value={values.email}
             error={errors.email}
+            disabled={status === "submitting"}
             onChange={(e) => update("email", e.target.value)}
           />
         </FieldWrap>
@@ -177,6 +212,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
             autoComplete="tel"
             value={values.phone}
             error={errors.phone}
+            disabled={status === "submitting"}
             onChange={(e) => update("phone", e.target.value)}
           />
         </FieldWrap>
@@ -185,6 +221,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
             id="lead-country"
             autoComplete="country-name"
             value={values.country}
+            disabled={status === "submitting"}
             onChange={(e) => update("country", e.target.value)}
           >
             {countryOptions.map((c) => (
@@ -200,6 +237,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
             id="lead-type"
             value={values.businessType}
             error={errors.businessType}
+            disabled={status === "submitting"}
             onChange={(e) => update("businessType", e.target.value)}
           >
             <option value="">Select…</option>
@@ -209,7 +247,12 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
           </Select>
         </FieldWrap>
         <FieldWrap label="Number of stores" htmlFor="lead-stores">
-          <Select id="lead-stores" value={values.storeCount} onChange={(e) => update("storeCount", e.target.value)}>
+          <Select
+            id="lead-stores"
+            value={values.storeCount}
+            disabled={status === "submitting"}
+            onChange={(e) => update("storeCount", e.target.value)}
+          >
             {["1", "2–5", "6–20", "21–50", "50+"].map((s) => (
               <option key={s}>{s}</option>
             ))}
@@ -219,6 +262,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
           <Select
             id="lead-solution"
             value={values.requiredSolution}
+            disabled={status === "submitting"}
             onChange={(e) => update("requiredSolution", e.target.value)}
           >
             <option value="">Not sure yet</option>
@@ -237,6 +281,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
             id="lead-message"
             placeholder="Tell us about your stores and what you want to improve."
             value={values.message}
+            disabled={status === "submitting"}
             onChange={(e) => update("message", e.target.value)}
           />
         </FieldWrap>
@@ -251,6 +296,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
           tabIndex={-1}
           autoComplete="off"
           value={values.website}
+          name="website"
           onChange={(e) => update("website", e.target.value)}
         />
       </div>
@@ -259,6 +305,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
         <Checkbox
           id="lead-consent"
           checked={values.consent}
+          disabled={status === "submitting"}
           onChange={(e) => update("consent", e.target.checked)}
           label="I agree to be contacted by RetailPOS.biz about my enquiry."
         />
@@ -276,16 +323,16 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
         </p>
       ) : null}
 
-      <Button onClick={handleSubmit} size="lg" disabled={status === "submitting"} className="justify-self-start">
+      <Button type="submit" size="lg" disabled={status === "submitting"} className="justify-self-start">
         {status === "submitting" ? (
           <>
             <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />
             Sending…
           </>
         ) : (
-          "Book a Free Demo"
+          submitLabel
         )}
       </Button>
-    </div>
+    </form>
   );
 }

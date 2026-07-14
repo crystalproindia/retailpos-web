@@ -12,6 +12,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { TrustMetrics } from "@/components/trust/TrustMetrics";
 import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
+import { LeadForm } from "@/components/forms/LeadForm";
 import type { Faq } from "@/types/content";
 
 export const metadata: Metadata = buildMetadata({
@@ -234,6 +235,23 @@ export default function PricingPage() {
         title="Proof points before a scoped proposal"
         description="RetailPOS.biz is evaluated by teams who need software that feels clear at the counter and controlled at head office."
       />
+      <Section tone="white" className="py-12 sm:py-16">
+        <div className="grid gap-10 lg:grid-cols-[0.82fr,1.18fr] lg:items-start">
+          <SectionHeading
+            eyebrow="Request pricing"
+            title="Get a scoped pricing conversation"
+            description="Share your store count, business type and rollout needs. We route pricing enquiries to the Command Center CRM so the team can respond with context."
+          />
+          <div className="rounded-lg border border-line bg-paper p-6 shadow-card sm:p-8">
+            <LeadForm
+              source="pricing_enquiry"
+              submitLabel="Request Pricing"
+              successTitle="Pricing enquiry received"
+              successMessage="Our sales team will review your scope and follow up with the right pricing conversation."
+            />
+          </div>
+        </div>
+      </Section>
       <Section tone="white" aria-labelledby="pricing-faq" className="py-12 sm:py-16">
         <JsonLd data={faqJsonLd(pricingFaqs)} />
         <div className="grid gap-8 lg:grid-cols-[1fr,1.6fr]">
