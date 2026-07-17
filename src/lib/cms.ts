@@ -274,6 +274,13 @@ function unwrapData(value: unknown): unknown {
   return value;
 }
 
+function arrayData<T>(value: unknown): T[] {
+  if (Array.isArray(value)) return value as T[];
+  if (isRecord(value) && Array.isArray(value.data)) return value.data as T[];
+  if (isRecord(value) && Array.isArray(value.items)) return value.items as T[];
+  return [];
+}
+
 function isPublished(value: unknown): boolean {
   if (!isRecord(value)) return false;
   const status = typeof value.status === "string" ? value.status.toLowerCase() : "";
@@ -419,7 +426,7 @@ function contentPageFromPublicPage(page: CmsPublicPage): CmsContentPage {
 
 export async function getCmsPages(): Promise<CmsPublicPage[]> {
   const pages = await cmsFetch<CmsPublicPage[]>("/pages", 900);
-  return Array.isArray(pages) ? pages.filter(isPublished) : [];
+  return arrayData<CmsPublicPage>(pages).filter(isPublished);
 }
 
 export async function getCmsPageBySlug(slug: string): Promise<CmsPublicPage | null> {
@@ -448,7 +455,7 @@ export async function getLandingPageBySlug(slug: string): Promise<CmsLandingPage
 
 export async function getArticles(): Promise<CmsArticle[]> {
   const articles = await cmsFetch<CmsArticle[]>("/api/public/cms/articles", 900);
-  return Array.isArray(articles) ? articles.filter(isPublished) : [];
+  return arrayData<CmsArticle>(articles).filter(isPublished);
 }
 
 export async function getArticleBySlug(slug: string): Promise<CmsArticle | null> {
@@ -458,7 +465,7 @@ export async function getArticleBySlug(slug: string): Promise<CmsArticle | null>
 
 export async function getCmsSitemap(): Promise<CmsSitemapEntry[]> {
   const entries = await cmsFetch<CmsSitemapEntry[]>("/api/public/cms/sitemap", 900);
-  return Array.isArray(entries) ? entries : [];
+  return arrayData<CmsSitemapEntry>(entries);
 }
 
 export async function getCmsRobots(): Promise<CmsRobots | null> {
@@ -468,12 +475,12 @@ export async function getCmsRobots(): Promise<CmsRobots | null> {
 
 export async function getCmsRedirects(): Promise<CmsRedirect[]> {
   const redirects = await cmsFetch<CmsRedirect[]>("/api/public/cms/redirects", 300);
-  return Array.isArray(redirects) ? redirects.filter((r) => r.is_active !== false && r.is_active !== 0) : [];
+  return arrayData<CmsRedirect>(redirects).filter((r) => r.is_active !== false && r.is_active !== 0);
 }
 
 export async function getCmsContentPages(): Promise<CmsContentPage[]> {
   const pages = await cmsFetch<CmsContentPage[]>("/api/public/cms/content/pages", 900);
-  return Array.isArray(pages) ? pages.filter(isPublished) : [];
+  return arrayData<CmsContentPage>(pages).filter(isPublished);
 }
 
 export async function getCmsContentPageByPath(pathname: string): Promise<CmsContentPage | null> {
@@ -488,19 +495,22 @@ export async function getCmsContentPageByKey(pageKey: string): Promise<CmsConten
 }
 
 export async function getCmsNavigation(location?: "header" | "footer" | "mobile"): Promise<CmsNavigationItem[]> {
-  const items = (await cmsFetch<CmsNavigationItem[]>("/navigation", 300)) ?? (await cmsFetch<CmsNavigationItem[]>("/api/public/cms/content/navigation", 300));
-  if (!Array.isArray(items)) return [];
-  return items.filter((item) => item.is_enabled !== false && item.is_enabled !== 0 && (!location || item.location === location));
+  const primaryItems = arrayData<CmsNavigationItem>(await cmsFetch<CmsNavigationItem[]>("/navigation", 300));
+  const fallbackItems = primaryItems.length
+    ? []
+    : arrayData<CmsNavigationItem>(await cmsFetch<CmsNavigationItem[]>("/api/public/cms/content/navigation", 300));
+  const items = primaryItems.length ? primaryItems : fallbackItems;
+  return items.filter((item) => isRecord(item) && item.is_enabled !== false && item.is_enabled !== 0 && (!location || item.location === location));
 }
 
 export async function getCmsFooter(): Promise<CmsFooterBlock[]> {
   const blocks = await cmsFetch<CmsFooterBlock[]>("/api/public/cms/content/footer", 300);
-  return Array.isArray(blocks) ? blocks.filter((block) => block.is_enabled !== false && block.is_enabled !== 0) : [];
+  return arrayData<CmsFooterBlock>(blocks).filter((block) => isRecord(block) && block.is_enabled !== false && block.is_enabled !== 0);
 }
 
 export async function getCmsCaseStudies(): Promise<CmsPublicCaseStudy[]> {
   const studies = await cmsFetch<CmsPublicCaseStudy[]>("/case-studies", 900);
-  return Array.isArray(studies) ? studies.filter(isPublished) : [];
+  return arrayData<CmsPublicCaseStudy>(studies).filter(isPublished);
 }
 
 export async function getCmsCaseStudy(slug: string): Promise<CmsPublicCaseStudy | null> {

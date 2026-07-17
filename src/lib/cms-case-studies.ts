@@ -60,11 +60,21 @@ export function caseStudyFromCms(study: CmsPublicCaseStudy): CaseStudy | null {
 
 export async function getCaseStudiesWithFallback(): Promise<CaseStudy[]> {
   const cmsStudies = (await getCmsCaseStudies()).map(caseStudyFromCms).filter((study): study is CaseStudy => Boolean(study));
-  return cmsStudies.length ? cmsStudies : fallbackCaseStudies;
+  const seen = new Set<string>();
+  const merged: CaseStudy[] = [];
+
+  for (const study of [...cmsStudies, ...fallbackCaseStudies]) {
+    if (seen.has(study.slug)) continue;
+    seen.add(study.slug);
+    merged.push(study);
+  }
+
+  return merged.length ? merged : fallbackCaseStudies;
 }
 
 export async function getCaseStudyWithFallback(slug: string): Promise<CaseStudy | null> {
-  const cmsStudy = caseStudyFromCms((await getCmsCaseStudy(slug)) ?? {});
+  const cmsCaseStudy = await getCmsCaseStudy(slug);
+  const cmsStudy = cmsCaseStudy ? caseStudyFromCms(cmsCaseStudy) : null;
   if (cmsStudy) return cmsStudy;
   return fallbackCaseStudies.find((study) => study.slug === slug) ?? null;
 }

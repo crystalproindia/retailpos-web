@@ -47,6 +47,40 @@ function flatLinks(items: CmsNavigationItem[]): NavLink[] {
     .filter((item): item is NavLink => Boolean(item));
 }
 
+function mergeLinks(requiredLinks: NavLink[], cmsLinks: NavLink[]): NavLink[] {
+  const seen = new Set<string>();
+  const merged: NavLink[] = [];
+
+  for (const link of [...requiredLinks, ...cmsLinks]) {
+    const key = link.href || link.label.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push(link);
+  }
+
+  return merged;
+}
+
+function mergeGroups(requiredGroups: NavGroup[], cmsGroups: NavGroup[]): NavGroup[] {
+  const groups: NavGroup[] = requiredGroups.map((group) => ({
+    ...group,
+    links: [...group.links],
+    sections: group.sections?.map((section) => ({ ...section, links: [...section.links] })),
+  }));
+
+  for (const cmsGroup of cmsGroups) {
+    const existing = groups.find((group) => group.label.toLowerCase() === cmsGroup.label.toLowerCase());
+    if (!existing) {
+      groups.push(cmsGroup);
+      continue;
+    }
+
+    existing.links = mergeLinks(existing.links, cmsGroup.links);
+  }
+
+  return groups;
+}
+
 function withRequiredCompanyLinks(groups: NavGroup[]): NavGroup[] {
   const hasCaseStudies = groups.some((group) => group.links.some((link) => link.href === caseStudiesNavLink.href));
   if (hasCaseStudies) return groups;
@@ -94,8 +128,8 @@ export async function getSiteNavigation(): Promise<SiteNavigation> {
   const cmsQuickLinks = flatLinks(mobileItems);
 
   return {
-    navGroups: cmsGroups.length ? withRequiredNavigationGroups(cmsGroups) : navGroups,
-    topLevelLinks: cmsTopLevel.length ? cmsTopLevel : topLevelLinks,
-    quickLinks: cmsQuickLinks.length ? withRequiredQuickLinks(cmsQuickLinks) : quickLinks,
+    navGroups: withRequiredNavigationGroups(mergeGroups(navGroups, cmsGroups)),
+    topLevelLinks: mergeLinks(topLevelLinks, cmsTopLevel),
+    quickLinks: withRequiredQuickLinks(mergeLinks(quickLinks, cmsQuickLinks)),
   };
 }

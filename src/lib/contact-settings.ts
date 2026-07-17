@@ -13,6 +13,13 @@ function text(value: unknown, maxLength = 160): string | undefined {
   return cmsText(value, maxLength);
 }
 
+function whatsappNumber(value: unknown): string | undefined {
+  const raw = text(value, 80);
+  if (!raw) return undefined;
+  const digits = raw.replace(/\D/g, "");
+  return digits.length >= 8 && digits.length <= 15 ? digits : undefined;
+}
+
 function settingRecord(settings: CmsSettings | null | undefined): Record<string, unknown> {
   return isRecord(settings?.website_settings) ? settings.website_settings : {};
 }
@@ -44,7 +51,7 @@ export function getSiteContactSettings(settings?: CmsSettings | null): SiteConta
   const offices = getOfficesForDisplay().map((office) => {
     if (office.countryCode === "IN") {
       const phone = text(settings?.contact_phone_india, 80) ?? text(websiteSettings.primary_phone, 80);
-      const whatsapp = text(websiteSettings.whatsapp_number, 80);
+      const whatsapp = whatsappNumber(websiteSettings.whatsapp_number);
       return mergeOffice(office, {
         email: globalEmail,
         ...(phone ? { phoneDisplay: phone, phoneE164: phone } : {}),

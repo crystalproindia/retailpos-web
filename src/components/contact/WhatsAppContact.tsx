@@ -40,7 +40,10 @@ export function WhatsAppCountrySelector({
   defaultMessage,
   onNavigate,
 }: WhatsAppCountrySelectorProps) {
-  const contactOptions = useMemo(() => contacts ?? getWhatsAppContacts(), [contacts]);
+  const contactOptions = useMemo(() => {
+    if (!contacts?.length) return getWhatsAppContacts();
+    return contacts.some((contact) => contact.available) ? contacts : getWhatsAppContacts();
+  }, [contacts]);
 
   return (
     <div className={cn("space-y-2", className)} aria-label="Choose WhatsApp country">

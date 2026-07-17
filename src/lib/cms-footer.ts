@@ -48,6 +48,36 @@ function columnFromBlock(block: CmsFooterBlock | undefined, fallbackTitle: strin
   return { title: cmsText(block?.title, 120) ?? fallbackTitle, links };
 }
 
+function mergeLinks(requiredLinks: NavLink[], cmsLinks: NavLink[]): NavLink[] {
+  const seen = new Set<string>();
+  const merged: NavLink[] = [];
+
+  for (const link of [...requiredLinks, ...cmsLinks]) {
+    const key = link.href || link.label.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push(link);
+  }
+
+  return merged;
+}
+
+function mergeColumns(requiredColumns: FooterColumn[], cmsColumns: FooterColumn[]): FooterColumn[] {
+  const columns = requiredColumns.map((column) => ({ ...column, links: [...column.links] }));
+
+  for (const cmsColumn of cmsColumns) {
+    const existing = columns.find((column) => column.title.toLowerCase() === cmsColumn.title.toLowerCase());
+    if (!existing) {
+      columns.push(cmsColumn);
+      continue;
+    }
+
+    existing.links = mergeLinks(existing.links, cmsColumn.links);
+  }
+
+  return columns;
+}
+
 function withRequiredFooterLinks(columns: FooterColumn[]): FooterColumn[] {
   const caseStudyFooterLink = { label: caseStudiesNavLink.label, href: caseStudiesNavLink.href };
   const hasCaseStudies = columns.some((column) => column.links.some((link) => link.href === caseStudiesNavLink.href));
@@ -80,9 +110,10 @@ export async function getSiteFooterContent(): Promise<SiteFooterContent> {
   const locationsBlock = blockByKey(blocks, "locations");
   const copyrightBlock = blockByKey(blocks, "copyright");
   const cmsColumns = [productLinks, solutionLinks].filter((column): column is FooterColumn => Boolean(column));
+  const columns = withRequiredFooterLinks(mergeColumns(footerColumns, cmsColumns));
 
   return {
-    columns: cmsColumns.length ? withRequiredFooterLinks(cmsColumns) : footerColumns,
+    columns,
     description:
       firstParagraph(companyBlock?.content) ??
       `Retail ERP, POS and AI-powered retail management by ${company.parent}, delivering software solutions since ${company.foundedYear}.`,
