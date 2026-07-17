@@ -1,6 +1,6 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import { MessageCircle } from "lucide-react";
-import { contactConfig, getOfficesForDisplay } from "@/config/contact";
+import { contactConfig, getOfficesForDisplay, type RegionalOffice } from "@/config/contact";
 
 /**
  * Regional sales contacts, driven entirely by src/config/contact.ts.
@@ -8,8 +8,17 @@ import { contactConfig, getOfficesForDisplay } from "@/config/contact";
  * wa.me links appear automatically once verified numbers are configured.
  * Compact grid on desktop, stacked on mobile.
  */
-export function RegionalContacts({ invert = false }: { invert?: boolean }) {
-  const offices = getOfficesForDisplay();
+export function RegionalContacts({
+  invert = false,
+  offices = getOfficesForDisplay(),
+  infoEmail = contactConfig.infoEmail,
+  globalEmail = contactConfig.globalEmail,
+}: {
+  invert?: boolean;
+  offices?: RegionalOffice[];
+  infoEmail?: string;
+  globalEmail?: string;
+}) {
   const heading = invert ? "text-brand-200" : "text-brand-600";
   const label = invert ? "text-white" : "text-ink";
   const muted = invert ? "text-white/60" : "text-ink-muted";
@@ -68,10 +77,10 @@ export function RegionalContacts({ invert = false }: { invert?: boolean }) {
       </ul>
       <p className={`mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs ${muted}`}>
         <span>
-          Email: <a href={`mailto:${contactConfig.infoEmail}`} className="hover:underline">{contactConfig.infoEmail}</a>
+          Email: <a href={`mailto:${infoEmail}`} className="hover:underline">{infoEmail}</a>
         </span>
         <span>
-          Global enquiries: <a href={`mailto:${contactConfig.globalEmail}`} className="hover:underline">{contactConfig.globalEmail}</a>
+          Global enquiries: <a href={`mailto:${globalEmail}`} className="hover:underline">{globalEmail}</a>
         </span>
       </p>
     </div>

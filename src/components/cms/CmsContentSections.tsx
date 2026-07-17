@@ -289,6 +289,7 @@ function renderCmsSection(section: CmsContentSection) {
     case "testimonials":
       return <CmsTestimonialsSection key={section.section_key ?? section.title ?? "testimonials"} section={section} />;
     case "stats":
+    case "trust_metrics":
       return <CmsStatsSection key={section.section_key ?? section.title ?? "stats"} section={section} />;
     case "cta":
       return <CmsCtaSection key={section.section_key ?? section.title ?? "cta"} section={section} />;
@@ -299,10 +300,13 @@ function renderCmsSection(section: CmsContentSection) {
     case "comparison":
       return <CmsComparisonSection key={section.section_key ?? section.title ?? "comparison"} section={section} />;
     case "feature_grid":
+    case "case_study_grid":
     case "product_highlights":
     case "industry_use_cases":
     case "module_details":
       return <CmsCardGridSection key={section.section_key ?? section.title ?? "cards"} section={section} />;
+    case "rich_text":
+    case "client_logos":
     case "custom":
       return <CmsCustomSection key={section.section_key ?? section.title ?? "custom"} section={section} />;
     default:

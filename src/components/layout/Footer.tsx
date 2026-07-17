@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
 import { company } from "@/data/company";
-import { contactConfig } from "@/config/contact";
 import { Container } from "@/components/ui/Container";
+import { getCmsSettings } from "@/lib/cms";
+import { getSiteContactSettings } from "@/lib/contact-settings";
 import { getSiteFooterContent } from "@/lib/cms-footer";
 import { Logo } from "./Logo";
 import { RegionalContacts } from "./RegionalContacts";
@@ -28,7 +29,8 @@ function FooterLink({ href, className, children }: { href: string; className?: s
 }
 
 export async function Footer() {
-  const footer = await getSiteFooterContent();
+  const [footer, settings] = await Promise.all([getSiteFooterContent(), getCmsSettings()]);
+  const contactSettings = getSiteContactSettings(settings);
 
   return (
     <footer className="bg-ink text-white">
@@ -53,7 +55,12 @@ export async function Footer() {
       {/* Regional contacts */}
       <div className="border-t border-white/10">
         <Container className="py-8">
-          <RegionalContacts invert />
+          <RegionalContacts
+            invert
+            offices={contactSettings.offices}
+            infoEmail={contactSettings.infoEmail}
+            globalEmail={contactSettings.globalEmail}
+          />
           {footer.contactContent || footer.locationsContent ? (
             <div className="mt-5 grid gap-4 text-sm text-white/60 sm:grid-cols-2">
               {footer.locationsContent ? (
@@ -85,8 +92,8 @@ export async function Footer() {
               <span className="inline-flex items-center gap-1.5">
                 <MapPin aria-hidden="true" className="h-3.5 w-3.5" /> {company.headquarters}
               </span>
-              <a href={`mailto:${contactConfig.infoEmail}`} className="inline-flex items-center gap-1.5 hover:text-white hover:underline">
-                <Mail aria-hidden="true" className="h-3.5 w-3.5" /> {contactConfig.infoEmail}
+              <a href={`mailto:${contactSettings.infoEmail}`} className="inline-flex items-center gap-1.5 hover:text-white hover:underline">
+                <Mail aria-hidden="true" className="h-3.5 w-3.5" /> {contactSettings.infoEmail}
               </a>
             </p>
           </div>

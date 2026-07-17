@@ -1,4 +1,4 @@
-import { contactConfig, getOfficesForDisplay } from "@/config/contact";
+import { contactConfig, getOfficesForDisplay, type RegionalOffice } from "@/config/contact";
 
 export interface WhatsAppPageContext {
   pageTitle?: string;
@@ -23,7 +23,11 @@ export function normalizeWhatsAppNumber(value: string | null | undefined): strin
 }
 
 export function getWhatsAppContacts(): WhatsAppContactOption[] {
-  return getOfficesForDisplay().map((office) => {
+  return whatsAppContactsFromOffices(getOfficesForDisplay());
+}
+
+export function whatsAppContactsFromOffices(offices: RegionalOffice[]): WhatsAppContactOption[] {
+  return offices.map((office) => {
     const number = normalizeWhatsAppNumber(office.whatsappE164);
     const available = Boolean(office.verified && number);
 
@@ -39,16 +43,16 @@ export function getWhatsAppContacts(): WhatsAppContactOption[] {
   });
 }
 
-export function buildWhatsAppMessage(context: WhatsAppPageContext = {}): string {
-  const lines: string[] = [contactConfig.defaultWhatsAppMessage];
+export function buildWhatsAppMessage(context: WhatsAppPageContext = {}, defaultMessage: string = contactConfig.defaultWhatsAppMessage): string {
+  const lines: string[] = [defaultMessage];
   if (context.pageTitle) lines.push(`Page: ${context.pageTitle}`);
   if (context.route) lines.push(`Route: ${context.route}`);
   if (context.pageUrl) lines.push(`URL: ${context.pageUrl}`);
   return lines.join("\n");
 }
 
-export function buildWhatsAppHref(number: string | null | undefined, context: WhatsAppPageContext = {}): string | null {
+export function buildWhatsAppHref(number: string | null | undefined, context: WhatsAppPageContext = {}, defaultMessage?: string): string | null {
   const normalized = normalizeWhatsAppNumber(number);
   if (!normalized) return null;
-  return `https://wa.me/${normalized}?text=${encodeURIComponent(buildWhatsAppMessage(context))}`;
+  return `https://wa.me/${normalized}?text=${encodeURIComponent(buildWhatsAppMessage(context, defaultMessage))}`;
 }

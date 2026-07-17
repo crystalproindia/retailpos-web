@@ -9,6 +9,8 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/seo/jsonld";
 import { getCmsSettings } from "@/lib/cms";
 import { getSiteNavigation } from "@/lib/cms-navigation";
+import { getSiteContactSettings } from "@/lib/contact-settings";
+import { whatsAppContactsFromOffices } from "@/lib/whatsapp";
 import "@/styles/globals.css";
 
 const display = Bricolage_Grotesque({
@@ -47,6 +49,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [settings, navigation] = await Promise.all([getCmsSettings(), getSiteNavigation()]);
+  const contactSettings = getSiteContactSettings(settings);
+  const whatsAppContacts = whatsAppContactsFromOffices(contactSettings.offices);
 
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
@@ -63,10 +67,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           navGroups={navigation.navGroups}
           topLevelLinks={navigation.topLevelLinks}
           quickLinks={navigation.quickLinks}
+          whatsAppContacts={whatsAppContacts}
+          defaultWhatsAppMessage={contactSettings.defaultWhatsAppMessage}
         />
         <main id="main">{children}</main>
         <Footer />
-        <FloatingWhatsApp />
+        <FloatingWhatsApp contacts={whatsAppContacts} defaultMessage={contactSettings.defaultWhatsAppMessage} />
       </body>
     </html>
   );

@@ -3,6 +3,9 @@ import type { NavLink } from "@/types/content";
 export interface CaseStudy {
   slug: string;
   title: string;
+  clientName?: string;
+  location?: string;
+  publishedAt?: string;
   businessType: string;
   icon: string;
   summary: string;
@@ -11,6 +14,9 @@ export interface CaseStudy {
   result: string;
   modules: string[];
   rolloutFocus: string[];
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImageUrl?: string;
 }
 
 export const caseStudiesNavLink: NavLink = {

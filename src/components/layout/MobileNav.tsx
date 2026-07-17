@@ -16,6 +16,7 @@ import type { NavGroup, NavLink } from "@/types/content";
 import { Icon } from "@/components/ui/Icon";
 import { ButtonLink } from "@/components/ui/Button";
 import { WhatsAppCountrySelector } from "@/components/contact/WhatsAppContact";
+import type { WhatsAppContactOption } from "@/lib/whatsapp";
 import { trackEvent } from "@/lib/analytics";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { Logo } from "./Logo";
@@ -26,6 +27,8 @@ interface MobileNavProps {
   navGroups?: NavGroup[];
   topLevelLinks?: NavLink[];
   quickLinks?: NavLink[];
+  whatsAppContacts?: WhatsAppContactOption[];
+  defaultWhatsAppMessage?: string;
 }
 
 const subscribeToHydration = () => () => {};
@@ -44,6 +47,8 @@ export function MobileNav({
   navGroups = staticNavGroups,
   topLevelLinks = staticTopLevelLinks,
   quickLinks = staticQuickLinks,
+  whatsAppContacts,
+  defaultWhatsAppMessage,
 }: MobileNavProps) {
   const [expanded, setExpanded] = useState<string | null>(navGroups[0]?.label ?? null);
   const [whatsappOpen, setWhatsappOpen] = useState(false);
@@ -191,7 +196,13 @@ export function MobileNav({
                       Choose a country. Unavailable numbers stay disabled until verified.
                     </p>
                   </div>
-                  <WhatsAppCountrySelector source="mobile_nav" compact onNavigate={closeNav} />
+                  <WhatsAppCountrySelector
+                    source="mobile_nav"
+                    compact
+                    contacts={whatsAppContacts}
+                    defaultMessage={defaultWhatsAppMessage}
+                    onNavigate={closeNav}
+                  />
                 </div>
               ) : null}
             </div>

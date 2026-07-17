@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { buildMetadataWithCms } from "@/lib/seo/metadata";
-import { caseStudies, getCaseStudy } from "@/data/case-studies";
+import type { CaseStudy } from "@/data/case-studies";
+import { getCaseStudiesWithFallback, getCaseStudyStaticParams, getCaseStudyWithFallback } from "@/lib/cms-case-studies";
 import { siteConfig } from "@/config/site";
 import { Badge } from "@/components/ui/Badge";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -15,15 +16,15 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
-export function generateStaticParams() {
-  return caseStudies.map((study) => ({ slug: study.slug }));
+export async function generateStaticParams() {
+  return getCaseStudyStaticParams();
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const study = getCaseStudy(slug);
+  const study = await getCaseStudyWithFallback(slug);
   const path = `/case-studies/${slug}`;
 
   if (!study) {
@@ -36,13 +37,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   return buildMetadataWithCms(path, {
-    title: `${study.title} Case Study | RetailPOS.biz`,
-    description: `${study.summary} Learn how RetailPOS.biz supports ${study.businessType.toLowerCase()} with POS, inventory, reporting and retail ERP workflows.`,
+    title: study.seoTitle ?? `${study.title} Case Study | RetailPOS.biz`,
+    description: study.seoDescription ?? `${study.summary} Learn how RetailPOS.biz supports ${study.businessType.toLowerCase()} with POS, inventory, reporting and retail ERP workflows.`,
+    ogImage: study.seoImageUrl,
     path,
   });
 }
 
-function caseStudyJsonLd(study: NonNullable<ReturnType<typeof getCaseStudy>>) {
+function caseStudyJsonLd(study: CaseStudy) {
   return {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -62,11 +64,12 @@ function caseStudyJsonLd(study: NonNullable<ReturnType<typeof getCaseStudy>>) {
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const study = getCaseStudy(slug);
+  const study = await getCaseStudyWithFallback(slug);
   if (!study) notFound();
 
   const path = `/case-studies/${study.slug}`;
-  const related = caseStudies.filter((item) => item.slug !== study.slug).slice(0, 3);
+  const allStudies = await getCaseStudiesWithFallback();
+  const related = allStudies.filter((item) => item.slug !== study.slug).slice(0, 3);
 
   return (
     <>
@@ -82,7 +85,9 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
           />
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <Badge tone="brand">{study.businessType}</Badge>
-            <span className="font-mono text-xs uppercase tracking-wider text-ink-muted">Anonymous scenario</span>
+            <span className="font-mono text-xs uppercase tracking-wider text-ink-muted">
+              {study.clientName ? study.clientName : "Anonymous scenario"}
+            </span>
           </div>
           <div className="mt-5 grid gap-8 lg:grid-cols-[1fr,0.72fr] lg:items-end">
             <div>
@@ -103,10 +108,13 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                 <div>
                   <p className="text-sm font-semibold text-ink">Scenario type</p>
                   <p className="text-sm text-ink-muted">{study.businessType}</p>
+                  {study.location ? <p className="mt-1 text-xs text-ink-muted">{study.location}</p> : null}
                 </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-                Client names, logos and quantified results are intentionally omitted unless approved for publication.
+                {study.clientName
+                  ? "This case study is published from the RetailPOS Command Center CMS."
+                  : "Client names, logos and quantified results are intentionally omitted unless approved for publication."}
               </p>
             </aside>
           </div>
@@ -134,14 +142,16 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
             title="Modules usually reviewed in this scenario"
             description="The exact rollout depends on store size, current tools, integrations and training needs."
           />
-          <div className="grid gap-4 sm:grid-cols-2">
-            {study.modules.map((module) => (
+          {study.modules.length ? (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {study.modules.map((module) => (
               <div key={module} className="rounded-lg border border-line bg-white p-5 shadow-card">
                 <Icon name="PackageCheck" className="h-5 w-5 text-brand-600" />
                 <h3 className="mt-3 text-sm font-semibold text-ink">{module}</h3>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : null}
         </div>
       </Section>
       <Section tone="white" className="py-12 sm:py-16">
@@ -151,14 +161,16 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
             title="What a demo should validate"
             description="These are the practical checks a team can walk through before deciding whether RetailPOS fits the operation."
           />
-          <ul className="space-y-3">
-            {study.rolloutFocus.map((item) => (
+          {study.rolloutFocus.length ? (
+            <ul className="space-y-3">
+              {study.rolloutFocus.map((item) => (
               <li key={item} className="flex gap-3 rounded-lg border border-line bg-paper px-4 py-3">
                 <Icon name="ShieldCheck" className="mt-0.5 h-4 w-4 shrink-0 text-ledger-600" />
                 <span className="text-sm leading-relaxed text-ink">{item}</span>
               </li>
-            ))}
-          </ul>
+              ))}
+            </ul>
+          ) : null}
         </div>
       </Section>
       <Section tone="paper" className="py-12 sm:py-16">

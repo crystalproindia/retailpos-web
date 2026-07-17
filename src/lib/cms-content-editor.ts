@@ -56,6 +56,10 @@ const supportedSectionTypes = new Set<CmsContentSectionType>([
   "stats",
   "comparison",
   "footer_seo",
+  "trust_metrics",
+  "client_logos",
+  "rich_text",
+  "case_study_grid",
   "custom",
 ]);
 

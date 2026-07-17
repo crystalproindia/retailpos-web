@@ -1,6 +1,7 @@
 import "server-only";
 
-const DEFAULT_CMS_API_BASE_URL = "https://app.retailpos.biz";
+const CMS_API_PREFIX = "/api/public/cms";
+const DEFAULT_CMS_API_BASE_URL = "https://app.retailpos.biz/api/public/cms";
 const DEFAULT_TIMEOUT_MS = 5000;
 
 export interface CmsSettings {
@@ -17,6 +18,29 @@ export interface CmsSettings {
   contact_email?: string | null;
   address?: string | null;
   same_as_social_links?: unknown;
+  website_settings?: unknown;
+}
+
+export interface CmsPublicPage {
+  slug?: string | null;
+  route_path?: string | null;
+  title?: string | null;
+  h1?: string | null;
+  subtitle?: string | null;
+  hero_content?: string | null;
+  intro_content?: string | null;
+  body_content?: string | null;
+  footer_seo_content?: string | null;
+  primary_cta?: unknown;
+  secondary_cta?: unknown;
+  content_sections?: unknown;
+  faq_items?: unknown;
+  seo?: unknown;
+  page_type?: string | null;
+  sections?: unknown;
+  is_published?: boolean | number | null;
+  status?: string | null;
+  published_at?: string | null;
 }
 
 export interface CmsSeoPage {
@@ -113,6 +137,26 @@ export interface CmsSitemapEntry {
   lastModified?: string | null;
 }
 
+export interface CmsPublicCaseStudy {
+  slug?: string | null;
+  title?: string | null;
+  client_name?: string | null;
+  industry?: string | null;
+  location?: string | null;
+  business_type?: string | null;
+  summary?: string | null;
+  challenge?: string | null;
+  solution?: string | null;
+  results?: string | null;
+  result?: string | null;
+  outcome_metrics?: unknown;
+  sections?: unknown;
+  seo?: unknown;
+  is_published?: boolean | number | null;
+  status?: string | null;
+  published_at?: string | null;
+}
+
 export interface CmsRobots {
   content?: string | null;
   default_index?: boolean | number | null;
@@ -149,6 +193,10 @@ export type CmsContentSectionType =
   | "stats"
   | "comparison"
   | "footer_seo"
+  | "trust_metrics"
+  | "client_logos"
+  | "rich_text"
+  | "case_study_grid"
   | "custom";
 
 export interface CmsContentSection {
@@ -209,7 +257,12 @@ function warn(message: string, error?: unknown) {
 }
 
 function endpointUrl(path: string): string {
-  return `${cmsBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+  const base = cmsBaseUrl();
+  let normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  if (base.endsWith(CMS_API_PREFIX) && normalizedPath.startsWith(`${CMS_API_PREFIX}/`)) {
+    normalizedPath = normalizedPath.slice(CMS_API_PREFIX.length);
+  }
+  return `${base}${normalizedPath}`;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -258,10 +311,134 @@ export async function getCmsSettings(): Promise<CmsSettings | null> {
   return isRecord(settings) ? settings : null;
 }
 
+function text(value: unknown, maxLength = 1000): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  return trimmed.length > maxLength ? trimmed.slice(0, maxLength).trimEnd() : trimmed;
+}
+
+function pageSlugForPath(pathname: string): string {
+  const path = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  if (path === "/") return "home";
+  return path.replace(/^\/+|\/+$/g, "").replace(/\//g, "-");
+}
+
+function seoFromPublicPage(page: CmsPublicPage): CmsSeoPage | null {
+  if (!isRecord(page.seo)) return null;
+  return {
+    meta_title: text(page.seo.title) ?? text(page.seo.meta_title),
+    meta_description: text(page.seo.description) ?? text(page.seo.meta_description),
+    canonical_url: text(page.seo.canonical_url),
+    robots_index: page.seo.robots_index as boolean | number | null | undefined,
+    robots_follow: page.seo.robots_follow as boolean | number | null | undefined,
+    schema_json: page.seo.schema_json,
+    og_title: isRecord(page.seo.open_graph) ? text(page.seo.open_graph.title) : undefined,
+    og_description: isRecord(page.seo.open_graph) ? text(page.seo.open_graph.description) : undefined,
+    og_image_url: isRecord(page.seo.open_graph) ? text(page.seo.open_graph.image_url) : text(page.seo.image_url),
+    twitter_title: isRecord(page.seo.twitter) ? text(page.seo.twitter.title) : undefined,
+    twitter_description: isRecord(page.seo.twitter) ? text(page.seo.twitter.description) : undefined,
+    twitter_image_url: isRecord(page.seo.twitter) ? text(page.seo.twitter.image_url) : undefined,
+    is_published: page.is_published,
+    status: page.status,
+    published_at: page.published_at,
+  };
+}
+
+function buttonFromPublic(value: unknown): CmsContentButton | null {
+  if (!isRecord(value)) return null;
+  return {
+    label: text(value.label) ?? null,
+    url: text(value.url) ?? null,
+  };
+}
+
+function normalizePublicSections(page: CmsPublicPage): CmsContentSection[] {
+  const sections: CmsContentSection[] = [];
+  const primaryCta = buttonFromPublic(page.primary_cta);
+  const secondaryCta = buttonFromPublic(page.secondary_cta);
+
+  if (text(page.h1) || text(page.title) || text(page.subtitle) || text(page.hero_content)) {
+    sections.push({
+      section_key: "hero",
+      section_type: "hero",
+      title: text(page.h1) ?? text(page.title) ?? null,
+      subtitle: text(page.subtitle) ?? text(page.hero_content) ?? null,
+      body: text(page.hero_content) ?? null,
+      primary_cta: primaryCta,
+      secondary_cta: secondaryCta,
+    });
+  }
+
+  if (text(page.body_content) || text(page.intro_content)) {
+    sections.push({
+      section_key: "body-content",
+      section_type: "rich_text",
+      title: text(page.intro_content) ? "Overview" : null,
+      body: text(page.body_content) ?? text(page.intro_content) ?? null,
+    });
+  }
+
+  if (Array.isArray(page.faq_items) && page.faq_items.length) {
+    sections.push({
+      section_key: "faq",
+      section_type: "faq",
+      title: "Common questions",
+      items: page.faq_items,
+    });
+  }
+
+  if (text(page.footer_seo_content)) {
+    sections.push({
+      section_key: "footer-seo",
+      section_type: "footer_seo",
+      title: "More about this page",
+      body: text(page.footer_seo_content, 5000) ?? null,
+    });
+  }
+
+  const rawSections = Array.isArray(page.sections) ? page.sections : Array.isArray(page.content_sections) ? page.content_sections : [];
+  for (const section of rawSections) {
+    if (isRecord(section)) sections.push(section as CmsContentSection);
+  }
+
+  return sections;
+}
+
+function contentPageFromPublicPage(page: CmsPublicPage): CmsContentPage {
+  return {
+    page_key: text(page.slug) ?? null,
+    route_path: text(page.route_path) ?? (text(page.slug) ? `/${text(page.slug)}` : null),
+    page_type: text(page.page_type) ?? null,
+    title: text(page.title) ?? null,
+    sections: normalizePublicSections(page),
+    status: page.status,
+    is_published: page.is_published,
+  };
+}
+
+export async function getCmsPages(): Promise<CmsPublicPage[]> {
+  const pages = await cmsFetch<CmsPublicPage[]>("/pages", 900);
+  return Array.isArray(pages) ? pages.filter(isPublished) : [];
+}
+
+export async function getCmsPageBySlug(slug: string): Promise<CmsPublicPage | null> {
+  const page = await cmsFetch<CmsPublicPage>(`/pages/${encodeURIComponent(slug)}`, 300);
+  return isRecord(page) && isPublished(page) ? page : null;
+}
+
+export async function getCmsContentPageBySlug(slug: string): Promise<CmsContentPage | null> {
+  const page = await getCmsPageBySlug(slug);
+  return page ? contentPageFromPublicPage(page) : null;
+}
+
 export async function getSeoPageByPath(pathname: string): Promise<CmsSeoPage | null> {
   const path = pathname.startsWith("/") ? pathname : `/${pathname}`;
   const seoPage = await cmsFetch<CmsSeoPage>(`/api/public/cms/seo-page?path=${encodeURIComponent(path)}`, 300);
-  return isRecord(seoPage) && isPublished(seoPage) ? seoPage : null;
+  if (isRecord(seoPage) && isPublished(seoPage)) return seoPage;
+
+  const publicPage = await getCmsPageBySlug(pageSlugForPath(path));
+  return publicPage ? seoFromPublicPage(publicPage) : null;
 }
 
 export async function getLandingPageBySlug(slug: string): Promise<CmsLandingPage | null> {
@@ -311,7 +488,7 @@ export async function getCmsContentPageByKey(pageKey: string): Promise<CmsConten
 }
 
 export async function getCmsNavigation(location?: "header" | "footer" | "mobile"): Promise<CmsNavigationItem[]> {
-  const items = await cmsFetch<CmsNavigationItem[]>("/api/public/cms/content/navigation", 300);
+  const items = (await cmsFetch<CmsNavigationItem[]>("/navigation", 300)) ?? (await cmsFetch<CmsNavigationItem[]>("/api/public/cms/content/navigation", 300));
   if (!Array.isArray(items)) return [];
   return items.filter((item) => item.is_enabled !== false && item.is_enabled !== 0 && (!location || item.location === location));
 }
@@ -319,4 +496,14 @@ export async function getCmsNavigation(location?: "header" | "footer" | "mobile"
 export async function getCmsFooter(): Promise<CmsFooterBlock[]> {
   const blocks = await cmsFetch<CmsFooterBlock[]>("/api/public/cms/content/footer", 300);
   return Array.isArray(blocks) ? blocks.filter((block) => block.is_enabled !== false && block.is_enabled !== 0) : [];
+}
+
+export async function getCmsCaseStudies(): Promise<CmsPublicCaseStudy[]> {
+  const studies = await cmsFetch<CmsPublicCaseStudy[]>("/case-studies", 900);
+  return Array.isArray(studies) ? studies.filter(isPublished) : [];
+}
+
+export async function getCmsCaseStudy(slug: string): Promise<CmsPublicCaseStudy | null> {
+  const study = await cmsFetch<CmsPublicCaseStudy>(`/case-studies/${encodeURIComponent(slug)}`, 900);
+  return isRecord(study) && isPublished(study) ? study : null;
 }

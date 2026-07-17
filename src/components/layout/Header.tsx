@@ -10,6 +10,7 @@ import { primaryCtas } from "@/data/ctas";
 import type { NavGroup, NavLink } from "@/types/content";
 import { Icon } from "@/components/ui/Icon";
 import { ButtonLink } from "@/components/ui/Button";
+import type { WhatsAppContactOption } from "@/lib/whatsapp";
 import { Logo } from "./Logo";
 import { MobileNav } from "./MobileNav";
 
@@ -17,12 +18,16 @@ interface HeaderProps {
   navGroups?: NavGroup[];
   topLevelLinks?: NavLink[];
   quickLinks?: NavLink[];
+  whatsAppContacts?: WhatsAppContactOption[];
+  defaultWhatsAppMessage?: string;
 }
 
 export function Header({
   navGroups = staticNavGroups,
   topLevelLinks = staticTopLevelLinks,
   quickLinks = staticQuickLinks,
+  whatsAppContacts,
+  defaultWhatsAppMessage,
 }: HeaderProps) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -228,6 +233,8 @@ export function Header({
         navGroups={navGroups}
         topLevelLinks={topLevelLinks}
         quickLinks={quickLinks}
+        whatsAppContacts={whatsAppContacts}
+        defaultWhatsAppMessage={defaultWhatsAppMessage}
       />
     </header>
   );

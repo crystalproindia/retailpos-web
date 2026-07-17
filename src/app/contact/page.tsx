@@ -11,9 +11,10 @@ import { LeadForm } from "@/components/forms/LeadForm";
 import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
 import { CmsContentSections } from "@/components/cms/CmsContentSections";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
-import { contactConfig } from "@/config/contact";
 import { siteConfig } from "@/config/site";
-import { buildWhatsAppHref, getWhatsAppContacts } from "@/lib/whatsapp";
+import { getCmsSettings } from "@/lib/cms";
+import { getSiteContactSettings, type SiteContactSettings } from "@/lib/contact-settings";
+import { buildWhatsAppHref, whatsAppContactsFromOffices } from "@/lib/whatsapp";
 
 export function generateMetadata(): Promise<Metadata> {
   return buildMetadataWithCms("/contact", {
@@ -37,13 +38,15 @@ const expectations = [
   "Use the regional office list for country context; unverified phone numbers are intentionally not published.",
 ];
 
-const contactRoutes = [
-  { icon: "Tag", title: "Sales", email: contactConfig.salesEmail, text: "New evaluations, product fit, module selection and pricing conversations." },
-  { icon: "LifeBuoy", title: "Support", email: contactConfig.supportEmail, text: "Existing-customer help, operational questions and issue routing." },
-  { icon: "Route", title: "Implementation", email: contactConfig.salesEmail, text: "Rollout planning, data migration, hardware context, integrations and training." },
-  { icon: "Handshake", title: "Partnership", email: contactConfig.primaryEmail, text: "Integration, channel, regional and service partnership discussions." },
-  { icon: "Users", title: "Careers", email: contactConfig.primaryEmail, text: "Work with the RetailPOS.biz and CrystalPro product delivery teams." },
-];
+function contactRoutes(contactSettings: SiteContactSettings) {
+  return [
+    { icon: "Tag", title: "Sales", email: contactSettings.globalEmail, text: "New evaluations, product fit, module selection and pricing conversations." },
+    { icon: "LifeBuoy", title: "Support", email: contactSettings.infoEmail, text: "Existing-customer help, operational questions and issue routing." },
+    { icon: "Route", title: "Implementation", email: contactSettings.globalEmail, text: "Rollout planning, data migration, hardware context, integrations and training." },
+    { icon: "Handshake", title: "Partnership", email: contactSettings.infoEmail, text: "Integration, channel, regional and service partnership discussions." },
+    { icon: "Users", title: "Careers", email: contactSettings.infoEmail, text: "Work with the RetailPOS.biz and CrystalPro product delivery teams." },
+  ];
+}
 
 const operatingSignals = [
   { icon: "Globe", title: "Regional coverage", text: "India headquarters with listed regional presence for Singapore and Malaysia context." },
@@ -52,12 +55,14 @@ const operatingSignals = [
 ];
 
 export default async function ContactPage() {
-  const contentPage = await getCmsContentPageForRoute("/contact", "contact");
+  const [contentPage, settings] = await Promise.all([getCmsContentPageForRoute("/contact", "contact"), getCmsSettings()]);
+  const contactSettings = getSiteContactSettings(settings);
   const cmsSections = cmsContentSections(contentPage);
   const hero = cmsHeroContent(firstCmsSection(cmsSections, "hero"));
   const bodySections = cmsSectionsExcept(cmsSections, ["hero"]);
-  const offices = [...contactConfig.offices].sort((a, b) => a.displayOrder - b.displayOrder);
-  const whatsappContacts = getWhatsAppContacts();
+  const offices = [...contactSettings.offices].sort((a, b) => a.displayOrder - b.displayOrder);
+  const whatsappContacts = whatsAppContactsFromOffices(contactSettings.offices);
+  const routes = contactRoutes(contactSettings);
   return (
     <>
       <div className="border-b border-line bg-paper">
@@ -127,7 +132,7 @@ export default async function ContactPage() {
               description="A clearer enquiry route helps the team respond with the right context instead of sending every message through one generic queue."
             />
             <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-              {contactRoutes.map((route) => (
+              {routes.map((route) => (
                 <li key={route.title} className="rounded-lg border border-line bg-white p-5 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-raised">
                   <Icon name={route.icon} className="h-5 w-5 text-brand-600" />
                   <h3 className="mt-3 text-sm font-semibold text-ink">{route.title}</h3>
@@ -175,15 +180,15 @@ export default async function ContactPage() {
                 <li className="flex items-center gap-2.5">
                   <Icon name="MessageCircle" className="h-4 w-4 text-brand-600" />
                   <span className="text-ink-muted">Email:</span>
-                  <a href={`mailto:${contactConfig.infoEmail}`} className="font-medium text-brand-700 hover:underline">
-                    {contactConfig.infoEmail}
+                  <a href={`mailto:${contactSettings.infoEmail}`} className="font-medium text-brand-700 hover:underline">
+                    {contactSettings.infoEmail}
                   </a>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Icon name="Globe" className="h-4 w-4 text-brand-600" />
                   <span className="text-ink-muted">Global enquiries:</span>
-                  <a href={`mailto:${contactConfig.globalEmail}`} className="font-medium text-brand-700 hover:underline">
-                    {contactConfig.globalEmail}
+                  <a href={`mailto:${contactSettings.globalEmail}`} className="font-medium text-brand-700 hover:underline">
+                    {contactSettings.globalEmail}
                   </a>
                 </li>
               </ul>
@@ -198,7 +203,7 @@ export default async function ContactPage() {
                         pageTitle: "Contact RetailPOS",
                         pageUrl: `${siteConfig.url}/contact`,
                         route: "/contact",
-                      })
+                      }, contactSettings.defaultWhatsAppMessage)
                     : null;
 
                   return (

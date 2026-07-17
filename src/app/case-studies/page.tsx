@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { buildMetadataWithCms } from "@/lib/seo/metadata";
-import { caseStudies } from "@/data/case-studies";
+import type { CaseStudy } from "@/data/case-studies";
+import { getCaseStudiesWithFallback } from "@/lib/cms-case-studies";
 import { siteConfig } from "@/config/site";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ButtonLink } from "@/components/ui/Button";
@@ -26,7 +27,7 @@ export function generateMetadata(): Promise<Metadata> {
   });
 }
 
-function caseStudiesJsonLd() {
+function caseStudiesJsonLd(studies: CaseStudy[]) {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -35,7 +36,7 @@ function caseStudiesJsonLd() {
     url: `${siteConfig.url}/case-studies`,
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: caseStudies.map((study, index) => ({
+      itemListElement: studies.map((study, index) => ({
         "@type": "ListItem",
         position: index + 1,
         name: study.title,
@@ -45,10 +46,12 @@ function caseStudiesJsonLd() {
   };
 }
 
-export default function CaseStudiesPage() {
+export default async function CaseStudiesPage() {
+  const studies = await getCaseStudiesWithFallback();
+
   return (
     <>
-      <JsonLd data={caseStudiesJsonLd()} />
+      <JsonLd data={caseStudiesJsonLd(studies)} />
       <div className="border-b border-line bg-paper">
         <Container className="pb-10 pt-2 sm:pb-12">
           <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Case Studies", path: "/case-studies" }]} />
@@ -89,7 +92,7 @@ export default function CaseStudiesPage() {
           description="Each example keeps the discussion practical: the business type, the operational challenge, the RetailPOS setup and the type of improvement a team can evaluate in a demo."
         />
         <ul className="mt-8 grid gap-5 md:grid-cols-2">
-          {caseStudies.map((study) => (
+          {studies.map((study) => (
             <li key={study.slug}>
               <Link
                 href={`/case-studies/${study.slug}`}
@@ -99,12 +102,13 @@ export default function CaseStudiesPage() {
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded bg-brand-50 text-brand-600">
                     <Icon name={study.icon} className="h-5 w-5" />
                   </span>
-                  <Badge tone="neutral">{study.businessType}</Badge>
+                  <Badge tone="neutral">{study.clientName ?? study.businessType}</Badge>
                 </div>
                 <h2 className="mt-5 font-display text-xl font-semibold leading-snug text-ink group-hover:text-brand-700">
                   {study.title}
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-ink-muted">{study.summary}</p>
+                {study.location ? <p className="mt-2 text-xs font-medium text-ink-muted">{study.location}</p> : null}
                 <dl className="mt-5 grid gap-4 text-sm">
                   <div>
                     <dt className="font-semibold text-ink">Challenge</dt>

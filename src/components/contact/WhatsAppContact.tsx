@@ -4,7 +4,12 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
-import { buildWhatsAppHref, getWhatsAppContacts, type WhatsAppPageContext } from "@/lib/whatsapp";
+import {
+  buildWhatsAppHref,
+  getWhatsAppContacts,
+  type WhatsAppContactOption,
+  type WhatsAppPageContext,
+} from "@/lib/whatsapp";
 
 type WhatsAppSource = "floating" | "mobile_nav";
 
@@ -12,6 +17,8 @@ interface WhatsAppCountrySelectorProps {
   source: WhatsAppSource;
   compact?: boolean;
   className?: string;
+  contacts?: WhatsAppContactOption[];
+  defaultMessage?: string;
   onNavigate?: () => void;
 }
 
@@ -29,14 +36,16 @@ export function WhatsAppCountrySelector({
   source,
   compact = false,
   className,
+  contacts,
+  defaultMessage,
   onNavigate,
 }: WhatsAppCountrySelectorProps) {
-  const contacts = useMemo(() => getWhatsAppContacts(), []);
+  const contactOptions = useMemo(() => contacts ?? getWhatsAppContacts(), [contacts]);
 
   return (
     <div className={cn("space-y-2", className)} aria-label="Choose WhatsApp country">
-      {contacts.map((contact) => {
-        const href = contact.available ? buildWhatsAppHref(contact.number) : null;
+      {contactOptions.map((contact) => {
+        const href = contact.available ? buildWhatsAppHref(contact.number, {}, defaultMessage) : null;
 
         return (
           <div
@@ -75,7 +84,7 @@ export function WhatsAppCountrySelector({
                     rel="noopener noreferrer"
                     aria-label={`Chat with RetailPOS ${contact.country} on WhatsApp`}
                     onClick={(event) => {
-                      const contextualHref = buildWhatsAppHref(contact.number, currentPageContext());
+                      const contextualHref = buildWhatsAppHref(contact.number, currentPageContext(), defaultMessage);
                       if (contextualHref) event.currentTarget.href = contextualHref;
                       trackEvent("whatsapp_country_selected", {
                         source,
@@ -113,7 +122,13 @@ export function WhatsAppCountrySelector({
   );
 }
 
-export function FloatingWhatsApp() {
+export function FloatingWhatsApp({
+  contacts,
+  defaultMessage,
+}: {
+  contacts?: WhatsAppContactOption[];
+  defaultMessage?: string;
+}) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
@@ -170,7 +185,7 @@ export function FloatingWhatsApp() {
               <X aria-hidden="true" className="h-5 w-5" />
             </button>
           </div>
-          <WhatsAppCountrySelector source="floating" className="mt-4" />
+          <WhatsAppCountrySelector source="floating" className="mt-4" contacts={contacts} defaultMessage={defaultMessage} />
         </div>
       ) : null}
       <button
