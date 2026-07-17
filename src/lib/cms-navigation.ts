@@ -3,6 +3,7 @@ import "server-only";
 import { getCmsNavigation, type CmsNavigationItem } from "@/lib/cms";
 import { cmsText, safeUrl } from "@/lib/cms-content";
 import { navGroups, quickLinks, topLevelLinks } from "@/data/navigation";
+import { caseStudiesNavLink } from "@/data/case-studies";
 import type { NavGroup, NavLink } from "@/types/content";
 
 export interface SiteNavigation {
@@ -46,6 +47,33 @@ function flatLinks(items: CmsNavigationItem[]): NavLink[] {
     .filter((item): item is NavLink => Boolean(item));
 }
 
+function withRequiredCompanyLinks(groups: NavGroup[]): NavGroup[] {
+  const hasCaseStudies = groups.some((group) => group.links.some((link) => link.href === caseStudiesNavLink.href));
+  if (hasCaseStudies) return groups;
+
+  const companyGroup = groups.find((group) => group.label.toLowerCase() === "company");
+  if (!companyGroup) {
+    return [
+      ...groups,
+      {
+        label: "Company",
+        href: "/about",
+        tagline: "Who we are and how to reach us",
+        links: [caseStudiesNavLink],
+      },
+    ];
+  }
+
+  return groups.map((group) =>
+    group === companyGroup
+      ? {
+          ...group,
+          links: [...group.links, caseStudiesNavLink],
+        }
+      : group,
+  );
+}
+
 export async function getSiteNavigation(): Promise<SiteNavigation> {
   const items = (await getCmsNavigation()).filter(isEnabled);
   const headerItems = items.filter((item) => item.location === "header");
@@ -60,7 +88,7 @@ export async function getSiteNavigation(): Promise<SiteNavigation> {
   const cmsQuickLinks = flatLinks(mobileItems);
 
   return {
-    navGroups: cmsGroups.length ? cmsGroups : navGroups,
+    navGroups: cmsGroups.length ? withRequiredCompanyLinks(cmsGroups) : navGroups,
     topLevelLinks: cmsTopLevel.length ? cmsTopLevel : topLevelLinks,
     quickLinks: cmsQuickLinks.length ? cmsQuickLinks : quickLinks,
   };

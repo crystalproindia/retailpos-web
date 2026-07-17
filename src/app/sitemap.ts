@@ -4,6 +4,7 @@ import { getArticles, getCmsSitemap, type CmsSitemapEntry } from "@/lib/cms";
 import { articleSlug } from "@/lib/cms-articles";
 import { allLandingPages } from "@/lib/landing-pages/registry";
 import { pagePath } from "@/lib/landing-pages/helpers";
+import { caseStudies } from "@/data/case-studies";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 type ChangeFrequency = NonNullable<SitemapEntry["changeFrequency"]>;
@@ -79,6 +80,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/industries",
     "/solutions",
     "/blog",
+    "/case-studies",
     "/about",
     "/contact",
     "/pricing",
@@ -99,6 +101,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteConfig.url}${pagePath(page)}`,
       changeFrequency: "monthly" as const,
       priority: 0.7,
+    })),
+    ...caseStudies.map((study) => ({
+      url: `${siteConfig.url}/case-studies/${study.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
   ];
 

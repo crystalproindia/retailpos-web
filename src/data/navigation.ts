@@ -3,6 +3,7 @@ import { products } from "./products";
 import { erpModules } from "./modules";
 import { industries } from "./industries";
 import { solutions } from "./solutions";
+import { caseStudiesNavLink } from "./case-studies";
 import { isImplemented } from "@/lib/landing-pages/registry";
 import { groupedIndustries } from "./industry-groups";
 
@@ -67,6 +68,7 @@ export const navGroups: NavGroup[] = [
     tagline: "Who we are and how to reach us",
     links: [
       { label: "About RetailPOS", href: "/about", icon: "Building2", description: "The product, the principles and the company behind it" },
+      caseStudiesNavLink,
       { label: "Contact", href: "/contact", icon: "Phone", description: "Sales, support and regional offices" },
       { label: "Pricing", href: "/pricing", icon: "Tag", description: "What shapes a quote for your setup" },
       { label: "Book a Demo", href: "/book-demo", icon: "CalendarCheck", description: "30 minutes, your items, your questions" },
@@ -103,6 +105,7 @@ export const footerColumns: { title: string; links: NavLink[] }[] = [
     title: "Company",
     links: [
       { label: "About", href: "/about" },
+      { label: "Case Studies", href: "/case-studies" },
       { label: "Contact", href: "/contact" },
       { label: "Pricing", href: "/pricing" },
       { label: "Book a Demo", href: "/book-demo" },
