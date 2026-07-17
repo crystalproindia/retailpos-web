@@ -66,8 +66,13 @@ export function RegionalContacts({ invert = false }: { invert?: boolean }) {
           </li>
         ))}
       </ul>
-      <p className={`mt-3 text-xs ${muted}`}>
-        General enquiries: <a href={`mailto:${contactConfig.primaryEmail}`} className="hover:underline">{contactConfig.primaryEmail}</a>
+      <p className={`mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs ${muted}`}>
+        <span>
+          Email: <a href={`mailto:${contactConfig.infoEmail}`} className="hover:underline">{contactConfig.infoEmail}</a>
+        </span>
+        <span>
+          Global enquiries: <a href={`mailto:${contactConfig.globalEmail}`} className="hover:underline">{contactConfig.globalEmail}</a>
+        </span>
       </p>
     </div>
   );

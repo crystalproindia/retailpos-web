@@ -173,24 +173,17 @@ export default async function ContactPage() {
               <h2 className="font-display text-display-sm font-semibold text-ink">Email us</h2>
               <ul className="mt-4 space-y-3 text-sm">
                 <li className="flex items-center gap-2.5">
-                  <Icon name="Tag" className="h-4 w-4 text-brand-600" />
-                  <span className="text-ink-muted">Sales:</span>
-                  <a href={`mailto:${contactConfig.salesEmail}`} className="font-medium text-brand-700 hover:underline">
-                    {contactConfig.salesEmail}
-                  </a>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <Icon name="LifeBuoy" className="h-4 w-4 text-brand-600" />
-                  <span className="text-ink-muted">Support:</span>
-                  <a href={`mailto:${contactConfig.supportEmail}`} className="font-medium text-brand-700 hover:underline">
-                    {contactConfig.supportEmail}
-                  </a>
-                </li>
-                <li className="flex items-center gap-2.5">
                   <Icon name="MessageCircle" className="h-4 w-4 text-brand-600" />
-                  <span className="text-ink-muted">General:</span>
-                  <a href={`mailto:${contactConfig.primaryEmail}`} className="font-medium text-brand-700 hover:underline">
-                    {contactConfig.primaryEmail}
+                  <span className="text-ink-muted">Email:</span>
+                  <a href={`mailto:${contactConfig.infoEmail}`} className="font-medium text-brand-700 hover:underline">
+                    {contactConfig.infoEmail}
+                  </a>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Icon name="Globe" className="h-4 w-4 text-brand-600" />
+                  <span className="text-ink-muted">Global enquiries:</span>
+                  <a href={`mailto:${contactConfig.globalEmail}`} className="font-medium text-brand-700 hover:underline">
+                    {contactConfig.globalEmail}
                   </a>
                 </li>
               </ul>

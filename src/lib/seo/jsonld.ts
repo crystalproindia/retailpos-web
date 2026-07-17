@@ -1,4 +1,5 @@
 import { siteConfig } from "@/config/site";
+import { contactConfig, getOfficesForDisplay } from "@/config/contact";
 import { company, socialLinks } from "@/data/company";
 import type { CmsSettings } from "@/lib/cms";
 import { cmsText, safeUrl, stringArray } from "@/lib/cms-content";
@@ -16,11 +17,13 @@ export function organizationJsonLd(settings?: CmsSettings | null) {
     .map((link) => safeUrl(link, { allowRelative: false }))
     .filter((link): link is string => Boolean(link));
   const sameAs = cmsSameAs.length ? cmsSameAs : socialLinks.map((s) => s.href);
-  const contactEmail = cmsText(settings?.contact_email, 120) ?? company.email;
+  const primaryOffice = getOfficesForDisplay().find((office) => office.isPrimary) ?? getOfficesForDisplay()[0];
+  const contactEmail = cmsText(settings?.contact_email, 120) ?? contactConfig.infoEmail;
   const contactPhone =
     cmsText(settings?.contact_phone_india, 80) ??
     cmsText(settings?.contact_phone_singapore, 80) ??
-    cmsText(settings?.contact_phone_malaysia, 80);
+    cmsText(settings?.contact_phone_malaysia, 80) ??
+    primaryOffice?.phoneDisplay;
 
   return {
     "@context": "https://schema.org",

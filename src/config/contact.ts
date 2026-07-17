@@ -3,9 +3,8 @@
  * SINGLE SOURCE for phone/email/WhatsApp across Header, Footer, forms and
  * the future Contact page. The admin panel replaces this via API later.
  *
- * IMPORTANT: `verified: false` numbers are NEVER rendered. Singapore and
- * Malaysia numbers were not provided and MUST NOT be invented — enter the
- * real values below and flip `verified` to true when available.
+ * IMPORTANT: `verified: false` numbers are NEVER rendered. Keep all public
+ * contact numbers here so WhatsApp, footer and contact pages stay in sync.
  */
 
 export interface RegionalOffice {
@@ -24,18 +23,28 @@ export interface RegionalOffice {
   displayOrder: number;
 }
 
-// TODO(verified-data): enter the verified India WhatsApp number as digits only, e.g. 91XXXXXXXXXX.
-const indiaWhatsAppNumber: string | undefined = undefined;
-// TODO(verified-data): enter the verified Singapore WhatsApp number as digits only, e.g. 65XXXXXXXX.
-const singaporeWhatsAppNumber: string | undefined = undefined;
-// TODO(verified-data): enter the verified Malaysia WhatsApp number as digits only, e.g. 60XXXXXXXXX.
-const malaysiaWhatsAppNumber: string | undefined = undefined;
+const infoEmail = "info@retailpos.biz";
+const globalEmail = "global@retailpos.biz";
+
+const indiaPhoneDisplay = "+91 8072682244";
+const indiaPhoneE164 = "+918072682244";
+const indiaWhatsAppNumber = "918072682244";
+
+const singaporePhoneDisplay = "+65 92475024";
+const singaporePhoneE164 = "+6592475024";
+const singaporeWhatsAppNumber = "6592475024";
+
+const malaysiaPhoneDisplay = "+60 104305163";
+const malaysiaPhoneE164 = "+60104305163";
+const malaysiaWhatsAppNumber = "60104305163";
 
 export const contactConfig = {
   companyName: "RetailPOS.biz",
-  primaryEmail: "hello@retailpos.biz",
-  salesEmail: "sales@retailpos.biz",
-  supportEmail: "support@retailpos.biz",
+  infoEmail,
+  globalEmail,
+  primaryEmail: infoEmail,
+  salesEmail: globalEmail,
+  supportEmail: infoEmail,
   defaultWhatsAppMessage:
     "Hi RetailPOS.biz, I'm interested in AI-powered Retail POS. I'd like to book a free demo.",
   indiaWhatsAppNumber,
@@ -47,13 +56,12 @@ export const contactConfig = {
       countryCode: "IN",
       city: "Coimbatore",
       address: "CrystalPro Technologies, Coimbatore, Tamil Nadu",
-      // TODO(verified-data): enter the verified India sales number, then set verified: true
-      phoneDisplay: undefined,
-      phoneE164: undefined,
-      whatsappDisplay: undefined,
+      phoneDisplay: indiaPhoneDisplay,
+      phoneE164: indiaPhoneE164,
+      whatsappDisplay: indiaPhoneDisplay,
       whatsappE164: indiaWhatsAppNumber,
-      email: "sales@retailpos.biz",
-      verified: false,
+      email: globalEmail,
+      verified: true,
       isPrimary: true,
       displayOrder: 1,
     },
@@ -61,20 +69,24 @@ export const contactConfig = {
       country: "Singapore",
       countryCode: "SG",
       city: "Singapore",
-      // TODO(verified-data): number not provided — do not invent
+      phoneDisplay: singaporePhoneDisplay,
+      phoneE164: singaporePhoneE164,
+      whatsappDisplay: singaporePhoneDisplay,
       whatsappE164: singaporeWhatsAppNumber,
-      email: "sales@retailpos.biz",
-      verified: false,
+      email: globalEmail,
+      verified: true,
       displayOrder: 2,
     },
     {
       country: "Malaysia",
       countryCode: "MY",
       city: "Kuala Lumpur",
-      // TODO(verified-data): number not provided — do not invent
+      phoneDisplay: malaysiaPhoneDisplay,
+      phoneE164: malaysiaPhoneE164,
+      whatsappDisplay: malaysiaPhoneDisplay,
       whatsappE164: malaysiaWhatsAppNumber,
-      email: "sales@retailpos.biz",
-      verified: false,
+      email: globalEmail,
+      verified: true,
       displayOrder: 3,
     },
   ] satisfies RegionalOffice[],

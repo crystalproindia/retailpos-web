@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
 import { company } from "@/data/company";
+import { contactConfig } from "@/config/contact";
 import { Container } from "@/components/ui/Container";
 import { getSiteFooterContent } from "@/lib/cms-footer";
 import { Logo } from "./Logo";
@@ -52,29 +53,23 @@ export async function Footer() {
       {/* Regional contacts */}
       <div className="border-t border-white/10">
         <Container className="py-8">
+          <RegionalContacts invert />
           {footer.contactContent || footer.locationsContent ? (
-            <div>
-              <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-200">
-                Regional sales contacts
-              </p>
-              <div className="mt-4 grid gap-4 text-sm text-white/70 sm:grid-cols-2">
-                {footer.locationsContent ? (
-                  <p className="leading-relaxed">
-                    <MapPin aria-hidden="true" className="mr-1.5 inline h-3.5 w-3.5" />
-                    {footer.locationsContent}
-                  </p>
-                ) : null}
-                {footer.contactContent ? (
-                  <p className="leading-relaxed">
-                    <Mail aria-hidden="true" className="mr-1.5 inline h-3.5 w-3.5" />
-                    {footer.contactContent}
-                  </p>
-                ) : null}
-              </div>
+            <div className="mt-5 grid gap-4 text-sm text-white/60 sm:grid-cols-2">
+              {footer.locationsContent ? (
+                <p className="leading-relaxed">
+                  <MapPin aria-hidden="true" className="mr-1.5 inline h-3.5 w-3.5" />
+                  {footer.locationsContent}
+                </p>
+              ) : null}
+              {footer.contactContent ? (
+                <p className="leading-relaxed">
+                  <Mail aria-hidden="true" className="mr-1.5 inline h-3.5 w-3.5" />
+                  {footer.contactContent}
+                </p>
+              ) : null}
             </div>
-          ) : (
-            <RegionalContacts invert />
-          )}
+          ) : null}
         </Container>
       </div>
 
@@ -90,8 +85,8 @@ export async function Footer() {
               <span className="inline-flex items-center gap-1.5">
                 <MapPin aria-hidden="true" className="h-3.5 w-3.5" /> {company.headquarters}
               </span>
-              <a href={`mailto:${company.email}`} className="inline-flex items-center gap-1.5 hover:text-white hover:underline">
-                <Mail aria-hidden="true" className="h-3.5 w-3.5" /> {company.email}
+              <a href={`mailto:${contactConfig.infoEmail}`} className="inline-flex items-center gap-1.5 hover:text-white hover:underline">
+                <Mail aria-hidden="true" className="h-3.5 w-3.5" /> {contactConfig.infoEmail}
               </a>
             </p>
           </div>
