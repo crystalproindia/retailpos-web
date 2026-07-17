@@ -1,7 +1,6 @@
 import "server-only";
 
 const CMS_API_PREFIX = "/api/public/cms";
-const DEFAULT_CMS_API_BASE_URL = "https://app.retailpos.biz/api/public/cms";
 const DEFAULT_TIMEOUT_MS = 5000;
 
 export interface CmsSettings {
@@ -241,8 +240,10 @@ export interface CmsFooterBlock {
   is_enabled?: boolean | number | null;
 }
 
-function cmsBaseUrl(): string {
-  return (process.env.RETAILPOS_CMS_API_BASE_URL || DEFAULT_CMS_API_BASE_URL).replace(/\/+$/, "");
+function cmsBaseUrl(): string | null {
+  const configured = process.env.RETAILPOS_CMS_API_BASE_URL?.trim();
+  if (!configured) return null;
+  return configured.replace(/\/+$/, "");
 }
 
 function cmsTimeoutMs(): number {
@@ -256,8 +257,9 @@ function warn(message: string, error?: unknown) {
   }
 }
 
-function endpointUrl(path: string): string {
+function endpointUrl(path: string): string | null {
   const base = cmsBaseUrl();
+  if (!base) return null;
   let normalizedPath = path.startsWith("/") ? path : `/${path}`;
   if (base.endsWith(CMS_API_PREFIX) && normalizedPath.startsWith(`${CMS_API_PREFIX}/`)) {
     normalizedPath = normalizedPath.slice(CMS_API_PREFIX.length);
@@ -291,8 +293,11 @@ function isPublished(value: unknown): boolean {
 }
 
 async function cmsFetch<T>(path: string, revalidate: number): Promise<T | null> {
+  const url = endpointUrl(path);
+  if (!url) return null;
+
   try {
-    const response = await fetch(endpointUrl(path), {
+    const response = await fetch(url, {
       headers: { Accept: "application/json" },
       signal: AbortSignal.timeout(cmsTimeoutMs()),
       next: { revalidate },
