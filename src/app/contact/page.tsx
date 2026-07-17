@@ -12,6 +12,8 @@ import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
 import { CmsContentSections } from "@/components/cms/CmsContentSections";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { contactConfig } from "@/config/contact";
+import { siteConfig } from "@/config/site";
+import { buildWhatsAppHref, getWhatsAppContacts } from "@/lib/whatsapp";
 
 export function generateMetadata(): Promise<Metadata> {
   return buildMetadataWithCms("/contact", {
@@ -55,6 +57,7 @@ export default async function ContactPage() {
   const hero = cmsHeroContent(firstCmsSection(cmsSections, "hero"));
   const bodySections = cmsSectionsExcept(cmsSections, ["hero"]);
   const offices = [...contactConfig.offices].sort((a, b) => a.displayOrder - b.displayOrder);
+  const whatsappContacts = getWhatsAppContacts();
   return (
     <>
       <div className="border-b border-line bg-paper">
@@ -195,31 +198,55 @@ export default async function ContactPage() {
             <div>
               <h2 className="font-display text-display-sm font-semibold text-ink">Regional offices</h2>
               <ul className="mt-4 space-y-4">
-                {offices.map((office) => (
-                  <li key={office.country} className="rounded-lg border border-line bg-white p-4">
-                    <p className="text-sm font-semibold text-ink">
-                      {office.country}
-                      {office.isPrimary ? (
-                        <span className="ml-2 rounded-full bg-brand-50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-brand-700">
-                          Headquarters
-                        </span>
-                      ) : null}
-                    </p>
-                    <p className="mt-1 text-sm text-ink-muted">{office.city}</p>
-                    <p className="mt-2 space-x-4 text-sm">
-                      <a href={`mailto:${office.email}`} aria-label={`Email RetailPOS ${office.country} sales`} className="font-medium text-brand-700 hover:underline">
-                        {office.email}
-                      </a>
-                      {office.verified && office.phoneE164 ? (
-                        <a href={`tel:${office.phoneE164}`} aria-label={`Call RetailPOS ${office.country} sales`} className="font-medium text-brand-700 hover:underline">
-                          {office.phoneDisplay}
+                {offices.map((office) => {
+                  const whatsapp = whatsappContacts.find((contact) => contact.countryCode === office.countryCode);
+                  const whatsappHref = whatsapp?.available
+                    ? buildWhatsAppHref(whatsapp.number, {
+                        pageTitle: "Contact RetailPOS",
+                        pageUrl: `${siteConfig.url}/contact`,
+                        route: "/contact",
+                      })
+                    : null;
+
+                  return (
+                    <li key={office.country} className="rounded-lg border border-line bg-white p-4">
+                      <p className="text-sm font-semibold text-ink">
+                        {office.country}
+                        {office.isPrimary ? (
+                          <span className="ml-2 rounded-full bg-brand-50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-brand-700">
+                            Headquarters
+                          </span>
+                        ) : null}
+                      </p>
+                      <p className="mt-1 text-sm text-ink-muted">{office.city}</p>
+                      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                        <a href={`mailto:${office.email}`} aria-label={`Email RetailPOS ${office.country} sales`} className="font-medium text-brand-700 hover:underline">
+                          {office.email}
                         </a>
-                      ) : (
-                        <span className="text-ink-muted">Phone line publishing soon</span>
-                      )}
-                    </p>
-                  </li>
-                ))}
+                        {office.verified && office.phoneE164 ? (
+                          <a href={`tel:${office.phoneE164}`} aria-label={`Call RetailPOS ${office.country} sales`} className="font-medium text-brand-700 hover:underline">
+                            {office.phoneDisplay}
+                          </a>
+                        ) : (
+                          <span className="text-ink-muted">Phone line publishing soon</span>
+                        )}
+                        {whatsappHref ? (
+                          <a
+                            href={whatsappHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`WhatsApp RetailPOS ${office.country} sales`}
+                            className="font-medium text-brand-700 hover:underline"
+                          >
+                            WhatsApp
+                          </a>
+                        ) : (
+                          <span className="text-ink-muted">WhatsApp number coming soon</span>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>

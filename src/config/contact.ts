@@ -24,11 +24,23 @@ export interface RegionalOffice {
   displayOrder: number;
 }
 
+// TODO(verified-data): enter the verified India WhatsApp number as digits only, e.g. 91XXXXXXXXXX.
+const indiaWhatsAppNumber: string | undefined = undefined;
+// TODO(verified-data): enter the verified Singapore WhatsApp number as digits only, e.g. 65XXXXXXXX.
+const singaporeWhatsAppNumber: string | undefined = undefined;
+// TODO(verified-data): enter the verified Malaysia WhatsApp number as digits only, e.g. 60XXXXXXXXX.
+const malaysiaWhatsAppNumber: string | undefined = undefined;
+
 export const contactConfig = {
   companyName: "RetailPOS.biz",
   primaryEmail: "hello@retailpos.biz",
   salesEmail: "sales@retailpos.biz",
   supportEmail: "support@retailpos.biz",
+  defaultWhatsAppMessage:
+    "Hi RetailPOS.biz, I'm interested in AI-powered Retail POS. I'd like to book a free demo.",
+  indiaWhatsAppNumber,
+  singaporeWhatsAppNumber,
+  malaysiaWhatsAppNumber,
   offices: [
     {
       country: "India",
@@ -39,7 +51,7 @@ export const contactConfig = {
       phoneDisplay: undefined,
       phoneE164: undefined,
       whatsappDisplay: undefined,
-      whatsappE164: undefined,
+      whatsappE164: indiaWhatsAppNumber,
       email: "sales@retailpos.biz",
       verified: false,
       isPrimary: true,
@@ -50,6 +62,7 @@ export const contactConfig = {
       countryCode: "SG",
       city: "Singapore",
       // TODO(verified-data): number not provided — do not invent
+      whatsappE164: singaporeWhatsAppNumber,
       email: "sales@retailpos.biz",
       verified: false,
       displayOrder: 2,
@@ -59,6 +72,7 @@ export const contactConfig = {
       countryCode: "MY",
       city: "Kuala Lumpur",
       // TODO(verified-data): number not provided — do not invent
+      whatsappE164: malaysiaWhatsAppNumber,
       email: "sales@retailpos.biz",
       verified: false,
       displayOrder: 3,

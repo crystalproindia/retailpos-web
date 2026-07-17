@@ -52,16 +52,9 @@ function withRequiredCompanyLinks(groups: NavGroup[]): NavGroup[] {
   if (hasCaseStudies) return groups;
 
   const companyGroup = groups.find((group) => group.label.toLowerCase() === "company");
+  const staticCompanyGroup = navGroups.find((group) => group.label.toLowerCase() === "company");
   if (!companyGroup) {
-    return [
-      ...groups,
-      {
-        label: "Company",
-        href: "/about",
-        tagline: "Who we are and how to reach us",
-        links: [caseStudiesNavLink],
-      },
-    ];
+    return staticCompanyGroup ? [...groups, staticCompanyGroup] : groups;
   }
 
   return groups.map((group) =>
@@ -72,6 +65,19 @@ function withRequiredCompanyLinks(groups: NavGroup[]): NavGroup[] {
         }
       : group,
   );
+}
+
+function withRequiredNavigationGroups(groups: NavGroup[]): NavGroup[] {
+  const companySafeGroups = withRequiredCompanyLinks(groups);
+  const groupLabels = new Set(companySafeGroups.map((group) => group.label.toLowerCase()));
+  const missingStaticGroups = navGroups.filter((group) => !groupLabels.has(group.label.toLowerCase()));
+  return [...companySafeGroups, ...missingStaticGroups];
+}
+
+function withRequiredQuickLinks(links: NavLink[]): NavLink[] {
+  const linkHrefs = new Set(links.map((link) => link.href));
+  const missingQuickLinks = quickLinks.filter((link) => !linkHrefs.has(link.href));
+  return [...links, ...missingQuickLinks];
 }
 
 export async function getSiteNavigation(): Promise<SiteNavigation> {
@@ -88,8 +94,8 @@ export async function getSiteNavigation(): Promise<SiteNavigation> {
   const cmsQuickLinks = flatLinks(mobileItems);
 
   return {
-    navGroups: cmsGroups.length ? withRequiredCompanyLinks(cmsGroups) : navGroups,
+    navGroups: cmsGroups.length ? withRequiredNavigationGroups(cmsGroups) : navGroups,
     topLevelLinks: cmsTopLevel.length ? cmsTopLevel : topLevelLinks,
-    quickLinks: cmsQuickLinks.length ? cmsQuickLinks : quickLinks,
+    quickLinks: cmsQuickLinks.length ? withRequiredQuickLinks(cmsQuickLinks) : quickLinks,
   };
 }

@@ -54,8 +54,9 @@ function withRequiredFooterLinks(columns: FooterColumn[]): FooterColumn[] {
   if (hasCaseStudies) return columns;
 
   const companyColumn = columns.find((column) => column.title.toLowerCase() === "company");
+  const staticCompanyColumn = footerColumns.find((column) => column.title.toLowerCase() === "company");
   if (!companyColumn) {
-    return [...columns, { title: "Company", links: [caseStudyFooterLink] }];
+    return staticCompanyColumn ? [...columns, staticCompanyColumn] : columns;
   }
 
   return columns.map((column) =>

@@ -4,6 +4,7 @@ import { siteConfig, analyticsConfig } from "@/config/site";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingWhatsApp } from "@/components/contact/WhatsAppContact";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/seo/jsonld";
 import { getCmsSettings } from "@/lib/cms";
@@ -65,6 +66,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
         <main id="main">{children}</main>
         <Footer />
+        <FloatingWhatsApp />
       </body>
     </html>
   );

@@ -15,6 +15,8 @@ import { primaryCtas } from "@/data/ctas";
 import type { NavGroup, NavLink } from "@/types/content";
 import { Icon } from "@/components/ui/Icon";
 import { ButtonLink } from "@/components/ui/Button";
+import { WhatsAppCountrySelector } from "@/components/contact/WhatsAppContact";
+import { trackEvent } from "@/lib/analytics";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { Logo } from "./Logo";
 
@@ -44,11 +46,17 @@ export function MobileNav({
   quickLinks = staticQuickLinks,
 }: MobileNavProps) {
   const [expanded, setExpanded] = useState<string | null>(navGroups[0]?.label ?? null);
+  const [whatsappOpen, setWhatsappOpen] = useState(false);
   const mounted = useSyncExternalStore(subscribeToHydration, getClientSnapshot, getServerSnapshot);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion();
   useScrollLock(open);
+
+  function closeNav() {
+    setWhatsappOpen(false);
+    onClose();
+  }
 
   useEffect(() => {
     if (!open || !mounted) return;
@@ -58,7 +66,7 @@ export function MobileNav({
   function trapFocus(e: React.KeyboardEvent<HTMLDivElement>) {
     if (e.key === "Escape") {
       e.preventDefault();
-      onClose();
+      closeNav();
       return;
     }
 
@@ -98,13 +106,13 @@ export function MobileNav({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.16 }}
           onMouseDown={(e) => {
-            if (e.target === e.currentTarget) onClose();
+            if (e.target === e.currentTarget) closeNav();
           }}
           onPointerDown={(e) => {
-            if (e.target === e.currentTarget) onClose();
+            if (e.target === e.currentTarget) closeNav();
           }}
           onClick={(e) => {
-            if (e.target === e.currentTarget) onClose();
+            if (e.target === e.currentTarget) closeNav();
           }}
         >
           <motion.div
@@ -127,7 +135,7 @@ export function MobileNav({
                 ref={closeButtonRef}
                 type="button"
                 aria-label="Close menu"
-                onClick={onClose}
+                onClick={closeNav}
                 className="inline-flex h-11 w-11 items-center justify-center rounded text-ink hover:bg-paper"
               >
                 <X aria-hidden="true" className="h-6 w-6" />
@@ -137,18 +145,55 @@ export function MobileNav({
             {/* Scrollable body */}
             <div className="flex-1 overflow-y-auto overscroll-contain pb-4">
             {/* Quick access row */}
-            <div className="grid grid-cols-3 gap-2 border-b border-line p-4">
-              {quickLinks.map((link) => (
-                <Link
-                  key={`${link.label}-${link.href}`}
-                  href={link.href}
-                  onClick={onClose}
-                  className="flex flex-col items-center gap-1.5 rounded-lg border border-line bg-paper py-3 text-xs font-medium text-ink transition-colors hover:border-brand-200 hover:bg-brand-50"
+            <div className="border-b border-line p-4">
+              <div className="grid grid-cols-2 gap-2">
+                {quickLinks.map((link) => (
+                  <Link
+                    key={`${link.label}-${link.href}`}
+                    href={link.href}
+                    onClick={closeNav}
+                    className="flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-lg border border-line bg-paper px-3 py-3 text-center text-xs font-medium text-ink transition-colors hover:border-brand-200 hover:bg-brand-50"
+                  >
+                    {link.icon ? <Icon name={link.icon} className="h-5 w-5 text-brand-600" /> : null}
+                    {link.label}
+                  </Link>
+                ))}
+                <button
+                  type="button"
+                  aria-expanded={whatsappOpen}
+                  aria-controls="mobile-whatsapp-selector"
+                  aria-label="Show WhatsApp contact countries"
+                  onClick={() => {
+                    const nextOpen = !whatsappOpen;
+                    setWhatsappOpen(nextOpen);
+                    trackEvent("whatsapp_mobile_nav_click", {
+                      action: nextOpen ? "open_selector" : "close_selector",
+                    });
+                  }}
+                  className={cn(
+                    "flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-lg border px-3 py-3 text-center text-xs font-medium transition-colors",
+                    whatsappOpen
+                      ? "border-ledger-500 bg-ledger-500/10 text-ledger-600"
+                      : "border-line bg-paper text-ink hover:border-ledger-500/40 hover:bg-ledger-500/10",
+                  )}
                 >
-                  {link.icon ? <Icon name={link.icon} className="h-5 w-5 text-brand-600" /> : null}
-                  {link.label}
-                </Link>
-              ))}
+                  <Icon name="MessageCircle" className="h-5 w-5 text-ledger-600" />
+                  WhatsApp
+                </button>
+              </div>
+              {whatsappOpen ? (
+                <div id="mobile-whatsapp-selector" className="mt-3 rounded-lg border border-line bg-paper p-3">
+                  <div className="mb-3">
+                    <p className="font-mono text-[10px] font-medium uppercase tracking-widest text-brand-600">
+                      Regional WhatsApp
+                    </p>
+                    <p className="mt-1 text-xs leading-relaxed text-ink-muted">
+                      Choose a country. Unavailable numbers stay disabled until verified.
+                    </p>
+                  </div>
+                  <WhatsAppCountrySelector source="mobile_nav" compact onNavigate={closeNav} />
+                </div>
+              ) : null}
             </div>
 
             {/* Accordion sections mirroring the mega menu */}
@@ -181,7 +226,7 @@ export function MobileNav({
                           <li key={link.href}>
                             <Link
                               href={link.href}
-                              onClick={onClose}
+                              onClick={closeNav}
                               className={cn(
                                 "flex items-start gap-3 rounded-lg border p-3 transition-colors",
                                 link.featured
@@ -229,7 +274,7 @@ export function MobileNav({
                               <li key={link.href}>
                                 <Link
                                   href={link.href}
-                                  onClick={onClose}
+                                  onClick={closeNav}
                                   className="flex items-center gap-2 rounded px-2 py-2 text-sm text-ink-soft hover:bg-white hover:text-brand-700"
                                 >
                                   {link.icon ? <Icon name={link.icon} className="h-4 w-4 text-brand-600" /> : null}
@@ -243,7 +288,7 @@ export function MobileNav({
 
                       <Link
                         href={group.href}
-                        onClick={onClose}
+                        onClick={closeNav}
                         className="mt-3 inline-block text-sm font-medium text-brand-600 underline-offset-2 hover:underline"
                       >
                         View all {group.label.toLowerCase()} →
@@ -256,7 +301,7 @@ export function MobileNav({
                 <li key={link.href} className="border-b border-line">
                   <Link
                     href={link.href}
-                    onClick={onClose}
+                    onClick={closeNav}
                     className="block px-4 py-4 font-display text-base font-semibold text-ink hover:bg-paper"
                   >
                     {link.label}
@@ -269,10 +314,10 @@ export function MobileNav({
             {/* Sticky conversion bar */}
             <div className="shrink-0 border-t border-line bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <div className="grid grid-cols-2 gap-2">
-                <ButtonLink href={primaryCtas.bookDemo.href} onClick={onClose} size="lg">
+                <ButtonLink href={primaryCtas.bookDemo.href} onClick={closeNav} size="lg">
                   {primaryCtas.bookDemo.label}
                 </ButtonLink>
-                <ButtonLink href={primaryCtas.talkToSales.href} onClick={onClose} variant="ghost" size="lg">
+                <ButtonLink href={primaryCtas.talkToSales.href} onClick={closeNav} variant="ghost" size="lg">
                   {primaryCtas.talkToSales.label}
                 </ButtonLink>
               </div>
