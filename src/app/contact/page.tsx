@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { buildMetadata } from "@/lib/seo/metadata";
+import { buildMetadataWithCms } from "@/lib/seo/metadata";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
@@ -7,13 +7,17 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Icon } from "@/components/ui/Icon";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
+import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { contactConfig } from "@/config/contact";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Contact RetailPOS — Sales, Support & Regional Offices",
-  description: "Talk to the RetailPOS team: sales and general enquiries by email, with regional contacts for India, Singapore and Malaysia.",
-  path: "/contact",
-});
+export function generateMetadata(): Promise<Metadata> {
+  return buildMetadataWithCms("/contact", {
+    title: "Contact RetailPOS — Sales, Support & Regional Offices",
+    description:
+      "Talk to the RetailPOS team: sales and general enquiries by email, with regional contacts for India, Singapore and Malaysia.",
+    path: "/contact",
+  });
+}
 
 const salesProcess = [
   { icon: "MessageCircle", title: "Route the enquiry", text: "Sales, support or regional office context is separated before the team responds." },
@@ -222,6 +226,7 @@ export default function ContactPage() {
           </div>
         </div>
       </Section>
+      <CmsSeoEnhancements path="/contact" />
     </>
   );
 }

@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { buildMetadata } from "@/lib/seo/metadata";
+import { buildMetadataWithCms } from "@/lib/seo/metadata";
 import { HubPage } from "@/components/landing/HubPage";
 import { solutions } from "@/data/solutions";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Retail Solutions — Small Business to Enterprise, Cloud POS to AI",
-  description: "Solutions matched to your stage and scale: small business, multi-store, enterprise, franchise, omnichannel, cloud POS, automation and AI-powered retail.",
-  path: "/solutions",
-});
+export function generateMetadata(): Promise<Metadata> {
+  return buildMetadataWithCms("/solutions", {
+    title: "Retail Solutions — Small Business to Enterprise, Cloud POS to AI",
+    description:
+      "Solutions matched to your stage and scale: small business, multi-store, enterprise, franchise, omnichannel, cloud POS, automation and AI-powered retail.",
+    path: "/solutions",
+  });
+}
 
 const iconFor = (slug: string) => solutions.find((s) => s.slug === slug)?.icon ?? "CircleDot";
 

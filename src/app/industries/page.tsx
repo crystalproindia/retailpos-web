@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { buildMetadata } from "@/lib/seo/metadata";
+import { buildMetadataWithCms } from "@/lib/seo/metadata";
 import { HubPage } from "@/components/landing/HubPage";
 import { industries } from "@/data/industries";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Retail Industries — Supermarket, Fashion, Pharmacy, Electronics & More",
-  description: "Industry-specific retail software: supermarkets, grocery, fashion, footwear, electronics, pharmacy, restaurants and jewellery — with vertical workflows built in.",
-  path: "/industries",
-});
+export function generateMetadata(): Promise<Metadata> {
+  return buildMetadataWithCms("/industries", {
+    title: "Retail Industries — Supermarket, Fashion, Pharmacy, Electronics & More",
+    description:
+      "Industry-specific retail software: supermarkets, grocery, fashion, footwear, electronics, pharmacy, restaurants and jewellery — with vertical workflows built in.",
+    path: "/industries",
+  });
+}
 
 const iconFor = (slug: string) => industries.find((i) => i.slug === slug)?.icon ?? "CircleDot";
 const deferred = industries

@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/seo/jsonld";
+import { getCmsSettings } from "@/lib/cms";
 import "@/styles/globals.css";
 
 const display = Bricolage_Grotesque({
@@ -42,7 +43,9 @@ export const metadata: Metadata = {
     : {}),
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getCmsSettings();
+
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body>
@@ -52,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <JsonLd data={[organizationJsonLd(), webSiteJsonLd()]} />
+        <JsonLd data={[organizationJsonLd(settings), webSiteJsonLd(settings)]} />
         <AnnouncementBar />
         <Header />
         <main id="main">{children}</main>

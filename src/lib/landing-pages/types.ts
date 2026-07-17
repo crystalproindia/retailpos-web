@@ -40,6 +40,10 @@ export interface LandingPage {
   metaDescription: string;
   intro: string;
   heroBullets?: string[];
+  primaryCtaLabel?: string;
+  primaryCtaHref?: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaHref?: string;
   problems?: LandingProblem[];
   features?: LandingFeature[];
   workflow?: LandingStep[];
@@ -49,4 +53,7 @@ export interface LandingPage {
   /** Related pages as family/slug refs, resolved by helpers. */
   related: { family: LandingFamily; slug: string }[];
   ctaHeading?: string;
+  seoIntroContent?: string;
+  seoFooterContent?: string;
+  schemaJson?: unknown;
 }

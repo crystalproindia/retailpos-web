@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { buildMetadata } from "@/lib/seo/metadata";
+import { buildMetadataWithCms } from "@/lib/seo/metadata";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
@@ -7,13 +7,17 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Icon } from "@/components/ui/Icon";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
+import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { company } from "@/data/company";
 
-export const metadata: Metadata = buildMetadata({
-  title: "About RetailPOS.biz — Retail Software by CrystalPro Technologies",
-  description: "RetailPOS.biz is a retail ERP, POS and AI platform by CrystalPro Technologies, a software company delivering solutions since 2012, headquartered in Coimbatore, India.",
-  path: "/about",
-});
+export function generateMetadata(): Promise<Metadata> {
+  return buildMetadataWithCms("/about", {
+    title: "About RetailPOS.biz — Retail Software by CrystalPro Technologies",
+    description:
+      "RetailPOS.biz is a retail ERP, POS and AI platform by CrystalPro Technologies, a software company delivering solutions since 2012, headquartered in Coimbatore, India.",
+    path: "/about",
+  });
+}
 
 const principles = [
   { icon: "Zap", title: "The counter comes first", text: "Billing speed and continuity are non-negotiable; everything else is built behind a counter that never stops." },
@@ -151,6 +155,7 @@ export default function AboutPage() {
           description="Access is role-based, consequential actions are logged with user and timestamp, and offline billing protects the counter from connectivity failures. We treat protecting business data as a product feature — and we describe our security architecture in those concrete terms rather than borrowed badges."
         />
       </Section>
+      <CmsSeoEnhancements path="/about" />
       <LandingCTA heading="See what we've built — on your own products" />
     </>
   );

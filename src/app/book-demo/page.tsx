@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { buildMetadata } from "@/lib/seo/metadata";
+import { buildMetadataWithCms } from "@/lib/seo/metadata";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { Accordion } from "@/components/ui/Accordion";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { faqJsonLd } from "@/lib/seo/jsonld";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { Icon } from "@/components/ui/Icon";
@@ -12,11 +13,14 @@ import { TrustMetrics } from "@/components/trust/TrustMetrics";
 import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
 import type { Faq } from "@/types/content";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Book a Free Demo — See RetailPOS on Your Own Products",
-  description: "Book a free 30-minute RetailPOS demo: your items, your industry's workflows and straight answers on scope and pricing. No obligation.",
-  path: "/book-demo",
-});
+export function generateMetadata(): Promise<Metadata> {
+  return buildMetadataWithCms("/book-demo", {
+    title: "Book a Free Demo — See RetailPOS on Your Own Products",
+    description:
+      "Book a free 30-minute RetailPOS demo: your items, your industry's workflows and straight answers on scope and pricing. No obligation.",
+    path: "/book-demo",
+  });
+}
 
 const expectations = [
   { icon: "CalendarCheck", title: "30-minute walkthrough", text: "A focused working session with a retail consultant, not a generic slideshow." },
@@ -120,6 +124,7 @@ export default function BookDemoPage() {
           <Accordion items={demoFaqs} />
         </div>
       </Section>
+      <CmsSeoEnhancements path="/book-demo" />
     </>
   );
 }

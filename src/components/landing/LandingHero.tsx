@@ -33,14 +33,14 @@ export function LandingHero({ page }: { page: LandingPage }) {
                     {b}
                   </li>
                 ))}
-              </ul>
+            </ul>
             ) : null}
             <div className="mt-7 flex flex-wrap gap-3">
-              <ButtonLink href={primaryCtas.bookDemo.href} size="lg">
-                {primaryCtas.bookDemo.label}
+              <ButtonLink href={page.primaryCtaHref ?? primaryCtas.bookDemo.href} size="lg">
+                {page.primaryCtaLabel ?? primaryCtas.bookDemo.label}
               </ButtonLink>
-              <ButtonLink href={primaryCtas.requestPricing.href} variant="ghost" size="lg">
-                {primaryCtas.requestPricing.label}
+              <ButtonLink href={page.secondaryCtaHref ?? primaryCtas.requestPricing.href} variant="ghost" size="lg">
+                {page.secondaryCtaLabel ?? primaryCtas.requestPricing.label}
               </ButtonLink>
             </div>
           </div>

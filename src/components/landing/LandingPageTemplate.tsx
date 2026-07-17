@@ -4,6 +4,7 @@ import { LandingFamilyStory } from "./LandingFamilyStory";
 import { LandingFAQ } from "./LandingFAQ";
 import { LandingCTA } from "./LandingCTA";
 import { RelatedPages } from "./RelatedPages";
+import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import {
   LandingBenefits,
   LandingFeatureGrid,
@@ -11,6 +12,7 @@ import {
   LandingUseCases,
   LandingWorkflow,
 } from "./LandingSections";
+import { pagePath } from "@/lib/landing-pages/helpers";
 import { landingProfileFor, type LandingSectionKey } from "@/lib/landing-pages/variants";
 
 /** Single shared page shell: sections render only when the page defines them. */
@@ -66,7 +68,19 @@ export function LandingPageTemplate({ page }: { page: LandingPage }) {
       {profile.order.map(renderSection)}
       {page.faqs.length ? <LandingFAQ items={page.faqs} name={page.name} /> : null}
       <RelatedPages page={page} />
-      <LandingCTA heading={page.ctaHeading} />
+      <CmsSeoEnhancements
+        path={pagePath(page)}
+        schemaJson={page.schemaJson}
+        introContent={page.seoIntroContent}
+        footerSeoContent={page.seoFooterContent}
+      />
+      <LandingCTA
+        heading={page.ctaHeading}
+        primaryLabel={page.primaryCtaLabel}
+        primaryHref={page.primaryCtaHref}
+        secondaryLabel={page.secondaryCtaLabel}
+        secondaryHref={page.secondaryCtaHref}
+      />
     </>
   );
 }

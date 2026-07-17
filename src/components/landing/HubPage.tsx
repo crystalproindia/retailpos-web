@@ -7,6 +7,7 @@ import { getFamilyPages } from "@/lib/landing-pages/registry";
 import { familyMeta, pagePath } from "@/lib/landing-pages/helpers";
 import type { LandingFamily } from "@/lib/landing-pages/types";
 import { LandingCTA } from "./LandingCTA";
+import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 
 interface DeferredItem {
   slug: string;
@@ -80,6 +81,7 @@ export function HubPage({ family, title, intro, deferred, deferredNote, iconFor 
           </div>
         ) : null}
       </Section>
+      <CmsSeoEnhancements path={fam.href} />
       <LandingCTA />
     </>
   );

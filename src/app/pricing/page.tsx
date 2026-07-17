@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { buildMetadata } from "@/lib/seo/metadata";
+import { buildMetadataWithCms } from "@/lib/seo/metadata";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Accordion } from "@/components/ui/Accordion";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { faqJsonLd } from "@/lib/seo/jsonld";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -15,11 +16,14 @@ import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
 import { LeadForm } from "@/components/forms/LeadForm";
 import type { Faq } from "@/types/content";
 
-export const metadata: Metadata = buildMetadata({
-  title: "RetailPOS Pricing — Built Around Your Stores, Modules & Scope",
-  description: "RetailPOS pricing depends on store count, modules, integrations and implementation scope. See what shapes your quote and request pricing for your setup.",
-  path: "/pricing",
-});
+export function generateMetadata(): Promise<Metadata> {
+  return buildMetadataWithCms("/pricing", {
+    title: "RetailPOS Pricing — Built Around Your Stores, Modules & Scope",
+    description:
+      "RetailPOS pricing depends on store count, modules, integrations and implementation scope. See what shapes your quote and request pricing for your setup.",
+    path: "/pricing",
+  });
+}
 
 const factors = [
   { icon: "Store", title: "Stores & counters", text: "How many outlets and billing counters run the system." },
@@ -261,6 +265,7 @@ export default function PricingPage() {
           <Accordion items={pricingFaqs} />
         </div>
       </Section>
+      <CmsSeoEnhancements path="/pricing" />
     </>
   );
 }

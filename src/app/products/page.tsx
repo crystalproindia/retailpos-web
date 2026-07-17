@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { buildMetadata } from "@/lib/seo/metadata";
+import { buildMetadataWithCms } from "@/lib/seo/metadata";
 import { HubPage } from "@/components/landing/HubPage";
 import { products } from "@/data/products";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Retail Software Products — POS, ERP, Inventory, CRM & AI",
-  description: "Explore the RetailPOS.biz product suite: POS billing, retail ERP, inventory, GST billing, accounting, CRM, omnichannel, analytics and AI retail.",
-  path: "/products",
-});
+export function generateMetadata(): Promise<Metadata> {
+  return buildMetadataWithCms("/products", {
+    title: "Retail Software Products — POS, ERP, Inventory, CRM & AI",
+    description:
+      "Explore the RetailPOS.biz product suite: POS billing, retail ERP, inventory, GST billing, accounting, CRM, omnichannel, analytics and AI retail.",
+    path: "/products",
+  });
+}
 
 const iconFor = (slug: string) => products.find((p) => p.slug === slug)?.icon ?? "CircleDot";
 

@@ -1,5 +1,7 @@
 import { siteConfig } from "@/config/site";
 import { company, socialLinks } from "@/data/company";
+import type { CmsSettings } from "@/lib/cms";
+import { cmsText, safeUrl, stringArray } from "@/lib/cms-content";
 import type { Faq } from "@/types/content";
 
 /**
@@ -9,30 +11,43 @@ import type { Faq } from "@/types/content";
  * Phases 2-4 so no unused schema ships now.
  */
 
-export function organizationJsonLd() {
+export function organizationJsonLd(settings?: CmsSettings | null) {
+  const cmsSameAs = stringArray(settings?.same_as_social_links, 12)
+    .map((link) => safeUrl(link, { allowRelative: false }))
+    .filter((link): link is string => Boolean(link));
+  const sameAs = cmsSameAs.length ? cmsSameAs : socialLinks.map((s) => s.href);
+  const contactEmail = cmsText(settings?.contact_email, 120) ?? company.email;
+  const contactPhone =
+    cmsText(settings?.contact_phone_india, 80) ??
+    cmsText(settings?.contact_phone_singapore, 80) ??
+    cmsText(settings?.contact_phone_malaysia, 80);
+
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: siteConfig.name,
+    name: cmsText(settings?.company_name, 120) ?? siteConfig.name,
     url: siteConfig.url,
-    logo: `${siteConfig.url}/logo.svg`,
+    logo: safeUrl(settings?.company_logo_url) ?? `${siteConfig.url}/logo.svg`,
+    email: contactEmail,
+    ...(contactPhone ? { telephone: contactPhone } : {}),
     foundingDate: String(company.foundedYear),
     parentOrganization: { "@type": "Organization", name: company.parent },
     address: {
       "@type": "PostalAddress",
+      ...(cmsText(settings?.address, 260) ? { streetAddress: cmsText(settings?.address, 260) } : {}),
       addressLocality: company.address.addressLocality,
       addressRegion: company.address.addressRegion,
       addressCountry: company.address.addressCountry,
     },
-    sameAs: socialLinks.map((s) => s.href),
+    sameAs,
   };
 }
 
-export function webSiteJsonLd() {
+export function webSiteJsonLd(settings?: CmsSettings | null) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: siteConfig.name,
+    name: cmsText(settings?.default_site_title, 120) ?? siteConfig.name,
     url: siteConfig.url,
   };
 }

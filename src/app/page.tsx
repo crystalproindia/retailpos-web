@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { buildMetadata } from "@/lib/seo/metadata";
+import { buildMetadataWithCms } from "@/lib/seo/metadata";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { softwareApplicationJsonLd } from "@/lib/seo/jsonld";
 import { Hero } from "@/components/sections/home/Hero";
 import { TrustMetrics } from "@/components/trust/TrustMetrics";
@@ -25,12 +26,14 @@ import { ResourcesPreview } from "@/components/sections/home/ResourcesPreview";
 import { HomeFaq } from "@/components/sections/home/HomeFaq";
 import { FinalCta } from "@/components/sections/home/FinalCta";
 
-export const metadata: Metadata = buildMetadata({
+export function generateMetadata(): Promise<Metadata> {
+  return buildMetadataWithCms("/", {
   title: "RetailPOS.biz — Retail ERP, POS & AI Retail Management Platform",
   description:
     "Run billing, inventory, purchasing, CRM, loyalty, accounting and analytics on one retail platform. GST-ready POS with offline mode, multi-store control and AI demand forecasting.",
   path: "/",
-});
+  });
+}
 
 export default function HomePage() {
   return (
@@ -57,6 +60,7 @@ export default function HomePage() {
       <UseCases />
       <ResourcesPreview />
       <HomeFaq />
+      <CmsSeoEnhancements path="/" />
       <FinalCta />
     </>
   );
