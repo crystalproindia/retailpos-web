@@ -8,6 +8,9 @@ import { familyMeta, pagePath } from "@/lib/landing-pages/helpers";
 import type { LandingFamily } from "@/lib/landing-pages/types";
 import { LandingCTA } from "./LandingCTA";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
+import { CmsContentSections } from "@/components/cms/CmsContentSections";
+import { getCmsContentPageForRoute } from "@/lib/cms-content-loader";
+import { cmsContentSections, cmsHeroContent, cmsSectionsExcept, firstCmsSection } from "@/lib/cms-content-editor";
 
 interface DeferredItem {
   slug: string;
@@ -27,8 +30,12 @@ interface HubPageProps {
 }
 
 /** Hub/index page: meaningful descriptions + crawlable links to every child page. */
-export function HubPage({ family, title, intro, deferred, deferredNote, iconFor }: HubPageProps) {
+export async function HubPage({ family, title, intro, deferred, deferredNote, iconFor }: HubPageProps) {
   const fam = familyMeta[family];
+  const contentPage = await getCmsContentPageForRoute(fam.href, family);
+  const cmsSections = cmsContentSections(contentPage);
+  const hero = cmsHeroContent(firstCmsSection(cmsSections, "hero"));
+  const bodySections = cmsSectionsExcept(cmsSections, ["hero"]);
   const pages = getFamilyPages(family);
   return (
     <>
@@ -36,9 +43,11 @@ export function HubPage({ family, title, intro, deferred, deferredNote, iconFor 
         <Container className="pb-10 pt-2 sm:pb-14">
           <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: fam.label, path: fam.href }]} />
           <h1 className="mt-4 max-w-3xl font-display text-display-md font-bold text-ink sm:text-display-lg">
-            {title}
+            {hero?.title ?? title}
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">{intro}</p>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
+            {hero?.subtitle ?? hero?.body ?? intro}
+          </p>
         </Container>
       </div>
       <Section tone="white" className="py-12 sm:py-16">
@@ -81,6 +90,7 @@ export function HubPage({ family, title, intro, deferred, deferredNote, iconFor 
           </div>
         ) : null}
       </Section>
+      <CmsContentSections sections={bodySections} />
       <CmsSeoEnhancements path={fam.href} />
       <LandingCTA />
     </>

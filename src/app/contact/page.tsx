@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadataWithCms } from "@/lib/seo/metadata";
+import { getCmsContentPageForRoute } from "@/lib/cms-content-loader";
+import { cmsContentSections, cmsHeroContent, cmsSectionsExcept, firstCmsSection } from "@/lib/cms-content-editor";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
@@ -7,6 +9,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Icon } from "@/components/ui/Icon";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
+import { CmsContentSections } from "@/components/cms/CmsContentSections";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { contactConfig } from "@/config/contact";
 
@@ -46,7 +49,11 @@ const operatingSignals = [
   { icon: "MessageCircle", title: "Expected response", text: "Include store count, current system and enquiry type so the right team can respond with useful next steps." },
 ];
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const contentPage = await getCmsContentPageForRoute("/contact", "contact");
+  const cmsSections = cmsContentSections(contentPage);
+  const hero = cmsHeroContent(firstCmsSection(cmsSections, "hero"));
+  const bodySections = cmsSectionsExcept(cmsSections, ["hero"]);
   const offices = [...contactConfig.offices].sort((a, b) => a.displayOrder - b.displayOrder);
   return (
     <>
@@ -59,11 +66,11 @@ export default function ContactPage() {
                 Sales and support
               </p>
               <h1 className="mt-3 max-w-3xl font-display text-display-md font-bold text-ink sm:text-display-lg">
-                Talk to the RetailPOS team
+                {hero?.title ?? "Talk to the RetailPOS team"}
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-                Whether you&apos;re comparing options, planning a rollout or already a customer — write to us
-                or send the form and the right person will reply.
+                {hero?.subtitle ??
+                  "Whether you're comparing options, planning a rollout or already a customer — write to us or send the form and the right person will reply."}
               </p>
             </div>
             <aside className="rounded-lg border border-line bg-white p-5 shadow-card">
@@ -226,6 +233,7 @@ export default function ContactPage() {
           </div>
         </div>
       </Section>
+      <CmsContentSections sections={bodySections} />
       <CmsSeoEnhancements path="/contact" />
     </>
   );

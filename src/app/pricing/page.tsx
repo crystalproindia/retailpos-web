@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { buildMetadataWithCms } from "@/lib/seo/metadata";
+import { getCmsContentPageForRoute } from "@/lib/cms-content-loader";
+import {
+  cmsContentSections,
+  cmsHeroContent,
+  cmsSectionsExcept,
+  firstCmsSection,
+} from "@/lib/cms-content-editor";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Accordion } from "@/components/ui/Accordion";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CmsContentSections } from "@/components/cms/CmsContentSections";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { faqJsonLd } from "@/lib/seo/jsonld";
 import { ButtonLink } from "@/components/ui/Button";
@@ -76,7 +84,13 @@ const pricingFaqs: Faq[] = [
   { question: "Are there hidden costs later?", answer: "The quotation itemises software, implementation, training and support so you can see each component. Changes in scope — new stores or modules — are priced the same transparent way." },
 ];
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const contentPage = await getCmsContentPageForRoute("/pricing", "pricing");
+  const cmsSections = cmsContentSections(contentPage);
+  const hero = cmsHeroContent(firstCmsSection(cmsSections, "hero"));
+  const faqSection = firstCmsSection(cmsSections, "faq");
+  const bodySections = cmsSectionsExcept(cmsSections, ["hero", "faq"]);
+
   return (
     <>
       <div className="border-b border-line bg-paper">
@@ -88,11 +102,11 @@ export default function PricingPage() {
                 Commercial experience
               </p>
               <h1 className="mt-3 max-w-3xl font-display text-display-md font-bold text-ink sm:text-display-lg">
-                Pricing built around your operation
+                {hero?.title ?? "Pricing built around your operation"}
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-                RetailPOS is priced on what you actually run — stores, modules, integrations and
-                implementation scope — not a one-size tier. Here&apos;s what shapes a quote, and how to get yours.
+                {hero?.subtitle ??
+                  "RetailPOS is priced on what you actually run — stores, modules, integrations and implementation scope — not a one-size tier. Here's what shapes a quote, and how to get yours."}
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <ButtonLink href="/book-demo" size="lg">Request Pricing in a Demo</ButtonLink>
@@ -256,15 +270,20 @@ export default function PricingPage() {
           </div>
         </div>
       </Section>
-      <Section tone="white" aria-labelledby="pricing-faq" className="py-12 sm:py-16">
-        <JsonLd data={faqJsonLd(pricingFaqs)} />
-        <div className="grid gap-8 lg:grid-cols-[1fr,1.6fr]">
-          <h2 id="pricing-faq" className="font-display text-display-sm font-semibold text-ink">
-            Pricing questions
-          </h2>
-          <Accordion items={pricingFaqs} />
-        </div>
-      </Section>
+      {faqSection ? (
+        <CmsContentSections sections={[faqSection]} />
+      ) : (
+        <Section tone="white" aria-labelledby="pricing-faq" className="py-12 sm:py-16">
+          <JsonLd data={faqJsonLd(pricingFaqs)} />
+          <div className="grid gap-8 lg:grid-cols-[1fr,1.6fr]">
+            <h2 id="pricing-faq" className="font-display text-display-sm font-semibold text-ink">
+              Pricing questions
+            </h2>
+            <Accordion items={pricingFaqs} />
+          </div>
+        </Section>
+      )}
+      <CmsContentSections sections={bodySections} />
       <CmsSeoEnhancements path="/pricing" />
     </>
   );

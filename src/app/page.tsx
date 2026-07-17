@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
 import { buildMetadataWithCms } from "@/lib/seo/metadata";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CmsContentSections } from "@/components/cms/CmsContentSections";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { softwareApplicationJsonLd } from "@/lib/seo/jsonld";
+import { getCmsContentPageForRoute } from "@/lib/cms-content-loader";
+import {
+  cmsContentSections,
+  cmsFaqItems,
+  cmsHeroContent,
+  cmsSectionsExcept,
+  firstCmsSection,
+} from "@/lib/cms-content-editor";
 import { Hero } from "@/components/sections/home/Hero";
 import { TrustMetrics } from "@/components/trust/TrustMetrics";
 import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
@@ -35,12 +44,21 @@ export function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const contentPage = await getCmsContentPageForRoute("/", "home");
+  const cmsSections = cmsContentSections(contentPage);
+  const hero = cmsHeroContent(firstCmsSection(cmsSections, "hero"));
+  const statsSection = firstCmsSection(cmsSections, "stats");
+  const faqSection = firstCmsSection(cmsSections, "faq");
+  const ctaSection = firstCmsSection(cmsSections, "cta");
+  const faqItems = faqSection ? cmsFaqItems(faqSection) : [];
+  const bodySections = cmsSectionsExcept(cmsSections, ["hero", "stats", "faq", "cta"]);
+
   return (
     <>
       <JsonLd data={softwareApplicationJsonLd()} />
-      <Hero />
-      <TrustMetrics compact />
+      <Hero content={hero} />
+      {statsSection ? <CmsContentSections sections={[statsSection]} /> : <TrustMetrics compact />}
       <ClientLogoWall compact tone="paper" />
       <TrustStrip />
       <Challenges />
@@ -59,9 +77,10 @@ export default function HomePage() {
       <TrustReceipt />
       <UseCases />
       <ResourcesPreview />
-      <HomeFaq />
+      {faqItems.length ? <CmsContentSections sections={[faqSection!]} /> : <HomeFaq />}
+      <CmsContentSections sections={bodySections} />
       <CmsSeoEnhancements path="/" />
-      <FinalCta />
+      <FinalCta section={ctaSection} />
     </>
   );
 }

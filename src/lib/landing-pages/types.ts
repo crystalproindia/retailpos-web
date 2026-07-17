@@ -1,4 +1,5 @@
 import type { Faq } from "@/types/content";
+import type { CmsContentSection } from "@/lib/cms";
 
 export type LandingFamily = "products" | "modules" | "industries" | "solutions";
 export type LandingVariant = "product" | "module" | "industry" | "solution";
@@ -56,4 +57,5 @@ export interface LandingPage {
   seoIntroContent?: string;
   seoFooterContent?: string;
   schemaJson?: unknown;
+  cmsContentSections?: CmsContentSection[];
 }

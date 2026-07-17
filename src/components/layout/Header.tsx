@@ -5,14 +5,25 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { navGroups, topLevelLinks } from "@/data/navigation";
+import { navGroups as staticNavGroups, topLevelLinks as staticTopLevelLinks, quickLinks as staticQuickLinks } from "@/data/navigation";
 import { primaryCtas } from "@/data/ctas";
+import type { NavGroup, NavLink } from "@/types/content";
 import { Icon } from "@/components/ui/Icon";
 import { ButtonLink } from "@/components/ui/Button";
 import { Logo } from "./Logo";
 import { MobileNav } from "./MobileNav";
 
-export function Header() {
+interface HeaderProps {
+  navGroups?: NavGroup[];
+  topLevelLinks?: NavLink[];
+  quickLinks?: NavLink[];
+}
+
+export function Header({
+  navGroups = staticNavGroups,
+  topLevelLinks = staticTopLevelLinks,
+  quickLinks = staticQuickLinks,
+}: HeaderProps) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -211,7 +222,13 @@ export function Header() {
         </AnimatePresence>
       </nav>
 
-      <MobileNav open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <MobileNav
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        navGroups={navGroups}
+        topLevelLinks={topLevelLinks}
+        quickLinks={quickLinks}
+      />
     </header>
   );
 }

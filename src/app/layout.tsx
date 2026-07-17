@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/Footer";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/seo/jsonld";
 import { getCmsSettings } from "@/lib/cms";
+import { getSiteNavigation } from "@/lib/cms-navigation";
 import "@/styles/globals.css";
 
 const display = Bricolage_Grotesque({
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getCmsSettings();
+  const [settings, navigation] = await Promise.all([getCmsSettings(), getSiteNavigation()]);
 
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
@@ -57,7 +58,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </a>
         <JsonLd data={[organizationJsonLd(settings), webSiteJsonLd(settings)]} />
         <AnnouncementBar />
-        <Header />
+        <Header
+          navGroups={navigation.navGroups}
+          topLevelLinks={navigation.topLevelLinks}
+          quickLinks={navigation.quickLinks}
+        />
         <main id="main">{children}</main>
         <Footer />
       </body>

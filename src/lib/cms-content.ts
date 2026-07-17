@@ -44,6 +44,7 @@ export function stripCmsHtml(value: string): string {
 }
 
 export function cmsText(value: unknown, maxLength = 220): string | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
   if (typeof value !== "string") return undefined;
   const text = normalizeWhitespace(stripCmsHtml(value));
   if (!text) return undefined;
@@ -64,7 +65,7 @@ export function cmsParagraphs(value: unknown, maxParagraphs = 5): string[] {
     .slice(0, maxParagraphs);
 }
 
-export function safeUrl(value: unknown, { allowRelative = true } = {}): string | undefined {
+export function safeUrl(value: unknown, { allowRelative = true, allowHttp = true } = {}): string | undefined {
   if (typeof value !== "string") return undefined;
   const trimmed = value.trim();
   if (!trimmed) return undefined;
@@ -75,7 +76,7 @@ export function safeUrl(value: unknown, { allowRelative = true } = {}): string |
 
   try {
     const url = new URL(trimmed);
-    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : undefined;
+    return url.protocol === "https:" || (allowHttp && url.protocol === "http:") ? url.toString() : undefined;
   } catch {
     return undefined;
   }

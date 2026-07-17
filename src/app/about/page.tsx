@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadataWithCms } from "@/lib/seo/metadata";
+import { getCmsContentPageForRoute } from "@/lib/cms-content-loader";
+import { cmsContentSections, cmsHeroContent, cmsSectionsExcept, firstCmsSection } from "@/lib/cms-content-editor";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
@@ -7,6 +9,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Icon } from "@/components/ui/Icon";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
+import { CmsContentSections } from "@/components/cms/CmsContentSections";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { company } from "@/data/company";
 
@@ -57,19 +60,23 @@ const roadmapThemes = [
   { icon: "Workflow", title: "Operational automation", text: "Less repeated admin around reordering, posting, scheduled reports and controlled approvals." },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const contentPage = await getCmsContentPageForRoute("/about", "about");
+  const cmsSections = cmsContentSections(contentPage);
+  const hero = cmsHeroContent(firstCmsSection(cmsSections, "hero"));
+  const bodySections = cmsSectionsExcept(cmsSections, ["hero"]);
+
   return (
     <>
       <div className="border-b border-line bg-paper">
         <Container className="pb-10 pt-2 sm:pb-12">
           <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "About", path: "/about" }]} />
           <h1 className="mt-4 max-w-3xl font-display text-display-md font-bold text-ink sm:text-display-lg">
-            Retail software, built the way stores actually work
+            {hero?.title ?? "Retail software, built the way stores actually work"}
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-            RetailPOS.biz is the retail platform of {company.parent}, a software company
-            headquartered in {company.headquarters}, delivering software solutions since {company.foundedYear},
-            with offices in India, Singapore, Malaysia and Bahrain.
+            {hero?.subtitle ??
+              `RetailPOS.biz is the retail platform of ${company.parent}, a software company headquartered in ${company.headquarters}, delivering software solutions since ${company.foundedYear}, with offices in India, Singapore, Malaysia and Bahrain.`}
           </p>
         </Container>
       </div>
@@ -155,6 +162,7 @@ export default function AboutPage() {
           description="Access is role-based, consequential actions are logged with user and timestamp, and offline billing protects the counter from connectivity failures. We treat protecting business data as a product feature — and we describe our security architecture in those concrete terms rather than borrowed badges."
         />
       </Section>
+      <CmsContentSections sections={bodySections} />
       <CmsSeoEnhancements path="/about" />
       <LandingCTA heading="See what we've built — on your own products" />
     </>

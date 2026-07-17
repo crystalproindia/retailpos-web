@@ -6,8 +6,13 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { navGroups, quickLinks, topLevelLinks } from "@/data/navigation";
+import {
+  navGroups as staticNavGroups,
+  quickLinks as staticQuickLinks,
+  topLevelLinks as staticTopLevelLinks,
+} from "@/data/navigation";
 import { primaryCtas } from "@/data/ctas";
+import type { NavGroup, NavLink } from "@/types/content";
 import { Icon } from "@/components/ui/Icon";
 import { ButtonLink } from "@/components/ui/Button";
 import { useScrollLock } from "@/hooks/useScrollLock";
@@ -16,6 +21,9 @@ import { Logo } from "./Logo";
 interface MobileNavProps {
   open: boolean;
   onClose: () => void;
+  navGroups?: NavGroup[];
+  topLevelLinks?: NavLink[];
+  quickLinks?: NavLink[];
 }
 
 const subscribeToHydration = () => () => {};
@@ -28,7 +36,13 @@ const getServerSnapshot = () => false;
  * major page reachable in two taps), featured highlights, and a sticky
  * bottom conversion bar that stays visible while scrolling.
  */
-export function MobileNav({ open, onClose }: MobileNavProps) {
+export function MobileNav({
+  open,
+  onClose,
+  navGroups = staticNavGroups,
+  topLevelLinks = staticTopLevelLinks,
+  quickLinks = staticQuickLinks,
+}: MobileNavProps) {
   const [expanded, setExpanded] = useState<string | null>(navGroups[0]?.label ?? null);
   const mounted = useSyncExternalStore(subscribeToHydration, getClientSnapshot, getServerSnapshot);
   const dialogRef = useRef<HTMLDivElement>(null);

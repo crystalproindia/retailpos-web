@@ -1,0 +1,67 @@
+import "server-only";
+
+import { getCmsNavigation, type CmsNavigationItem } from "@/lib/cms";
+import { cmsText, safeUrl } from "@/lib/cms-content";
+import { navGroups, quickLinks, topLevelLinks } from "@/data/navigation";
+import type { NavGroup, NavLink } from "@/types/content";
+
+export interface SiteNavigation {
+  navGroups: NavGroup[];
+  topLevelLinks: NavLink[];
+  quickLinks: NavLink[];
+}
+
+function isEnabled(item: CmsNavigationItem): boolean {
+  return item.is_enabled !== false && item.is_enabled !== 0;
+}
+
+function toNavLink(item: CmsNavigationItem): NavLink | null {
+  const label = cmsText(item.label, 120);
+  const href = safeUrl(item.url, { allowHttp: false });
+  return label && href ? { label, href, icon: "CircleDot" } : null;
+}
+
+function groupedNavGroups(items: CmsNavigationItem[]): NavGroup[] {
+  const groups = new Map<string, NavLink[]>();
+
+  for (const item of items) {
+    const parent = cmsText(item.parent_label, 120);
+    const link = toNavLink(item);
+    if (!parent || !link) continue;
+    groups.set(parent, [...(groups.get(parent) ?? []), link]);
+  }
+
+  return Array.from(groups.entries()).map(([label, links]) => ({
+    label,
+    href: links[0]?.href ?? "/",
+    tagline: "CMS managed links",
+    links,
+  }));
+}
+
+function flatLinks(items: CmsNavigationItem[]): NavLink[] {
+  return items
+    .filter((item) => !cmsText(item.parent_label, 120))
+    .map(toNavLink)
+    .filter((item): item is NavLink => Boolean(item));
+}
+
+export async function getSiteNavigation(): Promise<SiteNavigation> {
+  const items = (await getCmsNavigation()).filter(isEnabled);
+  const headerItems = items.filter((item) => item.location === "header");
+  const mobileItems = items.filter((item) => item.location === "mobile");
+
+  if (!headerItems.length && !mobileItems.length) {
+    return { navGroups, topLevelLinks, quickLinks };
+  }
+
+  const cmsGroups = groupedNavGroups(headerItems);
+  const cmsTopLevel = flatLinks(headerItems);
+  const cmsQuickLinks = flatLinks(mobileItems);
+
+  return {
+    navGroups: cmsGroups.length ? cmsGroups : navGroups,
+    topLevelLinks: cmsTopLevel.length ? cmsTopLevel : topLevelLinks,
+    quickLinks: cmsQuickLinks.length ? cmsQuickLinks : quickLinks,
+  };
+}

@@ -1,10 +1,18 @@
 import type { Metadata } from "next";
 import { buildMetadataWithCms } from "@/lib/seo/metadata";
+import { getCmsContentPageForRoute } from "@/lib/cms-content-loader";
+import {
+  cmsContentSections,
+  cmsHeroContent,
+  cmsSectionsExcept,
+  firstCmsSection,
+} from "@/lib/cms-content-editor";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Section } from "@/components/ui/Section";
 import { Accordion } from "@/components/ui/Accordion";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CmsContentSections } from "@/components/cms/CmsContentSections";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { faqJsonLd } from "@/lib/seo/jsonld";
 import { LeadForm } from "@/components/forms/LeadForm";
@@ -44,18 +52,24 @@ const demoFaqs: Faq[] = [
   { question: "Can we discuss pricing during the demo?", answer: "Yes. Pricing depends on stores, modules, rollout scope, implementation, training and support. The demo helps make that scope clear before a proposal." },
 ];
 
-export default function BookDemoPage() {
+export default async function BookDemoPage() {
+  const contentPage = await getCmsContentPageForRoute("/book-demo", "book-demo");
+  const cmsSections = cmsContentSections(contentPage);
+  const hero = cmsHeroContent(firstCmsSection(cmsSections, "hero"));
+  const faqSection = firstCmsSection(cmsSections, "faq");
+  const bodySections = cmsSectionsExcept(cmsSections, ["hero", "faq"]);
+
   return (
     <>
       <div className="border-b border-line bg-paper">
         <Container className="pb-10 pt-2 sm:pb-12">
           <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Book a Demo", path: "/book-demo" }]} />
           <h1 className="mt-4 max-w-3xl font-display text-display-md font-bold text-ink sm:text-display-lg">
-            Book a free RetailPOS demo
+            {hero?.title ?? "Book a free RetailPOS demo"}
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-            Thirty minutes, your items on screen, your questions answered. We&apos;ll walk your daily
-            workflows and give you clear next steps — whether or not RetailPOS is the right fit.
+            {hero?.subtitle ??
+              "Thirty minutes, your items on screen, your questions answered. We'll walk your daily workflows and give you clear next steps — whether or not RetailPOS is the right fit."}
           </p>
         </Container>
       </div>
@@ -115,15 +129,20 @@ export default function BookDemoPage() {
         title="Seen by teams with real operating needs"
         description="Use the demo to test whether RetailPOS.biz fits your business before discussing scope or commercials."
       />
-      <Section tone="paper" aria-labelledby="demo-faq" className="py-12 sm:py-16">
-        <JsonLd data={faqJsonLd(demoFaqs)} />
-        <div className="grid gap-8 lg:grid-cols-[1fr,1.6fr]">
-          <h2 id="demo-faq" className="font-display text-display-sm font-semibold text-ink">
-            Before you book
-          </h2>
-          <Accordion items={demoFaqs} />
-        </div>
-      </Section>
+      {faqSection ? (
+        <CmsContentSections sections={[faqSection]} />
+      ) : (
+        <Section tone="paper" aria-labelledby="demo-faq" className="py-12 sm:py-16">
+          <JsonLd data={faqJsonLd(demoFaqs)} />
+          <div className="grid gap-8 lg:grid-cols-[1fr,1.6fr]">
+            <h2 id="demo-faq" className="font-display text-display-sm font-semibold text-ink">
+              Before you book
+            </h2>
+            <Accordion items={demoFaqs} />
+          </div>
+        </Section>
+      )}
+      <CmsContentSections sections={bodySections} />
       <CmsSeoEnhancements path="/book-demo" />
     </>
   );

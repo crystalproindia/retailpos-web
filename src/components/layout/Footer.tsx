@@ -1,27 +1,47 @@
 import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
-import { footerColumns, legalLinks } from "@/data/navigation";
-import { company, socialLinks } from "@/data/company";
+import { company } from "@/data/company";
 import { Container } from "@/components/ui/Container";
+import { getSiteFooterContent } from "@/lib/cms-footer";
 import { Logo } from "./Logo";
 import { RegionalContacts } from "./RegionalContacts";
 
-export function Footer() {
-  const year = new Date().getFullYear();
+function isExternal(href: string): boolean {
+  return href.startsWith("http://") || href.startsWith("https://");
+}
+
+function FooterLink({ href, className, children }: { href: string; className?: string; children: React.ReactNode }) {
+  if (isExternal(href)) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  );
+}
+
+export async function Footer() {
+  const footer = await getSiteFooterContent();
 
   return (
     <footer className="bg-ink text-white">
       {/* Link columns */}
       <Container className="grid grid-cols-2 gap-8 py-12 sm:grid-cols-3 lg:grid-cols-5">
-        {footerColumns.map((col) => (
+        {footer.columns.map((col) => (
           <nav key={col.title} aria-label={col.title}>
             <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-200">{col.title}</p>
             <ul className="mt-4 space-y-2.5">
               {col.links.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-white/70 transition-colors hover:text-white hover:underline">
+                  <FooterLink href={link.href} className="text-sm text-white/70 transition-colors hover:text-white hover:underline">
                     {link.label}
-                  </Link>
+                  </FooterLink>
                 </li>
               ))}
             </ul>
@@ -32,7 +52,29 @@ export function Footer() {
       {/* Regional contacts */}
       <div className="border-t border-white/10">
         <Container className="py-8">
-          <RegionalContacts invert />
+          {footer.contactContent || footer.locationsContent ? (
+            <div>
+              <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-200">
+                Regional sales contacts
+              </p>
+              <div className="mt-4 grid gap-4 text-sm text-white/70 sm:grid-cols-2">
+                {footer.locationsContent ? (
+                  <p className="leading-relaxed">
+                    <MapPin aria-hidden="true" className="mr-1.5 inline h-3.5 w-3.5" />
+                    {footer.locationsContent}
+                  </p>
+                ) : null}
+                {footer.contactContent ? (
+                  <p className="leading-relaxed">
+                    <Mail aria-hidden="true" className="mr-1.5 inline h-3.5 w-3.5" />
+                    {footer.contactContent}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          ) : (
+            <RegionalContacts invert />
+          )}
         </Container>
       </div>
 
@@ -42,8 +84,7 @@ export function Footer() {
           <div className="space-y-3">
             <Logo invert />
             <p className="max-w-md text-sm text-white/60">
-              Retail ERP, POS and AI-powered retail management by {company.parent}, delivering
-              software solutions since {company.foundedYear}.
+              {footer.description}
             </p>
             <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/60">
               <span className="inline-flex items-center gap-1.5">
@@ -55,16 +96,11 @@ export function Footer() {
             </p>
           </div>
           <ul className="flex flex-wrap gap-4" aria-label="Social media">
-            {socialLinks.map((s) => (
+            {footer.socialLinks.map((s) => (
               <li key={s.href}>
-                <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-white/70 hover:text-white hover:underline"
-                >
+                <FooterLink href={s.href} className="text-sm text-white/70 hover:text-white hover:underline">
                   {s.label}
-                </a>
+                </FooterLink>
               </li>
             ))}
           </ul>
@@ -74,15 +110,13 @@ export function Footer() {
       {/* Legal */}
       <div className="border-t border-white/10">
         <Container className="flex flex-col items-start justify-between gap-3 py-5 text-xs text-white/50 sm:flex-row sm:items-center">
-          <p>
-            © {year} {company.parent}. All rights reserved.
-          </p>
+          <p>{footer.copyright}</p>
           <ul className="flex flex-wrap gap-4">
-            {legalLinks.map((link) => (
+            {footer.legalLinks.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="hover:text-white hover:underline">
+                <FooterLink href={link.href} className="hover:text-white hover:underline">
                   {link.label}
-                </Link>
+                </FooterLink>
               </li>
             ))}
           </ul>

@@ -5,6 +5,7 @@ import { LandingFAQ } from "./LandingFAQ";
 import { LandingCTA } from "./LandingCTA";
 import { RelatedPages } from "./RelatedPages";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
+import { CmsContentSections } from "@/components/cms/CmsContentSections";
 import {
   LandingBenefits,
   LandingFeatureGrid,
@@ -68,6 +69,7 @@ export function LandingPageTemplate({ page }: { page: LandingPage }) {
       {profile.order.map(renderSection)}
       {page.faqs.length ? <LandingFAQ items={page.faqs} name={page.name} /> : null}
       <RelatedPages page={page} />
+      {page.cmsContentSections?.length ? <CmsContentSections sections={page.cmsContentSections} /> : null}
       <CmsSeoEnhancements
         path={pagePath(page)}
         schemaJson={page.schemaJson}

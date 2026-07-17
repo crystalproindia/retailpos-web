@@ -1,5 +1,16 @@
-import type { CmsLandingPage } from "@/lib/cms";
+import type { CmsContentPage, CmsLandingPage } from "@/lib/cms";
 import { cmsText, faqItems, isRecord, safeUrl, stringArray } from "@/lib/cms-content";
+import {
+  cmsBenefitItems,
+  cmsCardItems,
+  cmsContentSections,
+  cmsFaqItems,
+  cmsFooterSeoText,
+  cmsHeroContent,
+  cmsSectionsExcept,
+  cmsSectionButton,
+  firstCmsSection,
+} from "@/lib/cms-content-editor";
 import type { LandingFeature, LandingPage, LandingProblem, LandingStep, LandingUseCase } from "./types";
 
 function firstText(...values: unknown[]): string | undefined {
@@ -130,5 +141,61 @@ export function applyCmsLandingPage(page: LandingPage, cmsPage: CmsLandingPage |
     seoIntroContent: longText(cmsPage.intro_content, page.seoIntroContent),
     seoFooterContent: longText(cmsPage.footer_seo_content, page.seoFooterContent),
     schemaJson: cmsPage.schema_json ?? page.schemaJson,
+  };
+}
+
+export function applyCmsContentPageToLandingPage(page: LandingPage, contentPage: CmsContentPage | null): LandingPage {
+  if (!contentPage) return page;
+
+  const sections = cmsContentSections(contentPage);
+  if (!sections.length) return page;
+
+  const heroSection = firstCmsSection(sections, "hero");
+  const hero = cmsHeroContent(heroSection);
+  const featureSection =
+    firstCmsSection(sections, "feature_grid") ??
+    firstCmsSection(sections, "product_highlights") ??
+    firstCmsSection(sections, "module_details") ??
+    firstCmsSection(sections, "industry_use_cases");
+  const benefitSection = firstCmsSection(sections, "benefits");
+  const faqSection = firstCmsSection(sections, "faq");
+  const ctaSection = firstCmsSection(sections, "cta");
+  const footerSeoSection = firstCmsSection(sections, "footer_seo");
+  const features = featureSection
+    ? cmsCardItems(featureSection).map((item): LandingFeature => ({
+        icon: item.icon,
+        title: item.title,
+        description: item.description,
+      }))
+    : [];
+  const benefits = benefitSection ? cmsBenefitItems(benefitSection) : [];
+  const faqs = faqSection ? cmsFaqItems(faqSection) : [];
+  const primary = cmsSectionButton(ctaSection ?? heroSection, "primary");
+  const secondary = cmsSectionButton(ctaSection ?? heroSection, "secondary");
+
+  return {
+    ...page,
+    title: hero?.title ?? page.title,
+    intro: hero?.subtitle ?? hero?.body ?? page.intro,
+    primaryCtaLabel: primary?.label ?? hero?.primaryCta?.label ?? page.primaryCtaLabel,
+    primaryCtaHref: primary?.href ?? hero?.primaryCta?.href ?? page.primaryCtaHref,
+    secondaryCtaLabel: secondary?.label ?? hero?.secondaryCta?.label ?? page.secondaryCtaLabel,
+    secondaryCtaHref: secondary?.href ?? hero?.secondaryCta?.href ?? page.secondaryCtaHref,
+    features: features.length ? features : page.features,
+    benefits: benefits.length ? benefits : page.benefits,
+    faqs: faqs.length ? faqs : page.faqs,
+    ctaHeading: cmsText(ctaSection?.title, 180) ?? page.ctaHeading,
+    seoFooterContent: cmsFooterSeoText(footerSeoSection) ?? page.seoFooterContent,
+    cmsContentSections: cmsSectionsExcept(sections, [
+      "hero",
+      "feature_grid",
+      "product_highlights",
+      "module_details",
+      "industry_use_cases",
+      "benefits",
+      "faq",
+      "cta",
+      "footer_seo",
+    ]),
   };
 }

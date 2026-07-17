@@ -131,6 +131,68 @@ export interface CmsRedirect {
   is_active?: boolean | number | null;
 }
 
+export interface CmsContentButton {
+  label?: string | null;
+  url?: string | null;
+}
+
+export type CmsContentSectionType =
+  | "hero"
+  | "feature_grid"
+  | "benefits"
+  | "product_highlights"
+  | "industry_use_cases"
+  | "module_details"
+  | "faq"
+  | "cta"
+  | "testimonials"
+  | "stats"
+  | "comparison"
+  | "footer_seo"
+  | "custom";
+
+export interface CmsContentSection {
+  section_key?: string | null;
+  section_type?: CmsContentSectionType | string | null;
+  eyebrow?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  body?: string | null;
+  image_url?: string | null;
+  primary_cta?: CmsContentButton | null;
+  secondary_cta?: CmsContentButton | null;
+  items?: unknown;
+  is_enabled?: boolean | number | null;
+  status?: string | null;
+}
+
+export interface CmsContentPage {
+  page_key?: string | null;
+  route_path?: string | null;
+  page_type?: string | null;
+  title?: string | null;
+  sections?: unknown;
+  status?: string | null;
+  is_published?: boolean | number | null;
+}
+
+export interface CmsNavigationItem {
+  label?: string | null;
+  url?: string | null;
+  location?: "header" | "footer" | "mobile" | string | null;
+  parent_label?: string | null;
+  opens_new_tab?: boolean | number | null;
+  is_enabled?: boolean | number | null;
+}
+
+export interface CmsFooterBlock {
+  block_key?: string | null;
+  title?: string | null;
+  content?: string | null;
+  links?: unknown;
+  is_enabled?: boolean | number | null;
+}
+
 function cmsBaseUrl(): string {
   return (process.env.RETAILPOS_CMS_API_BASE_URL || DEFAULT_CMS_API_BASE_URL).replace(/\/+$/, "");
 }
@@ -230,4 +292,31 @@ export async function getCmsRobots(): Promise<CmsRobots | null> {
 export async function getCmsRedirects(): Promise<CmsRedirect[]> {
   const redirects = await cmsFetch<CmsRedirect[]>("/api/public/cms/redirects", 300);
   return Array.isArray(redirects) ? redirects.filter((r) => r.is_active !== false && r.is_active !== 0) : [];
+}
+
+export async function getCmsContentPages(): Promise<CmsContentPage[]> {
+  const pages = await cmsFetch<CmsContentPage[]>("/api/public/cms/content/pages", 900);
+  return Array.isArray(pages) ? pages.filter(isPublished) : [];
+}
+
+export async function getCmsContentPageByPath(pathname: string): Promise<CmsContentPage | null> {
+  const path = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  const page = await cmsFetch<CmsContentPage>(`/api/public/cms/content/page?path=${encodeURIComponent(path)}`, 300);
+  return isRecord(page) && isPublished(page) ? page : null;
+}
+
+export async function getCmsContentPageByKey(pageKey: string): Promise<CmsContentPage | null> {
+  const page = await cmsFetch<CmsContentPage>(`/api/public/cms/content/page/${encodeURIComponent(pageKey)}`, 300);
+  return isRecord(page) && isPublished(page) ? page : null;
+}
+
+export async function getCmsNavigation(location?: "header" | "footer" | "mobile"): Promise<CmsNavigationItem[]> {
+  const items = await cmsFetch<CmsNavigationItem[]>("/api/public/cms/content/navigation", 300);
+  if (!Array.isArray(items)) return [];
+  return items.filter((item) => item.is_enabled !== false && item.is_enabled !== 0 && (!location || item.location === location));
+}
+
+export async function getCmsFooter(): Promise<CmsFooterBlock[]> {
+  const blocks = await cmsFetch<CmsFooterBlock[]>("/api/public/cms/content/footer", 300);
+  return Array.isArray(blocks) ? blocks.filter((block) => block.is_enabled !== false && block.is_enabled !== 0) : [];
 }
