@@ -11,7 +11,7 @@ import { getCmsSettings } from "@/lib/cms";
 import { getSiteNavigation } from "@/lib/cms-navigation";
 import { getSiteContactSettings } from "@/lib/contact-settings";
 import { whatsAppContactsFromOffices } from "@/lib/whatsapp";
-import "@/styles/globals.css";
+import "./globals.css";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],

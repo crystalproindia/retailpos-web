@@ -6,7 +6,7 @@
   html {
     scroll-behavior: smooth;
   }
-  /* Anchor targets clear the sticky header (announcement + header ≈ 6.5rem) */
+  /* Anchor targets clear the sticky header (announcement + header approx 6.5rem) */
   [id] {
     scroll-margin-top: 6.5rem;
   }
