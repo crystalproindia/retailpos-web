@@ -8,6 +8,17 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   turbopack: { root: projectRoot },
+  async headers() {
+    return [
+      {
+        source: "/preview/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+        ],
+      },
+    ];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

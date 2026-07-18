@@ -23,6 +23,7 @@ import { faqJsonLd } from "@/lib/seo/jsonld";
 interface CmsContentSectionsProps {
   sections: CmsContentSection[];
   excludeTypes?: CmsContentSectionType[];
+  previewMode?: boolean;
 }
 
 function sectionTitle(section: CmsContentSection, fallback: string): string {
@@ -30,7 +31,39 @@ function sectionTitle(section: CmsContentSection, fallback: string): string {
 }
 
 function sectionDescription(section: CmsContentSection): string | undefined {
-  return cmsText(section.subtitle ?? section.body, 360);
+  return cmsText(section.subtitle ?? section.body ?? section.content, 360);
+}
+
+function CmsHeroSection({ section }: { section: CmsContentSection }) {
+  const primary = cmsSectionButton(section, "primary");
+  const secondary = cmsSectionButton(section, "secondary");
+  const title = cmsText(section.title, 180);
+  const description = sectionDescription(section);
+  if (!title && !description) return null;
+
+  return (
+    <div className="border-b border-line bg-paper">
+      <Section className="pb-12 pt-10 sm:pb-16 sm:pt-14">
+        {cmsText(section.eyebrow, 120) ? (
+          <p className="font-mono text-xs font-medium uppercase tracking-[0.18em] text-brand-600">
+            {cmsText(section.eyebrow, 120)}
+          </p>
+        ) : null}
+        {title ? (
+          <h1 className="mt-3 max-w-4xl font-display text-display-md font-bold text-ink sm:text-display-lg">
+            {title}
+          </h1>
+        ) : null}
+        {description ? <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted sm:text-lg">{description}</p> : null}
+        {primary || secondary ? (
+          <div className="mt-7 flex flex-wrap gap-3">
+            {primary ? <ButtonLink href={primary.href} size="lg">{primary.label}</ButtonLink> : null}
+            {secondary ? <ButtonLink href={secondary.href} variant="ghost" size="lg">{secondary.label}</ButtonLink> : null}
+          </div>
+        ) : null}
+      </Section>
+    </div>
+  );
 }
 
 export function CmsFaqSection({ section }: { section: CmsContentSection }) {
@@ -282,11 +315,25 @@ function CmsCustomSection({ section }: { section: CmsContentSection }) {
   );
 }
 
-function renderCmsSection(section: CmsContentSection) {
+function CmsUnsupportedSection({ section }: { section: CmsContentSection }) {
+  if (process.env.NODE_ENV === "production") return null;
+  return (
+    <Section tone="paper" className="py-8">
+      <div className="rounded-lg border border-line bg-white p-4 text-sm text-ink-muted">
+        Unsupported preview section: {cmsText(section.section_type, 80) ?? "unknown"}
+      </div>
+    </Section>
+  );
+}
+
+function renderCmsSection(section: CmsContentSection, previewMode: boolean) {
   switch (section.section_type) {
+    case "hero":
+      return <CmsHeroSection key={section.section_key ?? section.title ?? "hero"} section={section} />;
     case "faq":
       return <CmsFaqSection key={section.section_key ?? section.title ?? "faq"} section={section} />;
     case "testimonials":
+    case "testimonial":
       return <CmsTestimonialsSection key={section.section_key ?? section.title ?? "testimonials"} section={section} />;
     case "stats":
     case "trust_metrics":
@@ -304,18 +351,27 @@ function renderCmsSection(section: CmsContentSection) {
     case "product_highlights":
     case "industry_use_cases":
     case "module_details":
+    case "product_grid":
+    case "module_grid":
+    case "industry_grid":
+    case "solution_grid":
+    case "pricing":
       return <CmsCardGridSection key={section.section_key ?? section.title ?? "cards"} section={section} />;
     case "rich_text":
     case "client_logos":
+    case "image_text":
+    case "custom_json":
     case "custom":
       return <CmsCustomSection key={section.section_key ?? section.title ?? "custom"} section={section} />;
     default:
-      return null;
+      return previewMode ? <CmsUnsupportedSection key={section.section_key ?? section.title ?? "unsupported"} section={section} /> : null;
   }
 }
 
-export function CmsContentSections({ sections, excludeTypes = [] }: CmsContentSectionsProps) {
+export function CmsContentSections({ sections, excludeTypes = [], previewMode = false }: CmsContentSectionsProps) {
   const excluded = new Set(excludeTypes);
-  const rendered = sections.filter((section) => !excluded.has(section.section_type as CmsContentSectionType)).map(renderCmsSection);
+  const rendered = sections
+    .filter((section) => !excluded.has(section.section_type as CmsContentSectionType))
+    .map((section) => renderCmsSection(section, previewMode));
   return <>{rendered}</>;
 }

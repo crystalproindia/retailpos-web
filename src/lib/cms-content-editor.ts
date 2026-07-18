@@ -50,16 +50,24 @@ const supportedSectionTypes = new Set<CmsContentSectionType>([
   "product_highlights",
   "industry_use_cases",
   "module_details",
+  "product_grid",
+  "module_grid",
+  "industry_grid",
+  "solution_grid",
   "faq",
   "cta",
   "testimonials",
+  "testimonial",
+  "pricing",
   "stats",
   "comparison",
   "footer_seo",
   "trust_metrics",
   "client_logos",
   "rich_text",
+  "image_text",
   "case_study_grid",
+  "custom_json",
   "custom",
 ]);
 
@@ -72,6 +80,7 @@ export function cmsContentSections(page: CmsContentPage | null | undefined): Cms
   return page.sections
     .filter((section): section is CmsContentSection => isRecord(section))
     .filter((section) => section.is_enabled !== false && section.is_enabled !== 0)
+    .filter((section) => section.is_active !== false && section.is_active !== 0)
     .filter((section) => isSupportedCmsSectionType(section.section_type));
 }
 
@@ -106,8 +115,8 @@ export function cmsSectionButton(section: CmsContentSection | null | undefined, 
 export function cmsHeroContent(section: CmsContentSection | null | undefined): CmsHeroContent | null {
   if (!section) return null;
   const title = cmsText(section.title, 180);
-  const subtitle = cmsText(section.subtitle ?? section.body, 420);
-  const body = cmsText(section.body, 900);
+  const subtitle = cmsText(section.subtitle ?? section.body ?? section.content, 420);
+  const body = cmsText(section.body ?? section.content, 900);
   const hero: CmsHeroContent = {
     eyebrow: cmsText(section.eyebrow, 120),
     title,
@@ -121,11 +130,15 @@ export function cmsHeroContent(section: CmsContentSection | null | undefined): C
 }
 
 export function cmsSectionParagraphs(section: CmsContentSection, maxParagraphs = 4): string[] {
-  return cmsParagraphs(section.body, maxParagraphs);
+  return cmsParagraphs(section.body ?? section.content, maxParagraphs);
 }
 
 function itemRecords(section: CmsContentSection, maxItems = 20): Record<string, unknown>[] {
-  return Array.isArray(section.items) ? section.items.filter(isRecord).slice(0, maxItems) : [];
+  if (Array.isArray(section.items)) return section.items.filter(isRecord).slice(0, maxItems);
+  if (isRecord(section.settings) && Array.isArray(section.settings.items)) {
+    return section.settings.items.filter(isRecord).slice(0, maxItems);
+  }
+  return [];
 }
 
 export function cmsCardItems(section: CmsContentSection, maxItems = 12): CmsCardItem[] {
@@ -201,5 +214,5 @@ export function cmsComparisonRows(section: CmsContentSection, maxItems = 10): Cm
 
 export function cmsFooterSeoText(section: CmsContentSection | null | undefined): string | undefined {
   if (!section) return undefined;
-  return cmsText(section.body ?? section.subtitle, 5000);
+  return cmsText(section.body ?? section.content ?? section.subtitle, 5000);
 }

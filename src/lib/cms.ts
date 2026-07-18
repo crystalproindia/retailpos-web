@@ -186,16 +186,24 @@ export type CmsContentSectionType =
   | "product_highlights"
   | "industry_use_cases"
   | "module_details"
+  | "product_grid"
+  | "module_grid"
+  | "industry_grid"
+  | "solution_grid"
   | "faq"
   | "cta"
   | "testimonials"
+  | "testimonial"
+  | "pricing"
   | "stats"
   | "comparison"
   | "footer_seo"
   | "trust_metrics"
   | "client_logos"
   | "rich_text"
+  | "image_text"
   | "case_study_grid"
+  | "custom_json"
   | "custom";
 
 export interface CmsContentSection {
@@ -205,11 +213,15 @@ export interface CmsContentSection {
   title?: string | null;
   subtitle?: string | null;
   body?: string | null;
+  content?: string | null;
   image_url?: string | null;
   primary_cta?: CmsContentButton | null;
   secondary_cta?: CmsContentButton | null;
   items?: unknown;
+  settings?: unknown;
   is_enabled?: boolean | number | null;
+  is_active?: boolean | number | null;
+  sort_order?: number | string | null;
   status?: string | null;
 }
 
@@ -318,6 +330,38 @@ async function cmsFetch<T>(path: string, revalidate: number): Promise<T | null> 
   }
 }
 
+async function cmsPreviewFetch<T>(path: string, token: string): Promise<T | null> {
+  const cleanToken = token.trim();
+  const baseUrl = endpointUrl(path);
+  if (!baseUrl || !cleanToken) return null;
+
+  try {
+    const url = new URL(baseUrl);
+    url.searchParams.set("token", cleanToken);
+
+    const response = await fetch(url.toString(), {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(cmsTimeoutMs()),
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      if (response.status !== 404 && response.status !== 401 && response.status !== 403) {
+        warn(`preview request failed: ${path} (${response.status})`);
+      }
+      return null;
+    }
+
+    const raw = (await response.json()) as unknown;
+    const data = unwrapData(raw);
+    if (data === null || data === undefined) return null;
+    return data as T;
+  } catch (error) {
+    warn(`preview request errored: ${path}`, error);
+    return null;
+  }
+}
+
 export async function getCmsSettings(): Promise<CmsSettings | null> {
   const settings = await cmsFetch<CmsSettings>("/api/public/cms/settings", 300);
   return isRecord(settings) ? settings : null;
@@ -417,7 +461,7 @@ function normalizePublicSections(page: CmsPublicPage): CmsContentSection[] {
   return sections;
 }
 
-function contentPageFromPublicPage(page: CmsPublicPage): CmsContentPage {
+export function contentPageFromPublicPage(page: CmsPublicPage): CmsContentPage {
   return {
     page_key: text(page.slug) ?? null,
     route_path: text(page.route_path) ?? (text(page.slug) ? `/${text(page.slug)}` : null),
@@ -521,4 +565,14 @@ export async function getCmsCaseStudies(): Promise<CmsPublicCaseStudy[]> {
 export async function getCmsCaseStudy(slug: string): Promise<CmsPublicCaseStudy | null> {
   const study = await cmsFetch<CmsPublicCaseStudy>(`/case-studies/${encodeURIComponent(slug)}`, 900);
   return isRecord(study) && isPublished(study) ? study : null;
+}
+
+export async function fetchPreviewPage(slug: string, token: string): Promise<CmsContentPage | null> {
+  const page = await cmsPreviewFetch<CmsPublicPage>(`/preview/page/${encodeURIComponent(slug)}`, token);
+  return isRecord(page) ? contentPageFromPublicPage(page) : null;
+}
+
+export async function fetchPreviewCaseStudy(slug: string, token: string): Promise<CmsPublicCaseStudy | null> {
+  const study = await cmsPreviewFetch<CmsPublicCaseStudy>(`/preview/case-study/${encodeURIComponent(slug)}`, token);
+  return isRecord(study) ? study : null;
 }
