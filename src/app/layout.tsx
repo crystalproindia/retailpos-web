@@ -5,6 +5,7 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingWhatsApp } from "@/components/contact/WhatsAppContact";
+import { TalkToSalesProvider } from "@/components/forms/TalkToSalesModal";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/seo/jsonld";
 import { getCmsSettings } from "@/lib/cms";
@@ -62,17 +63,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           Skip to content
         </a>
         <JsonLd data={[organizationJsonLd(settings), webSiteJsonLd(settings)]} />
-        <AnnouncementBar />
-        <Header
-          navGroups={navigation.navGroups}
-          topLevelLinks={navigation.topLevelLinks}
-          quickLinks={navigation.quickLinks}
+        <TalkToSalesProvider
           whatsAppContacts={whatsAppContacts}
           defaultWhatsAppMessage={contactSettings.defaultWhatsAppMessage}
-        />
-        <main id="main">{children}</main>
-        <Footer />
-        <FloatingWhatsApp contacts={whatsAppContacts} defaultMessage={contactSettings.defaultWhatsAppMessage} />
+        >
+          <AnnouncementBar />
+          <Header
+            navGroups={navigation.navGroups}
+            topLevelLinks={navigation.topLevelLinks}
+            quickLinks={navigation.quickLinks}
+            whatsAppContacts={whatsAppContacts}
+            defaultWhatsAppMessage={contactSettings.defaultWhatsAppMessage}
+          />
+          <main id="main">{children}</main>
+          <Footer />
+          <FloatingWhatsApp contacts={whatsAppContacts} defaultMessage={contactSettings.defaultWhatsAppMessage} />
+        </TalkToSalesProvider>
       </body>
     </html>
   );

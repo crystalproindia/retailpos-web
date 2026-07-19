@@ -15,6 +15,7 @@ import { primaryCtas } from "@/data/ctas";
 import type { NavGroup, NavLink } from "@/types/content";
 import { Icon } from "@/components/ui/Icon";
 import { ButtonLink } from "@/components/ui/Button";
+import { TalkToSalesButton } from "@/components/forms/TalkToSalesModal";
 import { WhatsAppCountrySelector } from "@/components/contact/WhatsAppContact";
 import type { WhatsAppContactOption } from "@/lib/whatsapp";
 import { trackEvent } from "@/lib/analytics";
@@ -152,17 +153,34 @@ export function MobileNav({
             {/* Quick access row */}
             <div className="border-b border-line p-4">
               <div className="grid grid-cols-2 gap-2">
-                {quickLinks.map((link) => (
-                  <Link
-                    key={`${link.label}-${link.href}`}
-                    href={link.href}
-                    onClick={closeNav}
-                    className="flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-lg border border-line bg-paper px-3 py-3 text-center text-xs font-medium text-ink transition-colors hover:border-brand-200 hover:bg-brand-50"
-                  >
-                    {link.icon ? <Icon name={link.icon} className="h-5 w-5 text-brand-600" /> : null}
-                    {link.label}
-                  </Link>
-                ))}
+                {quickLinks.map((link) => {
+                  const isTalkToSales = link.label === primaryCtas.talkToSales.label;
+                  const className =
+                    "flex h-auto min-h-20 flex-col items-center justify-center gap-1.5 rounded-lg border border-line bg-paper px-3 py-3 text-center text-xs font-medium text-ink shadow-none transition-colors hover:border-brand-200 hover:bg-brand-50";
+
+                  return isTalkToSales ? (
+                    <TalkToSalesButton
+                      key={`${link.label}-${link.href}`}
+                      trigger="mobile_quick_link"
+                      onClick={closeNav}
+                      variant="ghost"
+                      className={className}
+                    >
+                      {link.icon ? <Icon name={link.icon} className="h-5 w-5 text-brand-600" /> : null}
+                      {link.label}
+                    </TalkToSalesButton>
+                  ) : (
+                    <Link
+                      key={`${link.label}-${link.href}`}
+                      href={link.href}
+                      onClick={closeNav}
+                      className={className}
+                    >
+                      {link.icon ? <Icon name={link.icon} className="h-5 w-5 text-brand-600" /> : null}
+                      {link.label}
+                    </Link>
+                  );
+                })}
                 <button
                   type="button"
                   aria-expanded={whatsappOpen}
@@ -328,9 +346,9 @@ export function MobileNav({
                 <ButtonLink href={primaryCtas.bookDemo.href} onClick={closeNav} size="lg">
                   {primaryCtas.bookDemo.label}
                 </ButtonLink>
-                <ButtonLink href={primaryCtas.talkToSales.href} onClick={closeNav} variant="ghost" size="lg">
+                <TalkToSalesButton trigger="mobile_nav" onClick={closeNav} variant="ghost" size="lg">
                   {primaryCtas.talkToSales.label}
-                </ButtonLink>
+                </TalkToSalesButton>
               </div>
             </div>
           </motion.div>

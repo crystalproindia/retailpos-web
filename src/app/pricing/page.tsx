@@ -18,6 +18,7 @@ import { CmsContentSections } from "@/components/cms/CmsContentSections";
 import { CmsSeoEnhancements } from "@/components/seo/CmsSeoEnhancements";
 import { faqJsonLd } from "@/lib/seo/jsonld";
 import { ButtonLink } from "@/components/ui/Button";
+import { TalkToSalesButton } from "@/components/forms/TalkToSalesModal";
 import { Icon } from "@/components/ui/Icon";
 import { TrustMetrics } from "@/components/trust/TrustMetrics";
 import { ClientLogoWall } from "@/components/trust/ClientLogoWall";
@@ -110,7 +111,7 @@ export default async function PricingPage() {
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <ButtonLink href="/book-demo" size="lg">Request Pricing in a Demo</ButtonLink>
-                <ButtonLink href="/contact" variant="ghost" size="lg">Talk to Sales</ButtonLink>
+                <TalkToSalesButton trigger="pricing_page" variant="ghost" size="lg">Talk to Sales</TalkToSalesButton>
               </div>
             </div>
             <aside className="rounded-lg border border-line bg-white p-5 shadow-card">

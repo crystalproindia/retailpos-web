@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Checkbox, FieldWrap, Select, Textarea, TextInput } from "./fields";
 import { solutions } from "@/data/solutions";
 import { countryOptions } from "@/data/countries";
+import { getLeadTrackingContext, isValidEmail, submitWebsiteLead } from "@/lib/lead-client";
 
 type LeadSource = "contact" | "book_demo" | "pricing_enquiry" | "landing_page";
 
@@ -53,7 +54,7 @@ function validate(v: LeadFormValues): Errors {
   const errors: Errors = {};
   if (!v.name.trim()) errors.name = "Enter your name.";
   if (!v.businessName.trim()) errors.businessName = "Enter your business name.";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)) errors.email = "Enter a valid email address.";
+  if (!isValidEmail(v.email.trim())) errors.email = "Enter a valid email address.";
   if (!/^[+\d][\d\s-]{7,15}$/.test(v.phone)) errors.phone = "Enter a valid phone number.";
   if (!v.businessType) errors.businessType = "Select your business type.";
   if (!v.consent) errors.consent = "Please accept to be contacted about your enquiry.";
@@ -74,48 +75,28 @@ const businessTypes = [
   "Other retail",
 ];
 
-function getTrackingContext() {
-  if (typeof window === "undefined") {
-    return { page_url: "", utm_source: "", utm_medium: "", utm_campaign: "" };
-  }
-
-  const url = new URL(window.location.href);
-  return {
-    page_url: url.href,
-    utm_source: url.searchParams.get("utm_source") ?? "",
-    utm_medium: url.searchParams.get("utm_medium") ?? "",
-    utm_campaign: url.searchParams.get("utm_campaign") ?? "",
-  };
-}
-
 async function submitLead(payload: LeadFormValues, source: LeadSource): Promise<void> {
-  const tracking = getTrackingContext();
+  const tracking = getLeadTrackingContext();
   const requirement = payload.message.trim() || payload.requiredSolution || "Website enquiry";
 
-  const res = await fetch("/api/leads", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name: payload.name.trim(),
-      company_name: payload.businessName.trim(),
-      email: payload.email.trim(),
-      phone: payload.phone.trim(),
-      city: "",
-      country: payload.country,
-      business_type: payload.businessType,
-      requirement,
-      source,
-      ...tracking,
-      metadata: {
-        store_count: payload.storeCount,
-        required_solution: payload.requiredSolution,
-        consent_to_contact: payload.consent,
-      },
-      website: payload.website,
-    }),
+  await submitWebsiteLead({
+    name: payload.name.trim(),
+    company_name: payload.businessName.trim(),
+    email: payload.email.trim(),
+    phone: payload.phone.trim(),
+    city: "",
+    country: payload.country,
+    business_type: payload.businessType,
+    requirement,
+    source,
+    ...tracking,
+    metadata: {
+      store_count: payload.storeCount,
+      required_solution: payload.requiredSolution,
+      consent_to_contact: payload.consent,
+    },
+    website: payload.website,
   });
-
-  if (!res.ok) throw new Error("Lead submission failed.");
 }
 
 export function LeadForm({

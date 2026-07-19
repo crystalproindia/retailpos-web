@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -35,9 +36,13 @@ export function FieldWrap({ label, htmlFor, error, required, children }: FieldWr
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & { error?: string };
 
-export function TextInput({ error, className, id, ...props }: InputProps) {
+export const TextInput = forwardRef<HTMLInputElement, InputProps>(function TextInput(
+  { error, className, id, ...props },
+  ref,
+) {
   return (
     <input
+      ref={ref}
       id={id}
       aria-invalid={error ? true : undefined}
       aria-describedby={error && id ? `${id}-error` : undefined}
@@ -45,7 +50,7 @@ export function TextInput({ error, className, id, ...props }: InputProps) {
       {...props}
     />
   );
-}
+});
 
 type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & { error?: string };
 

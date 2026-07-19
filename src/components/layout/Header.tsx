@@ -10,6 +10,7 @@ import { primaryCtas } from "@/data/ctas";
 import type { NavGroup, NavLink } from "@/types/content";
 import { Icon } from "@/components/ui/Icon";
 import { ButtonLink } from "@/components/ui/Button";
+import { TalkToSalesButton } from "@/components/forms/TalkToSalesModal";
 import type { WhatsAppContactOption } from "@/lib/whatsapp";
 import { Logo } from "./Logo";
 import { MobileNav } from "./MobileNav";
@@ -100,9 +101,9 @@ export function Header({
         </div>
 
         <div className="hidden items-center gap-2 lg:flex">
-          <ButtonLink href={primaryCtas.talkToSales.href} variant="ghost" size="sm">
+          <TalkToSalesButton trigger="desktop_nav" variant="ghost" size="sm">
             {primaryCtas.talkToSales.label}
-          </ButtonLink>
+          </TalkToSalesButton>
           <ButtonLink href={primaryCtas.bookDemo.href} size="sm">
             {primaryCtas.bookDemo.label}
           </ButtonLink>

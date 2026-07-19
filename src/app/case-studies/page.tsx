@@ -6,6 +6,7 @@ import { getCaseStudiesWithFallback } from "@/lib/cms-case-studies";
 import { siteConfig } from "@/config/site";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ButtonLink } from "@/components/ui/Button";
+import { TalkToSalesButton } from "@/components/forms/TalkToSalesModal";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { Section } from "@/components/ui/Section";
@@ -70,7 +71,7 @@ export default async function CaseStudiesPage() {
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <ButtonLink href="/book-demo" size="lg">Book a Free Demo</ButtonLink>
-                <ButtonLink href="/contact" variant="ghost" size="lg">Talk to Sales</ButtonLink>
+                <TalkToSalesButton trigger="case_studies_page" variant="ghost" size="lg">Talk to Sales</TalkToSalesButton>
               </div>
             </div>
             <aside className="rounded-lg border border-line bg-white p-5 shadow-card">

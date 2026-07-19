@@ -1,5 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
+import { TalkToSalesButton } from "@/components/forms/TalkToSalesModal";
 import { primaryCtas } from "@/data/ctas";
 
 interface LandingCTAProps {
@@ -11,6 +12,11 @@ interface LandingCTAProps {
 }
 
 export function LandingCTA({ heading, primaryLabel, primaryHref, secondaryLabel, secondaryHref }: LandingCTAProps) {
+  const resolvedSecondaryLabel = secondaryLabel ?? primaryCtas.talkToSales.label;
+  const resolvedSecondaryHref = secondaryHref ?? primaryCtas.talkToSales.href;
+  const opensTalkToSales =
+    resolvedSecondaryLabel === primaryCtas.talkToSales.label || resolvedSecondaryHref === primaryCtas.talkToSales.href;
+
   return (
     <div className="border-t border-line bg-ink text-white">
       <Container className="flex flex-col items-start justify-between gap-6 py-12 sm:flex-row sm:items-center sm:py-14">
@@ -26,9 +32,15 @@ export function LandingCTA({ heading, primaryLabel, primaryHref, secondaryLabel,
           <ButtonLink href={primaryHref ?? primaryCtas.bookDemo.href}>
             {primaryLabel ?? primaryCtas.bookDemo.label}
           </ButtonLink>
-          <ButtonLink href={secondaryHref ?? primaryCtas.talkToSales.href} variant="inverted">
-            {secondaryLabel ?? primaryCtas.talkToSales.label}
-          </ButtonLink>
+          {opensTalkToSales ? (
+            <TalkToSalesButton trigger="landing_cta" variant="inverted">
+              {resolvedSecondaryLabel}
+            </TalkToSalesButton>
+          ) : (
+            <ButtonLink href={resolvedSecondaryHref} variant="inverted">
+              {resolvedSecondaryLabel}
+            </ButtonLink>
+          )}
         </div>
       </Container>
     </div>

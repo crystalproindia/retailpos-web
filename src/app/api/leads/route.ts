@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-const allowedSources = ["contact", "book_demo", "pricing_enquiry", "landing_page"] as const;
+const allowedSources = ["contact", "book_demo", "pricing_enquiry", "landing_page", "talk_to_sales_popup"] as const;
 
 type LeadSource = (typeof allowedSources)[number];
 
@@ -17,9 +17,13 @@ interface IncomingLeadPayload {
   requirement?: unknown;
   source?: unknown;
   page_url?: unknown;
+  page_title?: unknown;
+  referrer?: unknown;
   utm_source?: unknown;
   utm_medium?: unknown;
   utm_campaign?: unknown;
+  country_code?: unknown;
+  whatsapp_preferred?: unknown;
   metadata?: unknown;
   website?: unknown;
 }
@@ -42,12 +46,25 @@ interface LeadPayload {
 }
 
 function text(value: unknown, maxLength = 500): string {
-  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+  return typeof value === "string" ? value.replace(/[\u0000-\u001F\u007F<>]/g, "").trim().slice(0, maxLength) : "";
 }
 
 function metadata(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
-  return value as Record<string, unknown>;
+  const safe: Record<string, unknown> = {};
+
+  for (const [key, entry] of Object.entries(value as Record<string, unknown>)) {
+    const safeKey = text(key, 80);
+    if (!safeKey) continue;
+
+    if (typeof entry === "string") {
+      safe[safeKey] = text(entry, 500);
+    } else if (typeof entry === "number" || typeof entry === "boolean" || entry === null) {
+      safe[safeKey] = entry;
+    }
+  }
+
+  return safe;
 }
 
 function isLeadSource(value: string): value is LeadSource {
@@ -56,6 +73,19 @@ function isLeadSource(value: string): value is LeadSource {
 
 function validate(payload: IncomingLeadPayload): { lead?: LeadPayload; errors?: string[] } {
   const source = text(payload.source, 80);
+  const leadSource = isLeadSource(source) ? source : "landing_page";
+  const leadMetadata = metadata(payload.metadata);
+  const pageTitle = text(payload.page_title, 300);
+  const referrer = text(payload.referrer, 1000);
+  const countryCode = text(payload.country_code, 8).toUpperCase();
+
+  if (pageTitle && typeof leadMetadata.page_title === "undefined") leadMetadata.page_title = pageTitle;
+  if (referrer && typeof leadMetadata.referrer === "undefined") leadMetadata.referrer = referrer;
+  if (countryCode && typeof leadMetadata.country_code === "undefined") leadMetadata.country_code = countryCode;
+  if (typeof payload.whatsapp_preferred === "boolean" && typeof leadMetadata.whatsapp_preferred === "undefined") {
+    leadMetadata.whatsapp_preferred = payload.whatsapp_preferred;
+  }
+
   const lead: LeadPayload = {
     name: text(payload.name, 160),
     company_name: text(payload.company_name, 200),
@@ -65,20 +95,25 @@ function validate(payload: IncomingLeadPayload): { lead?: LeadPayload; errors?: 
     country: text(payload.country, 120),
     business_type: text(payload.business_type, 160),
     requirement: text(payload.requirement, 2000),
-    source: isLeadSource(source) ? source : "landing_page",
+    source: leadSource,
     page_url: text(payload.page_url, 1000),
     utm_source: text(payload.utm_source, 200),
     utm_medium: text(payload.utm_medium, 200),
     utm_campaign: text(payload.utm_campaign, 200),
-    metadata: metadata(payload.metadata),
+    metadata: leadMetadata,
   };
 
   const errors: string[] = [];
-  if (!lead.name) errors.push("name");
-  if (!lead.company_name) errors.push("company_name");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) errors.push("email");
-  if (!/^[+\d][\d\s-]{7,20}$/.test(lead.phone)) errors.push("phone");
-  if (!lead.business_type) errors.push("business_type");
+  if (lead.source === "talk_to_sales_popup") {
+    if (!/^\+\d{8,15}$/.test(lead.phone)) errors.push("phone");
+    if (lead.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) errors.push("email");
+  } else {
+    if (!lead.name) errors.push("name");
+    if (!lead.company_name) errors.push("company_name");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) errors.push("email");
+    if (!/^[+\d][\d\s-]{7,20}$/.test(lead.phone)) errors.push("phone");
+    if (!lead.business_type) errors.push("business_type");
+  }
 
   return errors.length ? { errors } : { lead };
 }
